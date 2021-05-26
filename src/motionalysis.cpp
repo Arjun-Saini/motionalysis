@@ -4,24 +4,27 @@
 
 #include "Particle.h"
 #line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
-/*
- * Project motionalysis
- * Description:
- * Author:
- * Date:
- */
-
-// setup() runs once, when the device is first turned on.
 void setup();
 void loop();
-#line 9 "e:/IoT/motionalysis/src/motionalysis.ino"
-void setup() {
-  // Put initialization like pinMode and begin functions here.
+#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
+SYSTEM_MODE(MANUAL);
 
+#include "Adafruit_LIS3DH.h"
+
+
+Adafruit_LIS3DH lis = Adafruit_LIS3DH();
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  lis.begin(0x18);
 }
 
-// loop() runs over and over again, as quickly as it can execute.
 void loop() {
-  // The core of your code will likely live here.
-
+  lis.read();
+  Serial.print("X:  "); Serial.print(lis.x);
+  Serial.print("  \tY:  "); Serial.print(lis.y);
+  Serial.print("  \tZ:  "); Serial.print(lis.z);
+  Serial.println();
+  delay(200);
 }

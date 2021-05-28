@@ -44,15 +44,15 @@ void loop() {
   payload = "X: " + String(event.acceleration.x) + "\tY: " + String(event.acceleration.y) + "\tZ: " + String(event.acceleration.z); 
   */
 
-  //publish to mqtt
-  client.publish("test/motionalysis", payload);
-
   //reconnect to mqtt if necessary
   if(client.isConnected()){
     client.loop();
   } else{
     client.connect(System.deviceID());
   }
+
+  //publish to mqtt
+  client.publish("test/motionalysis", payload);
 
   //pause between each loop to slow rate of data gathering
   delay(DELAY);

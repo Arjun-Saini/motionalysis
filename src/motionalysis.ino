@@ -6,7 +6,7 @@ String payload;
 int counter;
 const int DELAY = 200; //pause between data readings in milliseconds
 const int AWAKE_DURATION = 5000; //how long accelerometer will be awake for in milliseconds
-const int CLICK_THRESHHOLD = 15; //higher is less sensitive
+const int CLICK_THRESHHOLD = 60; //higher is less sensitive
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 MQTT client("lab.thewcl.com", 1883, callback);
@@ -16,7 +16,7 @@ void setup() {
   Serial.begin(9600);
   //start transmission from accelerometer
   lis.begin(0x18);
-  lis.setRange(LIS3DH_RANGE_8_G);
+  lis.setRange(LIS3DH_RANGE_2_G);
   lis.setClick(1, CLICK_THRESHHOLD);
 
   //connect to MQTT

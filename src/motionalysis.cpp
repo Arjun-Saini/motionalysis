@@ -15,8 +15,9 @@ void callback(char* topic, byte* payload, unsigned int length);
 String payload;
 int counter;
 const int DELAY = 200; //pause between data readings in milliseconds
-const int AWAKE_DURATION = 20000; //how long accelerometer will be awake for in milliseconds
-const int CLICK_THRESHHOLD = 15; //higher is less sensitive
+const int AWAKE_DURATION = 5000; //how long argon will be awake for in milliseconds after initial movement
+const int CLICK_THRESHHOLD = 60; //higher is less sensitive
+sensors_event_t event;
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 MQTT client("lab.thewcl.com", 1883, callback);
@@ -24,9 +25,10 @@ SystemSleepConfiguration config;
 
 void setup() {
   Serial.begin(9600);
+
   //start transmission from accelerometer
   lis.begin(0x18);
-  lis.setRange(LIS3DH_RANGE_8_G);
+  lis.setRange(LIS3DH_RANGE_2_G);
   lis.setClick(1, CLICK_THRESHHOLD);
 
   //connect to MQTT
@@ -46,16 +48,7 @@ void loop() {
 
   //read data from accelerometer
   lis.read();
-  payload = "X: " + String(lis.x_g) + "\tY: " + String(lis.y_g) + "\tZ: " + String(lis.z_g);
-
-  /* not sure why this doesnt work, it should output the acceleration in meters per second squared but instead it crashes the argon with a hard fault
-  sensors_event_t event;
-  lis.getEvent(&event);
-  payload = "X: " + String(event.acceleration.x) + "\tY: " + String(event.acceleration.y) + "\tZ: " + String(event.acceleration.z); 
-  */
-
-  //publish to mqtt
-  client.publish("test/motionalysis", payload);
+  payload = "X: " + String(9.8066 * lis.x_g) + "\tY: " + String(9.8066 * lis.y_g) + "\tZ: " + String(9.8066 * lis.z_g);
 
   //reconnect to mqtt if necessary
   if(client.isConnected()){
@@ -63,6 +56,9 @@ void loop() {
   } else{
     client.connect(System.deviceID());
   }
+
+  //publish to mqtt
+  client.publish("test/motionalysis", payload);
 
   //pause between each loop to slow rate of data gathering
   delay(DELAY);

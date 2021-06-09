@@ -3,7 +3,7 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
+#line 1 "/Users/trylaarsdam/Documents/dev/motionalysis/src/motionalysis.ino"
 #include "Adafruit_LIS3DH.h"
 #include "MQTT.h"
 #include <string>
@@ -11,7 +11,7 @@
 void setup();
 void loop();
 void callback(char* topic, byte* payload, unsigned int length);
-#line 5 "e:/IoT/motionalysis/src/motionalysis.ino"
+#line 5 "/Users/trylaarsdam/Documents/dev/motionalysis/src/motionalysis.ino"
 String payload;
 int counter;
 const int DELAY = 200; //pause between data readings in milliseconds
@@ -36,6 +36,8 @@ void setup() {
 
   pinMode(D5, INPUT);
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).gpio(D5, RISING);
+
+  counter = AWAKE_DURATION + DELAY;
 }
 
 void loop() {

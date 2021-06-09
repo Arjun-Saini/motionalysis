@@ -26,6 +26,8 @@ void setup() {
 
   pinMode(D5, INPUT);
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).gpio(D5, RISING);
+
+  counter = AWAKE_DURATION + DELAY;
 }
 
 void loop() {

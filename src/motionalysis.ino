@@ -10,7 +10,7 @@ SYSTEM_MODE(MANUAL)
 #define CLICK_THRESHHOLD 60 //higher is less sensitive
 #define GRAVITY 9.8066
 #define INTERRUPT_PIN D5 //pin on argon that is connected to interrupt pin on accelerometer
-#define MQTT_DELAY 100 //milliseconds between each publish of mqtt data, can't be too low or else mqtt won't be able to keep up
+#define MQTT_DELAY 200 //milliseconds between each publish of mqtt data, can't be too low or else mqtt won't be able to keep up
 
 String payload[AWAKE_DURATION / DELAY];
 int timeLeft;

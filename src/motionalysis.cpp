@@ -3,11 +3,11 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
+#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
 void setup();
 void loop();
 void callback(char* topic, byte* payload, unsigned int length);
-#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
+#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
 SYSTEM_MODE(MANUAL)
 
 #include "Adafruit_LIS3DH.h"
@@ -20,9 +20,9 @@ SYSTEM_MODE(MANUAL)
 #define CLICK_THRESHHOLD 60 //higher is less sensitive
 #define GRAVITY 9.8066
 #define INTERRUPT_PIN D5 //pin on argon that is connected to interrupt pin on accelerometer
-#define MQTT_DELAY 100 //milliseconds between each publish of mqtt data, can't be too low or else mqtt won't be able to keep up
+#define MQTT_DELAY 200 //milliseconds between each publish of mqtt data, can't be too low or else mqtt won't be able to keep up
 
-String payload[AWAKE_DURATION / DELAY + 1];
+String payload[AWAKE_DURATION / DELAY];
 int timeLeft;
 int counter;
 
@@ -54,9 +54,8 @@ void loop() {
     }
     //connect and publish to MQTT
     client.connect(System.deviceID());
-    for(int i = 0; i < AWAKE_DURATION / DELAY + 1; i++){
+    for(int i = 0; i < AWAKE_DURATION / DELAY; i++){
       client.publish("test/motionalysis", payload[i]);
-      Serial.println(payload[i]);
       client.loop();
       delay(MQTT_DELAY);
     }

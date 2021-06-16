@@ -21,8 +21,11 @@ SYSTEM_MODE(MANUAL)
 #define GRAVITY 9.8066
 #define INTERRUPT_PIN D5 //pin on argon that is connected to interrupt pin on accelerometer
 #define MQTT_DELAY 200 //milliseconds between each publish of mqtt data, can't be too low or else mqtt won't be able to keep up
+#define MQTT_PATH "motionalysis/" + System.deviceID()
 
-String payload[AWAKE_DURATION / DELAY];
+String xPayload[AWAKE_DURATION / DELAY];
+String yPayload[AWAKE_DURATION / DELAY];
+String zPayload[AWAKE_DURATION / DELAY];
 int timeLeft;
 int counter;
 
@@ -49,24 +52,26 @@ void loop() {
   if(timeLeft <= 0){
     WiFi.on();
     WiFi.connect();
-    while(!WiFi.ready()){
+    while(!WiFi.ready()){}
 
-    }
     //connect and publish to MQTT
     client.connect(System.deviceID());
     for(int i = 0; i < AWAKE_DURATION / DELAY; i++){
-      client.publish("test/motionalysis", payload[i]);
+      client.publish(MQTT_PATH + "/x", xPayload[i]);
+      client.publish(MQTT_PATH + "/y", yPayload[i]);
+      client.publish(MQTT_PATH + "/z", zPayload[i]);
       client.loop();
       delay(MQTT_DELAY);
     }
 
-    counter = AWAKE_DURATION;
     System.sleep(config);
   }
 
   //read data from accelerometer
   lis.read();
-  payload[counter] = "X: " + String(GRAVITY * lis.x_g) + "\tY: " + String(GRAVITY * lis.y_g) + "\tZ: " + String(GRAVITY * lis.z_g);
+  xPayload[counter] = String(GRAVITY * lis.x_g);
+  yPayload[counter] = String(GRAVITY * lis.y_g);
+  zPayload[counter] = String(GRAVITY * lis.z_g);
   counter++;
 
   //pause between each loop to slow rate of data gathering

@@ -26,11 +26,12 @@ String payload = "";
 int wifiTimeLeft = WIFI_INTERVAL;
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
-MQTT client("lab.thewcl.com", 1883, callback);
+//MQTT client("lab.thewcl.com", 1883, callback);
 SystemSleepConfiguration config;
 
 HttpClient http;
 http_header_t headers[] = {
+  {"Accept", "application/json"},
   {"Content-Type", "application/json"},
   {"api-token", "API-eafee-cdb56-3545d-38f7d"},
   {NULL, NULL}
@@ -52,9 +53,12 @@ void setup() {
 
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(SLEEP_DURATION);
 
-  request.hostname = "https://api.getshiftworx.com";
+  request.hostname = "ptsv2.com";
   request.port = 80;
-  request.path = "v1/datasource/data";
+  request.path = "/t/q2wns-1625165230/post";
+
+  //request.hostname = "api.getshiftworx.com";
+  //request.path = "v1/datasource/data";
 
   wifiTimeLeft = WIFI_INTERVAL;
 }
@@ -62,7 +66,7 @@ void setup() {
 void loop() {
   lis.read();
   //payload += "{\"x\":\"" + String(GRAVITY * lis.x_g) + "\"," + "\"y\":\"" + String(GRAVITY * lis.y_g) + "\"," + "\"z\":\"" + String(GRAVITY * lis.z_g) + "\"},";
-  payload +=  "{\"dsid\":50983, \"value\":3},";
+  //payload +=  "{\"dsid\":50983, \"value\":3},";
 
   lis.setupLowPowerWakeMode(16);
   System.sleep(config);
@@ -80,12 +84,13 @@ void loop() {
     
     client.publish(MQTT_PATH, "[" + payload + "]");
     client.loop();*/
-    payload.remove(payload.length() - 1);
-    request.body = "{\"data\":[" + payload + "]}";
+    //payload.remove(payload.length() - 1);
+    //request.body = "{\"data\":[" + payload + "]}";
+    request.body = "{\"data\":[{\"dsid\":50983,\"value\":5}]}";
     http.post(request, response, headers);
-    /*Serial.println("status");
+    delay(1000);
     Serial.println("Status: " + response.status);
-    Serial.println("Body: " + response.body);*/
+    Serial.println("Body: " + response.body);
 
     payload = "";
     

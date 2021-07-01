@@ -50,6 +50,7 @@ void setup() {
   request.path = "/t/q2wns-1625165230/post";
 
   //motionalysis server, not sure what the issue is
+  //the connection is made, but the request fails with error code 400 for a bad request
   request.hostname = "api.getshiftworx.com";
   request.path = "v1/datasource/data";
 

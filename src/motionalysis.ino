@@ -19,6 +19,7 @@ Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 //MQTT client("lab.thewcl.com", 1883, callback);
 SystemSleepConfiguration config;
 
+//setup for http connection
 HttpClient http;
 http_header_t headers[] = {
   {"Accept", "application/json"},
@@ -43,10 +44,12 @@ void setup() {
 
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(SLEEP_DURATION);
 
+  //test post request server, this works correctly
   request.hostname = "ptsv2.com";
   request.port = 80;
   request.path = "/t/q2wns-1625165230/post";
 
+  //motionalysis server, not sure what the issue is
   request.hostname = "api.getshiftworx.com";
   request.path = "v1/datasource/data";
 
@@ -54,11 +57,11 @@ void setup() {
 }
 
 void loop() {
-  lis.read();
+  //lis.read();
   //payload += "{\"x\":\"" + String(GRAVITY * lis.x_g) + "\"," + "\"y\":\"" + String(GRAVITY * lis.y_g) + "\"," + "\"z\":\"" + String(GRAVITY * lis.z_g) + "\"},";
   //payload +=  "{\"dsid\":50983, \"value\":3},";
 
-  lis.setupLowPowerWakeMode(16);
+  //lis.setupLowPowerWakeMode(16);
   System.sleep(config);
   
   if(wifiTimeLeft <= 0){
@@ -76,13 +79,14 @@ void loop() {
     client.loop();*/
     //payload.remove(payload.length() - 1);
     //request.body = "{\"data\":[" + payload + "]}";
+
+    //just as a note, logging is enabled for the http client so it displays some extra info on the serial monitor
     request.body = "{\"data\":[{\"dsid\":50983,\"value\":5}]}";
     http.post(request, response, headers);
-    delay(1000);
     Serial.println("Status: " + response.status);
     Serial.println("Body: " + response.body);
 
-    payload = "";
+    //payload = "";
     
     wifiTimeLeft = WIFI_INTERVAL;
 

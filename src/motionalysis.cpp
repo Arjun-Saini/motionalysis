@@ -57,8 +57,8 @@ void setup() {
   request.port = 80;
   request.path = "/t/q2wns-1625165230/post";
 
-  //request.hostname = "api.getshiftworx.com";
-  //request.path = "v1/datasource/data";
+  request.hostname = "api.getshiftworx.com";
+  request.path = "v1/datasource/data";
 
   wifiTimeLeft = WIFI_INTERVAL;
 }

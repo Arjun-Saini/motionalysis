@@ -20,15 +20,19 @@ SYSTEM_MODE(MANUAL)
 #define GRAVITY 9.8066
 #define MQTT_PATH "motionalysis/" + System.deviceID() //each argon will have its own path in mqtt, with separate paths for each axis of movement
 #define SDO_OUTPUT_PIN D8
-#define WIFI_INTERVAL 10000; //delay between each publish to mqtt in milliseconds
+#define WIFI_INTERVAL 20000; //delay between each publish to mqtt in milliseconds
 
 String payload = "";
 int wifiTimeLeft = WIFI_INTERVAL;
+float x, y, z;
+String unixTime;
+int isMoving;
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 //MQTT client("lab.thewcl.com", 1883, callback);
 SystemSleepConfiguration config;
 
+//setup for http connection
 HttpClient http;
 http_header_t headers[] = {
   {"Accept", "application/json"},
@@ -43,32 +47,52 @@ void setup() {
   Serial.begin(9600);
 
   //start transmission from accelerometer
+  lis.begin(0x18);
+  Wire.end();
   lis.begin(I2C_ADDRESS);
   lis.setRange(LIS3DH_RANGE_2_G);
   lis.setDataRate(LIS3DH_DATARATE_400_HZ);
 
-  //setup sleep system with interrupt pin
+  //pull sdo pin high to reduce power usage, switches i2c address from 0x18 to 0x19
   pinMode(SDO_OUTPUT_PIN, OUTPUT);
   digitalWrite(SDO_OUTPUT_PIN, HIGH);
 
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(SLEEP_DURATION);
 
-  request.hostname = "ptsv2.com";
-  request.port = 80;
-  request.path = "/t/q2wns-1625165230/post";
-
-  request.hostname = "api.getshiftworx.com";
-  request.path = "v1/datasource/data";
+  //test post request server, this works correctly
+  request.hostname = "trek.thewcl.com";
+  request.port = 3000;
+  request.path = "/";
 
   wifiTimeLeft = WIFI_INTERVAL;
 }
 
 void loop() {
   lis.read();
-  //payload += "{\"x\":\"" + String(GRAVITY * lis.x_g) + "\"," + "\"y\":\"" + String(GRAVITY * lis.y_g) + "\"," + "\"z\":\"" + String(GRAVITY * lis.z_g) + "\"},";
-  //payload +=  "{\"dsid\":50983, \"value\":3},";
+  unixTime = Time.now();
+  isMoving = 0;
 
-  lis.setupLowPowerWakeMode(16);
+  if(lis.x_g >= 0.8 && lis.x_g <= 1.2){
+    x = GRAVITY * (lis.x_g - 1);
+    y = GRAVITY * lis.y_g;
+    z = GRAVITY * lis.z_g;
+  } else if(lis.y_g >= 0.8 && lis.y_g <= 1.2){
+    x = GRAVITY * lis.x_g;
+    y = GRAVITY * (lis.y_g - 1);
+    z = GRAVITY * lis.z_g;
+  }else if(lis.z_g >= 0.8 && lis.z_g <= 1.2){
+    x = GRAVITY * lis.x_g;
+    y = GRAVITY * lis.y_g;
+    z = GRAVITY * (lis.z_g - 1);
+  }
+
+  if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
+    isMoving = 1;
+  }
+
+  payload +=  "{\"dsid\":50983, \"value\":" + String(isMoving) + ", \"timestamp\":" + unixTime + "},";
+
+  //lis.setupLowPowerWakeMode(16);
   System.sleep(config);
   
   if(wifiTimeLeft <= 0){
@@ -84,11 +108,11 @@ void loop() {
     
     client.publish(MQTT_PATH, "[" + payload + "]");
     client.loop();*/
-    //payload.remove(payload.length() - 1);
-    //request.body = "{\"data\":[" + payload + "]}";
-    request.body = "{\"data\":[{\"dsid\":50983,\"value\":5}]}";
+    payload.remove(payload.length() - 1);
+    request.body = "{\"data\":[" + payload + "]}";
+
+    //request.body = "{\"data\":[{\"dsid\":50983,\"value\":0}]}";
     http.post(request, response, headers);
-    delay(1000);
     Serial.println("Status: " + response.status);
     Serial.println("Body: " + response.body);
 

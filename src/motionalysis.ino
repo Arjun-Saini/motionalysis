@@ -8,9 +8,10 @@ SYSTEM_MODE(MANUAL)
 #define I2C_ADDRESS 0x19
 #define GRAVITY 9.8066
 #define SDO_OUTPUT_PIN D8
+#define CONFIG_WAIT_TIME 30000
 
 int sleepDuration = 1000;
-int wifiInterval = 5000;
+int wifiInterval = 60000;
 
 String payload = "";
 int wifiTimeLeft;
@@ -46,8 +47,10 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
 int count, dsid;
 bool bleInput = false;
 
+int time1, time2;
+
 void setup() {
-  wifiTimeLeft = wifiInterval;
+  EEPROM.get(200, wifiTimeLeft);
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000);
 
   Serial.begin(9600);
@@ -82,11 +85,19 @@ void setup() {
   
   pinMode(D7, OUTPUT);
   count = 0;
+
+  time1 = millis();
 }
 
 
-void loop() {  
-  if(bleInput){
+void loop() { 
+  time2 = millis(); 
+  if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
+    EEPROM.get(0, dsid);
+    EEPROM.get(100, sleepDuration);
+    EEPROM.get(200, wifiInterval);
+    config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
+
     lis.read();
     unixTime = Time.now();
     isMoving = 0;
@@ -115,6 +126,9 @@ void loop() {
 
     payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":" + String(isMoving) + ", \"timestamp\":" + unixTime + "},";
     Serial.println(payload);
+    Serial.println(dsid);
+    Serial.println(sleepDuration);
+    Serial.println(wifiInterval);
 
     //lis.setupLowPowerWakeMode(16);
 
@@ -151,33 +165,42 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
   if(count == 0){
     txCharacteristic.setValue("Enter network SSID (0 to skip): ");
   }else if(count == 1){
-    ssid = (char *)data;
+    ssid = (char*)data;
+    ssid = ssid.substring(0, ssid.length()-1);
     Serial.println(ssid);
+    Serial.println(ssid.length());
     if(ssid == "0"){
       count = 2;
-      txCharacteristic.setValue("Enter device DSID: ");
+      txCharacteristic.setValue("Enter device DSID (0 to skip): ");
     }else{
       txCharacteristic.setValue("Enter network password: ");
     }
   }else if(count == 2){
     password = (char *)data;
+    password = password.substring(0, password.length()-1);
     WiFi.setCredentials(ssid, password);
     Serial.println("Credentials set with ssid: " + ssid + "\n\tpassword: " + password);
-    txCharacteristic.setValue("Enter device DSID: ");
+    txCharacteristic.setValue("Enter device DSID (0 to skip): ");
   }else if(count == 3){
-    if((String)(char *)data != ""){
+    if(atoi((char *)data) != 0){
       EEPROM.put(0, atoi((char *)data));
+      Serial.println("dsid entered");
     }
     EEPROM.get(0, dsid);
-    Serial.println(dsid);
-    txCharacteristic.setValue("Enter time between data collection: ");
+    Serial.println("dsid: " + dsid);
+    txCharacteristic.setValue("Enter time between data collection (ms): ");
   }else if(count == 4){
     sleepDuration = atoi((char *)data);
+    EEPROM.put(100, sleepDuration);
+    EEPROM.get(100, sleepDuration);
     config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
     Serial.println(sleepDuration);
-    txCharacteristic.setValue("Enter time between WiFi connection: ");
+    txCharacteristic.setValue("Enter time between WiFi connection (ms): ");
   }else if(count == 5){
     wifiInterval = atoi((char *)data);
+    EEPROM.put(200, wifiInterval);
+    EEPROM.get(200, wifiInterval);
+    wifiTimeLeft = wifiInterval;
     Serial.println(wifiInterval);
     bleInput = true;
     digitalWrite(D7, LOW);

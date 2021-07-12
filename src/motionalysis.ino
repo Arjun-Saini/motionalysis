@@ -9,9 +9,11 @@ SYSTEM_MODE(MANUAL)
 #define GRAVITY 9.8066
 #define SDO_OUTPUT_PIN D8
 #define CONFIG_WAIT_TIME 30000
+#define DEFAULT_SLEEP_DURATION 1000
+#define DEFAULT_WIFI_DURATION 60000
 
-int sleepDuration = 1000;
-int wifiInterval = 60000;
+int sleepDuration = DEFAULT_SLEEP_DURATION;
+int wifiInterval = DEFAULT_WIFI_DURATION;
 
 String payload = "";
 int wifiTimeLeft;
@@ -191,14 +193,22 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     txCharacteristic.setValue("Enter time between data collection (ms): ");
   }else if(count == 4){
     sleepDuration = atoi((char *)data);
-    EEPROM.put(100, sleepDuration);
+    if(atoi((char *)data) != 0){
+      EEPROM.put(100, sleepDuration);
+    }else{
+      EEPROM.put(100, DEFAULT_SLEEP_DURATION);
+    }
     EEPROM.get(100, sleepDuration);
     config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
     Serial.println(sleepDuration);
     txCharacteristic.setValue("Enter time between WiFi connection (ms): ");
   }else if(count == 5){
     wifiInterval = atoi((char *)data);
-    EEPROM.put(200, wifiInterval);
+    if(atoi((char *)data) != 0){
+      EEPROM.put(200, wifiInterval);
+    }else{
+      EEPROM.put(200, DEFAULT_WIFI_DURATION);
+    }
     EEPROM.get(200, wifiInterval);
     wifiTimeLeft = wifiInterval;
     Serial.println(wifiInterval);

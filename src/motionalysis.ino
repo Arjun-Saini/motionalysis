@@ -17,6 +17,7 @@ int wifiTimeLeft;
 float x, y, z;
 String unixTime;
 int isMoving;
+String ssid, password;
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 SystemSleepConfiguration config;
@@ -148,18 +149,36 @@ void loop() {
 
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context){
   if(count == 0){
-    dsid = atoi((char *)data);
-    Serial.println(dsid);
-    Serial.println("data received: ");
+    txCharacteristic.setValue("Enter network SSID (0 to skip): ");
   }else if(count == 1){
+    ssid = (char *)data;
+    Serial.println(ssid);
+    if(ssid == "0"){
+      count = 2;
+      txCharacteristic.setValue("Enter device DSID: ");
+    }else{
+      txCharacteristic.setValue("Enter network password: ");
+    }
+  }else if(count == 2){
+    password = (char *)data;
+    WiFi.setCredentials(ssid, password);
+    Serial.println("Credentials set with ssid: " + ssid + "\n\tpassword: " + password);
+    txCharacteristic.setValue("Enter device DSID: ");
+  }else if(count == 3){
+    if((String)(char *)data != ""){
+      EEPROM.put(0, atoi((char *)data));
+    }
+    EEPROM.get(0, dsid);
+    Serial.println(dsid);
+    txCharacteristic.setValue("Enter time between data collection: ");
+  }else if(count == 4){
     sleepDuration = atoi((char *)data);
     config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
     Serial.println(sleepDuration);
-    Serial.println("data received: ");
-  }else if(count == 2){
+    txCharacteristic.setValue("Enter time between WiFi connection: ");
+  }else if(count == 5){
     wifiInterval = atoi((char *)data);
     Serial.println(wifiInterval);
-    Serial.println("data received: ");
     bleInput = true;
     digitalWrite(D7, LOW);
   }
@@ -168,6 +187,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
 }
 
 void connectCallback(const BlePeerDevice& peer, void* context){
+  count = 0;
   Serial.println("connected");
   digitalWrite(D7, HIGH);
 }

@@ -3,11 +3,12 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
+#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
 void setup();
 void loop();
-void callback(char* topic, byte* payload, unsigned int length);
-#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
+void connectCallback(const BlePeerDevice& peer, void* context);
+void disconnectCallback(const BlePeerDevice& peer, void* context);
+#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
 SYSTEM_MODE(MANUAL)
 
 #include "Adafruit_LIS3DH.h"
@@ -16,20 +17,19 @@ SYSTEM_MODE(MANUAL)
 #include <string>
 
 #define I2C_ADDRESS 0x19
-#define SLEEP_DURATION 1000 //how long argon will be awake for in milliseconds after initial movement
 #define GRAVITY 9.8066
-#define MQTT_PATH "motionalysis/" + System.deviceID() //each argon will have its own path in mqtt, with separate paths for each axis of movement
 #define SDO_OUTPUT_PIN D8
-#define WIFI_INTERVAL 20000; //delay between each publish to mqtt in milliseconds
+
+int sleepDuration = 1000;
+int wifiInterval = 5000;
 
 String payload = "";
-int wifiTimeLeft = WIFI_INTERVAL;
+int wifiTimeLeft;
 float x, y, z;
 String unixTime;
 int isMoving;
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
-//MQTT client("lab.thewcl.com", 1883, callback);
 SystemSleepConfiguration config;
 
 //setup for http connection
@@ -43,7 +43,23 @@ http_header_t headers[] = {
 http_request_t request;
 http_response_t response;
 
+//ble setup
+void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context);
+
+const BleUuid serviceUuid("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
+const BleUuid rxUuid("6E400002-B5A3-F393-E0A9-E50E24DCCA9E");
+const BleUuid txUuid("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
+
+BleCharacteristic txCharacteristic("tx", BleCharacteristicProperty::NOTIFY, txUuid, serviceUuid);
+BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP, rxUuid, serviceUuid, onDataReceived, NULL);
+
+int count, dsid;
+bool bleInput = false;
+
 void setup() {
+  wifiTimeLeft = wifiInterval;
+  config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000);
+
   Serial.begin(9600);
 
   //start transmission from accelerometer
@@ -57,76 +73,117 @@ void setup() {
   pinMode(SDO_OUTPUT_PIN, OUTPUT);
   digitalWrite(SDO_OUTPUT_PIN, HIGH);
 
-  config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(SLEEP_DURATION);
-
-  //test post request server, this works correctly
+  //http path to node server which sends data to the api
   request.hostname = "trek.thewcl.com";
   request.port = 3000;
   request.path = "/";
 
-  wifiTimeLeft = WIFI_INTERVAL;
+  //turn ble on
+  BLE.on();
+
+  BLE.addCharacteristic(txCharacteristic);
+  BLE.addCharacteristic(rxCharacteristic);
+
+  BleAdvertisingData data;
+  data.appendServiceUUID(serviceUuid);
+  BLE.advertise(&data);
+  BLE.onConnected(connectCallback);
+  BLE.onDisconnected(disconnectCallback);
+  
+  pinMode(D7, OUTPUT);
+  count = 0;
 }
 
-void loop() {
-  lis.read();
-  unixTime = Time.now();
-  isMoving = 0;
 
-  if(lis.x_g >= 0.8 && lis.x_g <= 1.2){
-    x = GRAVITY * (lis.x_g - 1);
-    y = GRAVITY * lis.y_g;
-    z = GRAVITY * lis.z_g;
-  } else if(lis.y_g >= 0.8 && lis.y_g <= 1.2){
-    x = GRAVITY * lis.x_g;
-    y = GRAVITY * (lis.y_g - 1);
-    z = GRAVITY * lis.z_g;
-  }else if(lis.z_g >= 0.8 && lis.z_g <= 1.2){
-    x = GRAVITY * lis.x_g;
-    y = GRAVITY * lis.y_g;
-    z = GRAVITY * (lis.z_g - 1);
-  }
+void loop() {  
+  if(bleInput){
+    lis.read();
+    unixTime = Time.now();
+    isMoving = 0;
 
-  if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
-    isMoving = 1;
-  }
+    if(lis.x_g >= 0.8 && lis.x_g <= 1.2){
+      x = GRAVITY * (lis.x_g - 1);
+      y = GRAVITY * lis.y_g;
+      z = GRAVITY * lis.z_g;
+    } else if(lis.y_g >= 0.8 && lis.y_g <= 1.2){
+      x = GRAVITY * lis.x_g;
+      y = GRAVITY * (lis.y_g - 1);
+      z = GRAVITY * lis.z_g;
+    }else if(lis.z_g >= 0.8 && lis.z_g <= 1.2){
+      x = GRAVITY * lis.x_g;
+      y = GRAVITY * lis.y_g;
+      z = GRAVITY * (lis.z_g - 1);
+    }
 
-  payload +=  "{\"dsid\":50983, \"value\":" + String(isMoving) + ", \"timestamp\":" + unixTime + "},";
+    Serial.println(lis.x_g);
+    Serial.println(lis.y_g);
+    Serial.println(lis.z_g);
 
-  //lis.setupLowPowerWakeMode(16);
-  System.sleep(config);
-  
-  if(wifiTimeLeft <= 0){
-    WiFi.on();
-    WiFi.connect();
-    while(!WiFi.ready()){}
-    Particle.connect();
+    if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
+      isMoving = 1;
+    }
 
-    //connect and publish to MQTT
-    /*Serial.println(payload);
-    while(!client.isConnected()){
-      client.connect(System.deviceID());
+    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":" + String(isMoving) + ", \"timestamp\":" + unixTime + "},";
+    Serial.println(payload);
+
+    //lis.setupLowPowerWakeMode(16);
+
+    BLE.disconnect();
+    BLE.off();
+    System.sleep(config);
     
-    client.publish(MQTT_PATH, "[" + payload + "]");
-    client.loop();*/
-    payload.remove(payload.length() - 1);
-    request.body = "{\"data\":[" + payload + "]}";
+    if(wifiTimeLeft <= 0){
+      WiFi.on();
+      WiFi.connect();
+      while(!WiFi.ready()){}
+      Particle.connect();
 
-    //request.body = "{\"data\":[{\"dsid\":50983,\"value\":0}]}";
-    http.post(request, response, headers);
-    Serial.println("Status: " + response.status);
-    Serial.println("Body: " + response.body);
+      payload.remove(payload.length() - 1);
+      request.body = "{\"data\":[" + payload + "]}";
 
-    payload = "";
-    
-    wifiTimeLeft = WIFI_INTERVAL;
+      http.post(request, response, headers);
+      Serial.println("Status: " + response.status);
+      Serial.println("Body: " + response.body);
 
-    Particle.disconnect();
-    WiFi.off();
+      payload = "";
+      
+      wifiTimeLeft = wifiInterval;
+
+      Particle.disconnect();
+      WiFi.off();
+    }
+
+    wifiTimeLeft -= sleepDuration;
   }
-
-  wifiTimeLeft -= SLEEP_DURATION;
 }
 
-void callback(char* topic, byte* payload, unsigned int length){
-  
+void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context){
+  if(count == 0){
+    dsid = atoi((char *)data);
+    Serial.println(dsid);
+    Serial.println("data received: ");
+  }else if(count == 1){
+    sleepDuration = atoi((char *)data);
+    config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
+    Serial.println(sleepDuration);
+    Serial.println("data received: ");
+  }else if(count == 2){
+    wifiInterval = atoi((char *)data);
+    Serial.println(wifiInterval);
+    Serial.println("data received: ");
+    bleInput = true;
+    digitalWrite(D7, LOW);
+  }
+
+  count++;
+}
+
+void connectCallback(const BlePeerDevice& peer, void* context){
+  Serial.println("connected");
+  digitalWrite(D7, HIGH);
+}
+
+void disconnectCallback(const BlePeerDevice& peer, void* context){
+  Serial.println("disconnected");
+  digitalWrite(D7, LOW);
 }

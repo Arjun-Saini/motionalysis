@@ -8,19 +8,17 @@ SYSTEM_MODE(MANUAL)
 #define I2C_ADDRESS 0x19
 #define GRAVITY 9.8066
 #define SDO_OUTPUT_PIN D8
-#define CONFIG_WAIT_TIME 30000
-#define DEFAULT_SLEEP_DURATION 1000
-#define DEFAULT_WIFI_DURATION 60000
+#define CONFIG_WAIT_TIME 10000
 
-int sleepDuration = DEFAULT_SLEEP_DURATION;
-int wifiInterval = DEFAULT_WIFI_DURATION;
+int sleepDuration = 1000;
+int wifiInterval = 60000;
 
 String payload = "";
 int wifiTimeLeft;
 float x, y, z;
 String unixTime;
 int isMoving;
-String ssid, password;
+String ssid, password = "";
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 SystemSleepConfiguration config;
@@ -164,56 +162,64 @@ void loop() {
 }
 
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context){
-  if(count == 0){
-    txCharacteristic.setValue("Enter network SSID (0 to skip): ");
-  }else if(count == 1){
-    ssid = (char*)data;
-    ssid = ssid.substring(0, ssid.length()-1);
-    Serial.println(ssid);
-    Serial.println(ssid.length());
-    if(ssid == "0"){
-      count = 2;
+  Serial.println(len);
+  switch(count){
+    case 0:
+      txCharacteristic.setValue("Enter network SSID (0 to skip): ");
+      break;
+    case 1:{
+      for(int i = 0; i < len -1; i++){
+        ssid += (char)data[i];
+        Serial.println(data[i]);
+      }
+      Serial.println(ssid);
+      Serial.println(ssid.length());
+      if(ssid == "0"){
+        count = 2;
+        txCharacteristic.setValue("Enter device DSID (0 to skip): ");
+      }else{
+        txCharacteristic.setValue("Enter network password: ");
+      }
+      break;
+    }
+    case 2:{
+      for(int i = 0; i < len - 1; i++){
+        Serial.println(data[i]);
+        password += (char)data[i];
+      }
+      Serial.println(password);
+      Serial.println(password.length());
+      WiFi.setCredentials(ssid, password);
+      Serial.println("\n\nCredentials set with ssid: " + ssid + "\npassword: " + password + "\n\n");
       txCharacteristic.setValue("Enter device DSID (0 to skip): ");
-    }else{
-      txCharacteristic.setValue("Enter network password: ");
+      break;
     }
-  }else if(count == 2){
-    password = (char *)data;
-    password = password.substring(0, password.length()-1);
-    WiFi.setCredentials(ssid, password);
-    Serial.println("Credentials set with ssid: " + ssid + "\n\tpassword: " + password);
-    txCharacteristic.setValue("Enter device DSID (0 to skip): ");
-  }else if(count == 3){
-    if(atoi((char *)data) != 0){
-      EEPROM.put(0, atoi((char *)data));
-      Serial.println("dsid entered");
-    }
-    EEPROM.get(0, dsid);
-    Serial.println("dsid: " + dsid);
-    txCharacteristic.setValue("Enter time between data collection (ms): ");
-  }else if(count == 4){
-    sleepDuration = atoi((char *)data);
-    if(atoi((char *)data) != 0){
+    case 3:
+      if(atoi((char *)data) != 0){
+        EEPROM.put(0, atoi((char *)data));
+        Serial.println("dsid entered");
+      }
+      EEPROM.get(0, dsid);
+      Serial.println("dsid: " + dsid);
+      txCharacteristic.setValue("Enter time between data collection (ms): ");
+      break;
+    case 4:
+      sleepDuration = atoi((char *)data);
       EEPROM.put(100, sleepDuration);
-    }else{
-      EEPROM.put(100, DEFAULT_SLEEP_DURATION);
-    }
-    EEPROM.get(100, sleepDuration);
-    config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
-    Serial.println(sleepDuration);
-    txCharacteristic.setValue("Enter time between WiFi connection (ms): ");
-  }else if(count == 5){
-    wifiInterval = atoi((char *)data);
-    if(atoi((char *)data) != 0){
+      EEPROM.get(100, sleepDuration);
+      config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
+      Serial.println(sleepDuration);
+      txCharacteristic.setValue("Enter time between WiFi connection (ms): ");
+      break;
+    case 5:
+      wifiInterval = atoi((char *)data);
       EEPROM.put(200, wifiInterval);
-    }else{
-      EEPROM.put(200, DEFAULT_WIFI_DURATION);
-    }
-    EEPROM.get(200, wifiInterval);
-    wifiTimeLeft = wifiInterval;
-    Serial.println(wifiInterval);
-    bleInput = true;
-    digitalWrite(D7, LOW);
+      EEPROM.get(200, wifiInterval);
+      wifiTimeLeft = wifiInterval;
+      Serial.println(wifiInterval);
+      bleInput = true;
+      digitalWrite(D7, LOW);
+      break;
   }
 
   count++;

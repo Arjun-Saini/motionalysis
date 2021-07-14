@@ -1,1 +1,8 @@
 target/3.0.0/argon
+target/3.0.0/argon/motionalysis.map
+target/3.0.0/argon/motionalysis.lst
+target/3.0.0/argon/motionalysis.hex
+target/3.0.0/argon/motionalysis.elf
+target/3.0.0/argon/motionalysis.dfu
+target/3.0.0/argon/motionalysis.bin.no_crc
+target/3.0.0/argon/motionalysis.bin

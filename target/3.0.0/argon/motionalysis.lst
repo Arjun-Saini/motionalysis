@@ -398,7 +398,7 @@ void setup() {
    d41fa:	2202      	movs	r2, #2
    d41fc:	721a      	strb	r2, [r3, #8]
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000 - SLEEP_DELAY);
-   d41fe:	f240 31a2 	movw	r1, #930	; 0x3a2
+   d41fe:	f44f 7166 	mov.w	r1, #920	; 0x398
    d4202:	4848      	ldr	r0, [pc, #288]	; (d4324 <setup+0x140>)
   request.hostname = "trek.thewcl.com";
    d4204:	4c48      	ldr	r4, [pc, #288]	; (d4328 <setup+0x144>)
@@ -744,7 +744,7 @@ void loop() {
    d444e:	4d43      	ldr	r5, [pc, #268]	; (d455c <loop+0x17c>)
    d4450:	f8df b11c 	ldr.w	fp, [pc, #284]	; d4570 <loop+0x190>
     config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration - SLEEP_DELAY);
-   d4454:	3946      	subs	r1, #70	; 0x46
+   d4454:	3950      	subs	r1, #80	; 0x50
    d4456:	f7ff fe9b 	bl	d4190 <_ZN8particle24SystemSleepConfiguration8durationEm>
     lis.read();
    d445a:	4620      	mov	r0, r4
@@ -1745,7 +1745,7 @@ class StringSumHelper : public String
       EEPROM.get(200, wifiInterval);
    d4d26:	4c22      	ldr	r4, [pc, #136]	; (d4db0 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x438>)
       config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration - SLEEP_DELAY);
-   d4d28:	3946      	subs	r1, #70	; 0x46
+   d4d28:	3950      	subs	r1, #80	; 0x50
    d4d2a:	f7ff fa31 	bl	d4190 <_ZN8particle24SystemSleepConfiguration8durationEm>
       Serial.println(sleepDuration);
    d4d2e:	f003 fb1f 	bl	d8370 <_Z16_fetch_usbserialv>

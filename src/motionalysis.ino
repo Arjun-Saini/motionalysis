@@ -11,6 +11,7 @@ SYSTEM_MODE(MANUAL)
 #define CONFIG_WAIT_TIME 30000
 #define DEFAULT_SLEEP_DURATION 1000
 #define DEFAULT_WIFI_INTERVAL 60000
+#define SLEEP_DELAY 70
 
 int sleepDuration = DEFAULT_SLEEP_DURATION;
 int wifiInterval = DEFAULT_WIFI_INTERVAL;
@@ -49,12 +50,16 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
 String inputBuffer;
 int count, dsid;
 bool bleInput = false;
+int networkCount;
+WiFiAccessPoint networks[5];
+String networkBuffer;
 
 int time1, time2;
+int t1, t2, t3;
 
 void setup() {
   EEPROM.get(200, wifiTimeLeft);
-  config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000);
+  config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000 - SLEEP_DELAY);
 
   Serial.begin(9600);
 
@@ -94,12 +99,13 @@ void setup() {
 
 
 void loop() { 
+  t1 = millis();
   time2 = millis(); 
   if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
     EEPROM.get(0, dsid);
     EEPROM.get(100, sleepDuration);
     EEPROM.get(200, wifiInterval);
-    config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
+    config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration - SLEEP_DELAY);
 
     lis.read();
     unixTime = Time.now();
@@ -132,12 +138,15 @@ void loop() {
     Serial.println(dsid);
     Serial.println(sleepDuration);
     Serial.println(wifiInterval);
+    Serial.println(t3);
 
     //lis.setupLowPowerWakeMode(16);
 
     BLE.disconnect();
     BLE.off();
     System.sleep(config);
+    t2 = millis();
+    t3 = t2 - t1;
     
     if(wifiTimeLeft <= 0){
       WiFi.on();
@@ -168,12 +177,23 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
   Serial.println(len);
   inputBuffer = "";
   switch(count){
-    case 0:
-      txCharacteristic.setValue("Enter network SSID (blank to skip): ");
+    case 0:{
+      SSID:
+      txCharacteristic.setValue("\nEnter network SSID, credentials are currently stored for [ ");
+      networkCount = WiFi.getCredentials(networks, 5);
+      for(int i = 0; i < networkCount; i++){
+        networkBuffer = networks[i].ssid;
+        Serial.println(networkBuffer.length());
+        txCharacteristic.setValue(networkBuffer);
+        txCharacteristic.setValue(" ");
+      }
+      txCharacteristic.setValue("] (blank to skip): ");
       break;
+    }
     case 1:{
       for(int i = 0; i < len - 1; i++){
-        ssid += (char)data[i];
+        inputBuffer += (char)data[i];
+        ssid = inputBuffer;
         Serial.println(data[i]);
       }
       Serial.println(ssid);
@@ -184,6 +204,10 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         txCharacteristic.setValue("\nEnter device DSID, current value is [");
         txCharacteristic.setValue(String(dsid));
         txCharacteristic.setValue("] (blank to skip): ");
+      }else if(ssid == "clear"){
+        WiFi.clearCredentials();
+        count = 0;
+        goto SSID;
       }else{
         txCharacteristic.setValue("\nEnter network password: ");
       }
@@ -217,9 +241,9 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       EEPROM.get(0, dsid);
       Serial.println("dsid: " + dsid);
       EEPROM.get(100, sleepDuration);
-      txCharacteristic.setValue("\nEnter time between data collection in milliseconds, current value is [");
+      txCharacteristic.setValue("\nEnter time between data collection as an integer in milliseconds, current value is [");
       txCharacteristic.setValue(String(sleepDuration));
-      txCharacteristic.setValue("]: ");
+      txCharacteristic.setValue("] (blank to skip): ");
       break;
     }
     case 4:{
@@ -233,12 +257,12 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       }
       EEPROM.put(100, sleepDuration);
       EEPROM.get(100, sleepDuration);
-      config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration);
+      config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration - SLEEP_DELAY);
       Serial.println(sleepDuration);
       EEPROM.get(200, wifiInterval);
-      txCharacteristic.setValue("\nEnter time between WiFi connections in milliseconds, current value is [");
+      txCharacteristic.setValue("\nEnter time between WiFi connections as an integer in milliseconds, current value is [");
       txCharacteristic.setValue(String(wifiInterval));
-      txCharacteristic.setValue("]: ");
+      txCharacteristic.setValue("] (blank to skip): ");
       break;
     }
     case 5:{

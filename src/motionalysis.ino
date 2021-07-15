@@ -1,7 +1,6 @@
 SYSTEM_MODE(MANUAL)
 
 #include "Adafruit_LIS3DH.h"
-#include "MQTT.h"
 #include "HttpClient/HttpClient.h"
 #include <string>
 

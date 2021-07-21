@@ -111,31 +111,31 @@ void loop() {
 
     lis.read();
     unixTime = Time.now();
-    isMoving = 0;
+    // isMoving = 0;
 
-    if(lis.x_g >= 0.8 && lis.x_g <= 1.2){
-      x = GRAVITY * (lis.x_g - 1);
-      y = GRAVITY * lis.y_g;
-      z = GRAVITY * lis.z_g;
-    } else if(lis.y_g >= 0.8 && lis.y_g <= 1.2){
-      x = GRAVITY * lis.x_g;
-      y = GRAVITY * (lis.y_g - 1);
-      z = GRAVITY * lis.z_g;
-    }else if(lis.z_g >= 0.8 && lis.z_g <= 1.2){
-      x = GRAVITY * lis.x_g;
-      y = GRAVITY * lis.y_g;
-      z = GRAVITY * (lis.z_g - 1);
-    }
+    // if(lis.x_g >= 0.8 && lis.x_g <= 1.2){
+    //   x = GRAVITY * (lis.x_g - 1);
+    //   y = GRAVITY * lis.y_g;
+    //   z = GRAVITY * lis.z_g;
+    // } else if(lis.y_g >= 0.8 && lis.y_g <= 1.2){
+    //   x = GRAVITY * lis.x_g;
+    //   y = GRAVITY * (lis.y_g - 1);
+    //   z = GRAVITY * lis.z_g;
+    // }else if(lis.z_g >= 0.8 && lis.z_g <= 1.2){
+    //   x = GRAVITY * lis.x_g;
+    //   y = GRAVITY * lis.y_g;
+    //   z = GRAVITY * (lis.z_g - 1);
+    // }
 
     Serial.println(lis.x_g);
     Serial.println(lis.y_g);
     Serial.println(lis.z_g);
 
-    if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
-      isMoving = 1;
-    }
+    // if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
+    //   isMoving = 1;
+    // }
 
-    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":" + String(isMoving) + ", \"timestamp\":" + unixTime + "},";
+    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + " " + String(lis.y_g) + " " + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
     Serial.println(payload);
     Serial.println(dsid);
     Serial.println(sleepDuration);

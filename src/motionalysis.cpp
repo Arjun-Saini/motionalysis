@@ -12,7 +12,6 @@ void disconnectCallback(const BlePeerDevice& peer, void* context);
 SYSTEM_MODE(MANUAL)
 
 #include "Adafruit_LIS3DH.h"
-#include "MQTT.h"
 #include "HttpClient/HttpClient.h"
 #include <string>
 
@@ -62,11 +61,13 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
 String inputBuffer;
 int count, dsid;
 bool bleInput = false;
+bool ota = false;
 int networkCount;
 WiFiAccessPoint networks[5];
 String networkBuffer;
 
-int time1, time2;
+int time1;
+int time2;
 int t1, t2, t3, t4;
 
 bool wifiTest = true;
@@ -112,9 +113,18 @@ void setup() {
 }
 
 
-void loop() { 
-  t1 = millis();
-  time2 = millis(); 
+void loop() {
+  if(ota){
+    while(!Particle.connected()){
+      Particle.process();
+      Particle.connect();
+      Serial.println("ota while");
+    }
+    Serial.println("ota if");
+    ota = false;
+    while(true){Particle.process();}
+  }
+
   if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
     EEPROM.get(0, dsid);
     EEPROM.get(100, sleepDuration);
@@ -123,31 +133,32 @@ void loop() {
 
     lis.read();
     unixTime = Time.now();
-    isMoving = 0;
+    // isMoving = 0;
 
-    if(lis.x_g >= 0.8 && lis.x_g <= 1.2){
-      x = GRAVITY * (lis.x_g - 1);
-      y = GRAVITY * lis.y_g;
-      z = GRAVITY * lis.z_g;
-    } else if(lis.y_g >= 0.8 && lis.y_g <= 1.2){
-      x = GRAVITY * lis.x_g;
-      y = GRAVITY * (lis.y_g - 1);
-      z = GRAVITY * lis.z_g;
-    }else if(lis.z_g >= 0.8 && lis.z_g <= 1.2){
-      x = GRAVITY * lis.x_g;
-      y = GRAVITY * lis.y_g;
-      z = GRAVITY * (lis.z_g - 1);
-    }
+    // if(lis.x_g >= 0.8 && lis.x_g <= 1.2){
+    //   x = GRAVITY * (lis.x_g - 1);
+    //   y = GRAVITY * lis.y_g;
+    //   z = GRAVITY * lis.z_g;
+    // } else if(lis.y_g >= 0.8 && lis.y_g <= 1.2){
+    //   x = GRAVITY * lis.x_g;
+    //   y = GRAVITY * (lis.y_g - 1);
+    //   z = GRAVITY * lis.z_g;
+    // }else if(lis.z_g >= 0.8 && lis.z_g <= 1.2){
+    //   x = GRAVITY * lis.x_g;
+    //   y = GRAVITY * lis.y_g;
+    //   z = GRAVITY * (lis.z_g - 1);
+    // }
 
     Serial.println(lis.x_g);
     Serial.println(lis.y_g);
     Serial.println(lis.z_g);
 
-    if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
-      isMoving = 1;
-    }
+    // if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
+    //   isMoving = 1;
+    // }
 
-    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":" + String(isMoving) + ", \"timestamp\":" + unixTime + "},";
+    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(round(lis.x_g * 100) / 100) + "," + String(round(lis.y_g * 100) / 100) + "," + String(round(lis.z_g * 100) / 100) + "\", \"timestamp\":" + unixTime + "},";
+    //payload += String(lis.x_g) + "," + lis.y_g + "," + lis.z_g + "," + unixTime + ",";
     Serial.println(payload);
     Serial.println(dsid);
     Serial.println(sleepDuration);
@@ -167,9 +178,11 @@ void loop() {
       WiFi.connect();
       while(!WiFi.ready()){}
       Particle.connect();
+      Particle.syncTime();
 
       payload.remove(payload.length() - 1);
       request.body = "{\"data\":[" + payload + "]}";
+      //request.body = dsid + "," + payload;
 
       http.post(request, response, headers);
       Serial.println("Status: " + response.status);
@@ -335,9 +348,22 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       EEPROM.get(200, wifiInterval);
       wifiTimeLeft = wifiInterval;
       Serial.println(wifiInterval);
+      txCharacteristic.setValue("\nEnter 'ota' to wait for OTA update (blank to skip): ");
+      break;
+    }
+    case 7:{
+      for(int i = 0; i < len - 1; i++){
+        Serial.println(data[i]);
+        inputBuffer += (char)data[i];
+      }
+      if(inputBuffer == "ota"){
+        Serial.println("346");
+        System.updatesEnabled();
+        Serial.println("348");
+        ota = true;
+      }
       bleInput = true;
       digitalWrite(D7, LOW);
-      break;
     }
   }
 

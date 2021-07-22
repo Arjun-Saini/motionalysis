@@ -18,7 +18,7 @@ SYSTEM_MODE(MANUAL)
 #define I2C_ADDRESS 0x19
 #define GRAVITY 9.8066
 #define SDO_OUTPUT_PIN D8
-#define CONFIG_WAIT_TIME 30000
+#define CONFIG_WAIT_TIME 5000
 #define DEFAULT_SLEEP_DURATION 1000
 #define DEFAULT_WIFI_INTERVAL 60000
 #define SLEEP_DELAY 70
@@ -71,6 +71,7 @@ int time2;
 int t1, t2, t3, t4;
 
 bool wifiTest = true;
+bool timeFix = false;
 
 void setup() {
   EEPROM.get(200, wifiTimeLeft);
@@ -114,18 +115,32 @@ void setup() {
 
 
 void loop() {
+  Particle.process();
   if(ota){
     while(!Particle.connected()){
       Particle.process();
       Particle.connect();
-      Serial.println("ota while");
     }
-    Serial.println("ota if");
     ota = false;
     while(true){Particle.process();}
   }
 
+  time2 = millis();
   if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
+    if(!timeFix){
+      Particle.process();
+      WiFi.on();
+      WiFi.connect();
+      while(!WiFi.ready()){}
+      Particle.connect();
+      Particle.syncTime();
+      delay(5000);
+      Particle.process();
+      Particle.disconnect();
+      WiFi.off();
+      timeFix = true;
+    }
+
     EEPROM.get(0, dsid);
     EEPROM.get(100, sleepDuration);
     EEPROM.get(200, wifiInterval);
@@ -179,6 +194,10 @@ void loop() {
       while(!WiFi.ready()){}
       Particle.connect();
       Particle.syncTime();
+      delay(1000);
+      Particle.process();
+      Serial.println(Particle.timeSyncedLast());
+      Serial.println(Time.now());
 
       payload.remove(payload.length() - 1);
       request.body = "{\"data\":[" + payload + "]}";

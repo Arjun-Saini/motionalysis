@@ -60,6 +60,7 @@ int time2;
 int t1, t2, t3, t4;
 
 bool wifiTest = true;
+bool timeFix = false;
 
 void setup() {
   EEPROM.get(200, wifiTimeLeft);
@@ -103,19 +104,32 @@ void setup() {
 
 
 void loop() {
+  Particle.process();
   if(ota){
     while(!Particle.connected()){
       Particle.process();
       Particle.connect();
-      Serial.println("ota while");
     }
-    Serial.println("ota if");
     ota = false;
     while(true){Particle.process();}
   }
 
   time2 = millis();
   if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
+    if(!timeFix){
+      Particle.process();
+      WiFi.on();
+      WiFi.connect();
+      while(!WiFi.ready()){}
+      Particle.connect();
+      Particle.syncTime();
+      delay(5000);
+      Particle.process();
+      Particle.disconnect();
+      WiFi.off();
+      timeFix = true;
+    }
+
     EEPROM.get(0, dsid);
     EEPROM.get(100, sleepDuration);
     EEPROM.get(200, wifiInterval);
@@ -169,6 +183,10 @@ void loop() {
       while(!WiFi.ready()){}
       Particle.connect();
       Particle.syncTime();
+      delay(1000);
+      Particle.process();
+      Serial.println(Particle.timeSyncedLast());
+      Serial.println(Time.now());
 
       payload.remove(payload.length() - 1);
       request.body = "{\"data\":[" + payload + "]}";

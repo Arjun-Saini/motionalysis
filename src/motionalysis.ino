@@ -114,6 +114,7 @@ void loop() {
     while(true){Particle.process();}
   }
 
+  time2 = millis();
   if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
     EEPROM.get(0, dsid);
     EEPROM.get(100, sleepDuration);

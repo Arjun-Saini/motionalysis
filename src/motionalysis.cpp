@@ -3,12 +3,12 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
+#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
 void setup();
 void loop();
 void connectCallback(const BlePeerDevice& peer, void* context);
 void disconnectCallback(const BlePeerDevice& peer, void* context);
-#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
+#line 1 "e:/IoT/motionalysis/src/motionalysis.ino"
 SYSTEM_MODE(MANUAL)
 
 #include "Adafruit_LIS3DH.h"
@@ -18,11 +18,12 @@ SYSTEM_MODE(MANUAL)
 #define I2C_ADDRESS 0x19
 #define GRAVITY 9.8066
 #define SDO_OUTPUT_PIN D8
-#define CONFIG_WAIT_TIME 5000
+#define CONFIG_WAIT_TIME 30000
 #define DEFAULT_SLEEP_DURATION 1000
 #define DEFAULT_WIFI_INTERVAL 60000
 #define SLEEP_DELAY 70
 #define WIFI_TEST_TIMEOUT 30000
+#define ROUNDING_FACTOR 10
 
 int sleepDuration = DEFAULT_SLEEP_DURATION;
 int wifiInterval = DEFAULT_WIFI_INTERVAL;
@@ -83,8 +84,8 @@ void setup() {
   lis.begin(0x18);
   Wire.end();
   lis.begin(I2C_ADDRESS);
-  lis.setRange(LIS3DH_RANGE_2_G);
-  lis.setDataRate(LIS3DH_DATARATE_400_HZ);
+  lis.setRange(LIS3DH_RANGE_16_G);
+  lis.setDataRate(LIS3DH_DATARATE_100_HZ);
 
   //pull sdo pin high to reduce power usage, switches i2c address from 0x18 to 0x19
   pinMode(SDO_OUTPUT_PIN, OUTPUT);
@@ -172,7 +173,7 @@ void loop() {
     //   isMoving = 1;
     // }
 
-    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(round(lis.x_g * 100) / 100) + "," + String(round(lis.y_g * 100) / 100) + "," + String(round(lis.z_g * 100) / 100) + "\", \"timestamp\":" + unixTime + "},";
+    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(round(lis.x_g * ROUNDING_FACTOR) / ROUNDING_FACTOR) + "," + String(round(lis.y_g * ROUNDING_FACTOR) / ROUNDING_FACTOR) + "," + String(round(lis.z_g * ROUNDING_FACTOR) / ROUNDING_FACTOR) + "\", \"timestamp\":" + unixTime + "},";
     //payload += String(lis.x_g) + "," + lis.y_g + "," + lis.z_g + "," + unixTime + ",";
     Serial.println(payload);
     Serial.println(dsid);

@@ -13,16 +13,22 @@ SYSTEM_MODE(MANUAL)
 #define SLEEP_DELAY 70
 #define WIFI_TEST_TIMEOUT 30000
 #define ROUNDING_FACTOR 10
+#define SENSITIVITY 0.5
 
 int sleepDuration = DEFAULT_SLEEP_DURATION;
 int wifiInterval = DEFAULT_WIFI_INTERVAL;
 
 String payload = "";
+String prevPayload;
+bool valuesChanged = false;
 int wifiTimeLeft;
 float x, y, z;
 String unixTime;
 int isMoving;
 String ssid, password = "";
+
+float currentArr[3 * (60 + 1)];
+float previousArr[3 * (60 + 1)];
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 SystemSleepConfiguration config;
@@ -49,9 +55,10 @@ BleCharacteristic txCharacteristic("tx", BleCharacteristicProperty::NOTIFY, txUu
 BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP, rxUuid, serviceUuid, onDataReceived, NULL);
 
 String inputBuffer;
-int count, dsid;
+int count, dsid, size;
 bool bleInput = false;
 bool ota = false;
+
 int networkCount;
 WiFiAccessPoint networks[5];
 String networkBuffer;
@@ -162,9 +169,24 @@ void loop() {
     //   isMoving = 1;
     // }
 
-    payload +=  "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(round(lis.x_g * ROUNDING_FACTOR) / ROUNDING_FACTOR) + "," + String(round(lis.y_g * ROUNDING_FACTOR) / ROUNDING_FACTOR) + "," + String(round(lis.z_g * ROUNDING_FACTOR) / ROUNDING_FACTOR) + "\", \"timestamp\":" + unixTime + "},";
-    //payload += String(lis.x_g) + "," + lis.y_g + "," + lis.z_g + "," + unixTime + ",";
+    currentArr[size] = lis.x_g;
+    currentArr[size + 1] = lis.y_g;
+    currentArr[size + 2] = lis.z_g;
+    if(abs(currentArr[size] - previousArr[size]) > SENSITIVITY || abs(currentArr[size + 1] - previousArr[size + 1]) > SENSITIVITY || abs(currentArr[size + 2] - previousArr[size + 2]) > SENSITIVITY){
+      valuesChanged = true;
+    }
+
+    payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
+    prevPayload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(previousArr[size]) + "," + String(previousArr[size + 1]) + "," + String(previousArr[size + 2]) + "\", \"timestamp\":" + unixTime + "},";
+
+    previousArr[size] = currentArr[size];
+    previousArr[size + 1] = currentArr[size + 1];
+    previousArr[size + 2] = currentArr[size + 2];
+
+    size += 3;
+
     Serial.println(payload);
+    Serial.println(prevPayload);
     Serial.println(dsid);
     Serial.println(sleepDuration);
     Serial.println(wifiInterval);
@@ -190,7 +212,16 @@ void loop() {
       Serial.println(Time.now());
 
       payload.remove(payload.length() - 1);
-      request.body = "{\"data\":[" + payload + "]}";
+      prevPayload.remove(prevPayload.length() - 1);
+      if(valuesChanged){
+        request.body = "{\"data\":[" + payload + "]}";
+        valuesChanged = false;
+        Serial.println("Values changed, different array sent");
+      }else{
+        request.body = "{\"data\":[" + prevPayload + "]}";
+        Serial.println("Values not changed, same array sent");
+      }
+      size = 0;
       //request.body = dsid + "," + payload;
 
       http.post(request, response, headers);
@@ -198,6 +229,7 @@ void loop() {
       Serial.println("Body: " + response.body);
 
       payload = "";
+      prevPayload = "";
       
       wifiTimeLeft = wifiInterval;
 

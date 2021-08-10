@@ -82,6 +82,7 @@ bool wifiTest = true;
 bool timeFix = false;
 
 void setup() {
+  System.updatesEnabled();
   EEPROM.get(200, wifiTimeLeft);
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000 - SLEEP_DELAY);
 
@@ -185,14 +186,13 @@ void loop() {
     currentArr[size + 2] = lis.z_g;
     if(abs(currentArr[size] - previousArr[size]) > SENSITIVITY || abs(currentArr[size + 1] - previousArr[size + 1]) > SENSITIVITY || abs(currentArr[size + 2] - previousArr[size + 2]) > SENSITIVITY){
       valuesChanged = true;
+      previousArr[size] = currentArr[size];
+      previousArr[size + 1] = currentArr[size + 1];
+      previousArr[size + 2] = currentArr[size + 2];
     }
-
-    payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
+    
     prevPayload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(previousArr[size]) + "," + String(previousArr[size + 1]) + "," + String(previousArr[size + 2]) + "\", \"timestamp\":" + unixTime + "},";
-
-    previousArr[size] = currentArr[size];
-    previousArr[size + 1] = currentArr[size + 1];
-    previousArr[size + 2] = currentArr[size + 2];
+    payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
 
     size += 3;
 

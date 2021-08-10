@@ -24,7 +24,7 @@ SYSTEM_MODE(MANUAL)
 #define SLEEP_DELAY 70
 #define WIFI_TEST_TIMEOUT 30000
 #define ROUNDING_FACTOR 10
-#define SENSITIVITY 0.5
+#define SENSITIVITY_TOLERANCE 0.5
 
 int sleepDuration = DEFAULT_SLEEP_DURATION;
 int wifiInterval = DEFAULT_WIFI_INTERVAL;
@@ -38,8 +38,12 @@ String unixTime;
 int isMoving;
 String ssid, password = "";
 
-float currentArr[3 * (60 + 1)];
-float previousArr[3 * (60 + 1)];
+// float *currentArr;
+// float *previousArr;
+
+// float currentArr[3 * (60 + 1)];
+// float previousArr[3 * (60 + 1)];
+Vector<float> previousArr(3 * (3600 + 1));
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 SystemSleepConfiguration config;
@@ -86,8 +90,11 @@ void setup() {
   EEPROM.get(200, wifiTimeLeft);
   config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000 - SLEEP_DELAY);
 
-  Serial.begin(9600);
+  // currentArr = new float[arrSizeBuffer];
+  // previousArr = new float[arrSizeBuffer];
 
+  Serial.begin(9600);
+  
   //start transmission from accelerometer
   lis.begin(0x18);
   Wire.end();
@@ -172,7 +179,6 @@ void loop() {
     //   y = GRAVITY * lis.y_g;
     //   z = GRAVITY * (lis.z_g - 1);
     // }
-
     Serial.println(lis.x_g);
     Serial.println(lis.y_g);
     Serial.println(lis.z_g);
@@ -180,18 +186,15 @@ void loop() {
     // if(abs(x) > 1 || abs(y) > 1 || abs(z) > 1){
     //   isMoving = 1;
     // }
-
-    currentArr[size] = lis.x_g;
-    currentArr[size + 1] = lis.y_g;
-    currentArr[size + 2] = lis.z_g;
-    if(abs(currentArr[size] - previousArr[size]) > SENSITIVITY || abs(currentArr[size + 1] - previousArr[size + 1]) > SENSITIVITY || abs(currentArr[size + 2] - previousArr[size + 2]) > SENSITIVITY){
+    
+    if(abs(lis.x_g - previousArr.at(size)) > SENSITIVITY_TOLERANCE || abs(lis.y_g - previousArr.at(size + 1)) > SENSITIVITY_TOLERANCE || abs(lis.z_g - previousArr.at(size + 2)) > SENSITIVITY_TOLERANCE){
       valuesChanged = true;
-      previousArr[size] = currentArr[size];
-      previousArr[size + 1] = currentArr[size + 1];
-      previousArr[size + 2] = currentArr[size + 2];
+      previousArr.insert(size, lis.x_g);
+      previousArr.insert(size + 1, lis.y_g);
+      previousArr.insert(size + 2, lis.z_g);
     }
     
-    prevPayload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(previousArr[size]) + "," + String(previousArr[size + 1]) + "," + String(previousArr[size + 2]) + "\", \"timestamp\":" + unixTime + "},";
+    prevPayload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(previousArr.at(size)) + "," + String(previousArr.at(size + 1)) + "," + String(previousArr.at(size + 2)) + "\", \"timestamp\":" + unixTime + "},";
     payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
 
     size += 3;
@@ -409,9 +412,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         inputBuffer += (char)data[i];
       }
       if(inputBuffer == "ota"){
-        Serial.println("346");
         System.updatesEnabled();
-        Serial.println("348");
         ota = true;
       }
       bleInput = true;

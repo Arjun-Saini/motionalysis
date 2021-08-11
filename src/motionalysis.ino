@@ -158,11 +158,16 @@ void loop() {
     //determines if the new data has changed enough for different values to be sent
     if(abs(lis.x_g - previousArr.at(size)) > SENSITIVITY_TOLERANCE || abs(lis.y_g - previousArr.at(size + 1)) > SENSITIVITY_TOLERANCE || abs(lis.z_g - previousArr.at(size + 2)) > SENSITIVITY_TOLERANCE){
       valuesChanged = true;
-      previousArr.insert(size, lis.x_g);
-      previousArr.insert(size + 1, lis.y_g);
-      previousArr.insert(size + 2, lis.z_g);
+      previousArr.append(lis.x_g);
+      previousArr.append(lis.y_g);
+      previousArr.append(lis.z_g);
+      
     }
     
+    Serial.println("VALUES");
+    Serial.println(previousArr.at(size));
+    Serial.println(previousArr.at(size + 1));
+    Serial.println(previousArr.at(size + 2));
     prevPayload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(previousArr.at(size)) + "," + String(previousArr.at(size + 1)) + "," + String(previousArr.at(size + 2)) + "\", \"timestamp\":" + unixTime + "},";
     payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
 
@@ -216,6 +221,7 @@ void loop() {
       payload = "";
       prevPayload = "";
       size = 0;
+      previousArr.clear();
       
       wifiTimeLeft = wifiInterval;
 

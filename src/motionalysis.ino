@@ -1,6 +1,6 @@
 SYSTEM_MODE(MANUAL)
 PRODUCT_ID(15161)
-PRODUCT_VERSION(2)
+PRODUCT_VERSION(3)
 
 #include "Adafruit_LIS3DH.h"
 #include "HttpClient/HttpClient.h"
@@ -24,7 +24,7 @@ int wifiTimeLeft;
 String unixTime;
 String ssid, password = "";
 
-Vector<float> previousArr(3 * (3600 + 1));
+float prevX, prevY, prevZ;
 
 Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 SystemSleepConfiguration config;
@@ -156,25 +156,22 @@ void loop() {
     Serial.println(lis.z_g);
     
     //determines if the new data has changed enough for different values to be sent
-    if(abs(lis.x_g - previousArr.at(size)) > SENSITIVITY_TOLERANCE || abs(lis.y_g - previousArr.at(size + 1)) > SENSITIVITY_TOLERANCE || abs(lis.z_g - previousArr.at(size + 2)) > SENSITIVITY_TOLERANCE){
-      valuesChanged = true;
-      previousArr.append(lis.x_g);
-      previousArr.append(lis.y_g);
-      previousArr.append(lis.z_g);
-      
+    if(abs(lis.x_g - prevX) > SENSITIVITY_TOLERANCE || abs(lis.y_g - prevY) > SENSITIVITY_TOLERANCE || abs(lis.z_g - prevZ) > SENSITIVITY_TOLERANCE){
+      prevX = lis.x_g;
+      prevY = lis.y_g;
+      prevZ = lis.z_g;
+
+      payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
+    }else{
+      payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(prevX) + "," + String(prevY) + "," + String(prevZ) + "\", \"timestamp\":" + unixTime + "},";
     }
     
-    Serial.println("VALUES");
-    Serial.println(previousArr.at(size));
-    Serial.println(previousArr.at(size + 1));
-    Serial.println(previousArr.at(size + 2));
-    prevPayload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(previousArr.at(size)) + "," + String(previousArr.at(size + 1)) + "," + String(previousArr.at(size + 2)) + "\", \"timestamp\":" + unixTime + "},";
-    payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
-
-    size += 3;
+    Serial.println("previous values: ");
+    Serial.println(prevX);
+    Serial.println(prevY);
+    Serial.println(prevZ);
 
     Serial.println(payload);
-    Serial.println(prevPayload);
     Serial.println(dsid);
     Serial.println(sleepDuration);
     Serial.println(wifiInterval);
@@ -200,17 +197,9 @@ void loop() {
       Serial.println(Particle.timeSyncedLast());
       Serial.println(Time.now());
 
-      //formatting payload into json format, sets the correct payload as the http request body
+      //formatting payload into json, sets payload as the http request body
       payload.remove(payload.length() - 1);
-      prevPayload.remove(prevPayload.length() - 1);
-      if(valuesChanged){
-        request.body = "{\"data\":[" + payload + "]}";
-        valuesChanged = false;
-        Serial.println("Values changed, different array sent");
-      }else{
-        request.body = "{\"data\":[" + prevPayload + "]}";
-        Serial.println("Values not changed, same array sent");
-      }
+      request.body = "{\"data\":[" + payload + "]}";
 
       //sends post request to server
       http.post(request, response, headers);
@@ -219,9 +208,6 @@ void loop() {
 
       //reset variables
       payload = "";
-      prevPayload = "";
-      size = 0;
-      previousArr.clear();
       
       wifiTimeLeft = wifiInterval;
 

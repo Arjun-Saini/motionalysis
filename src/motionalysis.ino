@@ -1,6 +1,6 @@
 SYSTEM_MODE(MANUAL)
 PRODUCT_ID(15161)
-PRODUCT_VERSION(1)
+PRODUCT_VERSION(2)
 
 #include "Adafruit_LIS3DH.h"
 #include "HttpClient/HttpClient.h"

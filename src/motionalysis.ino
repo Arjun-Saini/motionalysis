@@ -1,7 +1,6 @@
 SYSTEM_MODE(MANUAL)
-SYSTEM_THREAD(ENABLED)
 PRODUCT_ID(15161)
-PRODUCT_VERSION(4)
+PRODUCT_VERSION(6)
 
 #include "Adafruit_LIS3DH.h"
 #include "HttpClient/HttpClient.h"
@@ -35,6 +34,7 @@ HttpClient http;
 http_header_t headers[] = {
   {"Accept", "application/json"},
   {"Content-Type", "application/json"},
+  {"api-token", "API-eafee-cdb56-3545d-38f7d"},
   {NULL, NULL}
 };
 http_request_t request;
@@ -65,15 +65,8 @@ int t1, t2, t3, t4;
 
 bool wifiTest = true;
 bool timeFix = false;
-bool inLoop = false;
-bool wifiConnection = false;
-
-void threadFunction(void *param);
-Thread *thread;
 
 void setup() {
-  thread = new Thread("wifi", threadFunction);
-
   System.updatesEnabled();
   EEPROM.get(200, wifiTimeLeft);
 
@@ -133,7 +126,6 @@ void loop() {
   time2 = millis();
 
   if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
-    inLoop = true;
     //connects to particle cloud once to synchronize the time
     if(!timeFix){
       Particle.process();
@@ -154,11 +146,47 @@ void loop() {
     EEPROM.get(100, sleepDuration);
     EEPROM.get(200, wifiInterval);
     config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration - SLEEP_DELAY);
+
+    //get data from accelerometer
+    lis.read();
+    unixTime = Time.now();
+    
+    Serial.println(lis.x_g);
+    Serial.println(lis.y_g);
+    Serial.println(lis.z_g);
+    
+    //determines if the new data has changed enough for different values to be sent
+    if(abs(lis.x_g - prevX) > SENSITIVITY_TOLERANCE || abs(lis.y_g - prevY) > SENSITIVITY_TOLERANCE || abs(lis.z_g - prevZ) > SENSITIVITY_TOLERANCE){
+      prevX = lis.x_g;
+      prevY = lis.y_g;
+      prevZ = lis.z_g;
+
+      payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + String(1) + ", \"timestamp\":" + unixTime + "},";
+    }else{
+      payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + String(0) + ", \"timestamp\":" + unixTime + "},";
+    }
+    
+    Serial.println("previous values: ");
+    Serial.println(prevX);
+    Serial.println(prevY);
+    Serial.println(prevZ);
+
+    Serial.println(payload);
+    Serial.println(dsid);
+    Serial.println(sleepDuration);
+    Serial.println(wifiInterval);
+    Serial.println(t3);
+
+    //automatically disconnects from ble if it is still connected before sleep, this step is necessary or else it causes the device to crash
+    BLE.disconnect();
+    BLE.off();
+
+    System.sleep(config);
+    t2 = millis();
+    t3 = t2 - t1;
     
     //connects to wifi and publishes data
     if(wifiTimeLeft <= 0){
-      wifiConnection = true;
-
       WiFi.on();
       WiFi.connect();
       while(!WiFi.ready()){}
@@ -172,69 +200,23 @@ void loop() {
       //formatting payload into json, sets payload as the http request body
       payload.remove(payload.length() - 1);
       request.body = "{\"data\":[" + payload + "]}";
-      payload = "";
 
       //sends post request to server
       http.post(request, response, headers);
       Serial.println("Status: " + response.status);
       Serial.println("Body: " + response.body);
 
-      //reset variables      
+      //reset variables
+      payload = "";
+      
       wifiTimeLeft = wifiInterval;
 
       Particle.disconnect();
       WiFi.off();
-      wifiConnection = false;
     }
-  }
-}
 
-void threadFunction(void *params){
-  while(true){
-    if(inLoop && timeFix){
-      //get data from accelerometer
-      lis.read();
-      unixTime = Time.now();
-      
-      // Serial.println(lis.x_g);
-      // Serial.println(lis.y_g);
-      // Serial.println(lis.z_g);
-      
-      //determines if the new data has changed enough for different values to be sent
-      if(abs(lis.x_g - prevX) > SENSITIVITY_TOLERANCE || abs(lis.y_g - prevY) > SENSITIVITY_TOLERANCE || abs(lis.z_g - prevZ) > SENSITIVITY_TOLERANCE){
-        prevX = lis.x_g;
-        prevY = lis.y_g;
-        prevZ = lis.z_g;
-
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
-      }else{
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(prevX) + "," + String(prevY) + "," + String(prevZ) + "\", \"timestamp\":" + unixTime + "},";
-      }
-      
-      // Serial.println("previous values: ");
-      // Serial.println(prevX);
-      // Serial.println(prevY);
-      // Serial.println(prevZ);
-
-      // Serial.println(payload);
-      // Serial.println(dsid);
-      // Serial.println(sleepDuration);
-      // Serial.println(wifiInterval);
-
-      //automatically disconnects from ble if it is still connected before sleep, this step is necessary or else it causes the device to crash
-      BLE.disconnect();
-      BLE.off();
-
-      if(!wifiConnection){
-        System.sleep(config);
-      }else{
-        delay(sleepDuration);
-      }
-      
-      //countdown to wifi publish
-      wifiTimeLeft -= sleepDuration;
-    }
-    os_thread_yield();
+    //countdown to wifi publish
+    wifiTimeLeft -= sleepDuration;
   }
 }
 

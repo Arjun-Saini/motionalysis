@@ -9,6 +9,6 @@
         "xutility": "cpp"
     },
     "particle.targetPlatform": "argon",
-    "particle.firmwareVersion": "3.0.0",
-    "particle.targetDevice": ""
+    "particle.firmwareVersion": "3.1.0",
+    "particle.targetDevice": "motion_8"
 }

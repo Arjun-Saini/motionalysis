@@ -88,14 +88,16 @@ void setup() {
   lis.begin(I2C_ADDRESS);
   lis.setRange(LIS3DH_RANGE_16_G);
   lis.setDataRate(LIS3DH_DATARATE_100_HZ);
+  
 
   //pull sdo pin high to reduce power usage, switches i2c address from 0x18 to 0x19
   pinMode(SDO_OUTPUT_PIN, OUTPUT);
   digitalWrite(SDO_OUTPUT_PIN, HIGH);
 
   //http path to node server which sends data to the api
-  request.hostname = "trek.thewcl.com";
-  request.port = 3000;
+  //request.hostname = "trek.thewcl.com";
+  request.hostname = "digiglue.io";
+  request.port = 80;
   request.path = "/";
 
   //turn ble on
@@ -206,9 +208,10 @@ void threadFunction(void *params){
         prevY = lis.y_g;
         prevZ = lis.z_g;
 
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
+        //payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
+        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + "1" + "\", \"timestamp\":" + unixTime + "},";
       }else{
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(prevX) + "," + String(prevY) + "," + String(prevZ) + "\", \"timestamp\":" + unixTime + "},";
+        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + "0" + "\", \"timestamp\":" + unixTime + "},";
       }
       
       // Serial.println("previous values: ");

@@ -3,17 +3,17 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
+#line 1 "c:/Users/terdf/Documents/GitHub/motionalysis/src/motionalysis.ino"
 void setup();
 void loop();
 void threadFunction(void *params);
 void connectCallback(const BlePeerDevice& peer, void* context);
 void disconnectCallback(const BlePeerDevice& peer, void* context);
-#line 1 "c:/Users/Arjun/Documents/GitHub/motionalysis/src/motionalysis.ino"
+#line 1 "c:/Users/terdf/Documents/GitHub/motionalysis/src/motionalysis.ino"
 SYSTEM_MODE(MANUAL)
 SYSTEM_THREAD(ENABLED)
 PRODUCT_ID(15161)
-PRODUCT_VERSION(4)
+PRODUCT_VERSION(7)
 
 #include "Adafruit_LIS3DH.h"
 #include "HttpClient/HttpClient.h"
@@ -106,8 +106,10 @@ void setup() {
   digitalWrite(SDO_OUTPUT_PIN, HIGH);
 
   //http path to node server which sends data to the api
-  request.hostname = "trek.thewcl.com";
-  request.port = 3000;
+  //request.hostname = "trek.thewcl.com";
+  //request.port = 3000;
+  request.hostname = "digiglue.io";
+  request.port = 80;
   request.path = "/";
 
   //turn ble on
@@ -190,6 +192,7 @@ void loop() {
       http.post(request, response, headers);
       Serial.println("Status: " + response.status);
       Serial.println("Body: " + response.body);
+      Serial.println("ReqBody: " + request.body);
 
       //reset variables      
       wifiTimeLeft = wifiInterval;
@@ -218,18 +221,18 @@ void threadFunction(void *params){
         prevY = lis.y_g;
         prevZ = lis.z_g;
 
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(lis.x_g) + "," + String(lis.y_g) + "," + String(lis.z_g) + "\", \"timestamp\":" + unixTime + "},";
+        payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + 1 + ", \"timestamp\":" + unixTime + "},";
       }else{
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":\"" + String(prevX) + "," + String(prevY) + "," + String(prevZ) + "\", \"timestamp\":" + unixTime + "},";
+        payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + 0 + ", \"timestamp\":" + unixTime + "},";
       }
       
-      // Serial.println("previous values: ");
-      // Serial.println(prevX);
-      // Serial.println(prevY);
-      // Serial.println(prevZ);
+      Serial.println("new previous values: ");
+      Serial.println(prevX);
+      Serial.println(prevY);
+      Serial.println(prevZ);
 
-      // Serial.println(payload);
-      // Serial.println(dsid);
+      Serial.println(payload);
+      Serial.println(dsid);
       // Serial.println(sleepDuration);
       // Serial.println(wifiInterval);
 

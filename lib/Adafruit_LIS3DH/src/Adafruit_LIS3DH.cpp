@@ -317,6 +317,8 @@ bool Adafruit_LIS3DH::getEvent(sensors_event_t *event) {
   event->acceleration.x = x_g;
   event->acceleration.y = y_g;
   event->acceleration.z = z_g;
+
+  return true;
 }
 
 /**************************************************************************/

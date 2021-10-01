@@ -11,7 +11,7 @@ PRODUCT_VERSION(7)
 #define SDO_OUTPUT_PIN D8 //reduces power usage on lis3dh
 #define CONFIG_WAIT_TIME 30000 //time in ms after power up where device waits for user input, if none is detected it will start collecting data
 #define DEFAULT_SLEEP_DURATION 1000
-#define DEFAULT_WIFI_INTERVAL 60000
+#define DEFAULT_WIFI_INTERVAL 60
 #define SLEEP_DELAY 70
 #define WIFI_TEST_TIMEOUT 30000 //time in ms after wifi test before timing out
 #define SENSITIVITY_TOLERANCE 0.5 //minimum change in g value for new data to be sent

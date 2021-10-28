@@ -3,44 +3,46 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "c:/Users/terdf/Documents/GitHub/motionalysis/src/motionalysis.ino"
+#line 1 "/Users/trylaarsdam/Documents/dev/motionalysis/src/motionalysis.ino"
 void setup();
 void loop();
-void threadFunction(void *params);
 void connectCallback(const BlePeerDevice& peer, void* context);
 void disconnectCallback(const BlePeerDevice& peer, void* context);
-#line 1 "c:/Users/terdf/Documents/GitHub/motionalysis/src/motionalysis.ino"
+#line 1 "/Users/trylaarsdam/Documents/dev/motionalysis/src/motionalysis.ino"
 SYSTEM_MODE(MANUAL)
-SYSTEM_THREAD(ENABLED)
-PRODUCT_ID(15161)
-PRODUCT_VERSION(7)
 
-#include "Adafruit_LIS3DH.h"
+/*
+ * Project motionalysis-testFirmware
+ * Description: Attempting to diagnose Motionalysis issues
+ * Author: trylaarsdam
+ * Date:
+ */
+#include <Adafruit_LIS3DH.h>
 #include "HttpClient/HttpClient.h"
-#include <string>
 
-#define I2C_ADDRESS 0x19 //i2c address for lis3dh accelerometer
-#define SDO_OUTPUT_PIN D8 //reduces power usage on lis3dh
-#define CONFIG_WAIT_TIME 30000 //time in ms after power up where device waits for user input, if none is detected it will start collecting data
-#define DEFAULT_SLEEP_DURATION 1000
-#define DEFAULT_WIFI_INTERVAL 60
-#define SLEEP_DELAY 70
-#define WIFI_TEST_TIMEOUT 30000 //time in ms after wifi test before timing out
-#define SENSITIVITY_TOLERANCE 0.5 //minimum change in g value for new data to be sent
 
-int sleepDuration = DEFAULT_SLEEP_DURATION;
-int wifiInterval = DEFAULT_WIFI_INTERVAL;
-
+Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
+int recordingInterval; // interval between lis3dh reads
+int reportingInterval; // interval between reporting data to server in seconds
 String payload, prevPayload = "";
 bool valuesChanged = false;
-int wifiTimeLeft;
 String unixTime;
 String ssid, password = "";
-
+float x, y, z;
+uint8_t storedValues [256];
+long storedTimes [256];
 float prevX, prevY, prevZ;
-
-Adafruit_LIS3DH lis = Adafruit_LIS3DH();
-SystemSleepConfiguration config;
+int storedValuesPos = 0;
+enum firmwareStateEnum {
+  BLEWAIT,
+  RECORDING,
+  SENDING
+};
+uint8_t firmwareState = BLEWAIT;
+bool bleWaitForConfig = false;
+String inputBuffer;
+int count, dsid, size;
+bool ota = false;
 
 //setup for http connection
 HttpClient http;
@@ -52,7 +54,11 @@ http_header_t headers[] = {
 http_request_t request;
 http_response_t response;
 
-//ble setup
+
+int networkCount;
+WiFiAccessPoint networks[5];
+String networkBuffer;
+
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context);
 
 const BleUuid serviceUuid("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
@@ -62,196 +68,167 @@ const BleUuid txUuid("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
 BleCharacteristic txCharacteristic("tx", BleCharacteristicProperty::NOTIFY, txUuid, serviceUuid);
 BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP, rxUuid, serviceUuid, onDataReceived, NULL);
 
-String inputBuffer;
-int count, dsid, size;
-bool bleInput = false;
-bool ota = false;
 
-int networkCount;
-WiFiAccessPoint networks[5];
-String networkBuffer;
-
-int time1;
-int time2;
-int t1, t2, t3, t4;
-
-bool wifiTest = true;
-bool timeFix = false;
-bool inLoop = false;
-bool wifiConnection = false;
-
-void threadFunction(void *param);
-Thread *thread;
-
+// setup() runs once, when the device is first turned on.
 void setup() {
-  thread = new Thread("wifi", threadFunction);
-
-  System.updatesEnabled();
-  EEPROM.get(200, wifiTimeLeft);
-
-  //sets up default config for sleep
-  config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(1000 - SLEEP_DELAY);
-
-  Serial.begin(9600);
-  
-  //start transmission from accelerometer
-  lis.begin(0x18);
-  Wire.end();
-  lis.begin(I2C_ADDRESS);
-  lis.setRange(LIS3DH_RANGE_16_G);
-  lis.setDataRate(LIS3DH_DATARATE_100_HZ);
-
-  //pull sdo pin high to reduce power usage, switches i2c address from 0x18 to 0x19
-  pinMode(SDO_OUTPUT_PIN, OUTPUT);
-  digitalWrite(SDO_OUTPUT_PIN, HIGH);
-
-  //http path to node server which sends data to the api
-  //request.hostname = "trek.thewcl.com";
-  //request.port = 3000;
+  // Put initialization like pinMode and begin functions here.
+  System.enableReset();
   request.hostname = "digiglue.io";
   request.port = 80;
   request.path = "/";
+  Serial.begin(9600);
+  if(!lis3dh.begin(0x18)) {
+    delay(1000);
+    Serial.println("Failed to initialize LIS3DH");
+  }
+  //Wire.end();
 
-  //turn ble on
-  BLE.on();
-
-  BLE.addCharacteristic(txCharacteristic);
-  BLE.addCharacteristic(rxCharacteristic);
-
-  BleAdvertisingData data;
-  data.appendServiceUUID(serviceUuid);
-  BLE.advertise(&data);
-  BLE.onConnected(connectCallback);
-  BLE.onDisconnected(disconnectCallback);
-  
-  pinMode(D7, OUTPUT);
-  count = 0;
-
-  time1 = millis();
+  EEPROM.get(100, recordingInterval);
+  EEPROM.get(0, dsid);
+  Serial.println(recordingInterval);
+  EEPROM.get(200, reportingInterval);
+  reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
+  Serial.printlnf("recordingInterval: %i", recordingInterval);
+  Serial.printlnf("reportingInterval: %i", reportingInterval);
+  if(recordingInterval == -1) {
+    recordingInterval = 500; //default value
+  }
+  if(reportingInterval == -1) {
+    reportingInterval = 10; //default value
+  }
+  int WiFiConnectCountdown = 20000;
+  //sync time
+  WiFi.on();
+  WiFi.connect();
+  while(!WiFi.ready() && WiFiConnectCountdown != 0) {
+    WiFiConnectCountdown= WiFiConnectCountdown - 100;
+    delay(100);
+  }
+  if(WiFi.ready() != true) {
+    Serial.println("WiFi failed to connect, skipping time synchronization");
+  }
+  else {
+    Serial.println("WiFi connected, syncing time");
+    Particle.connect();
+    while(!Particle.connected()) {
+      //Particle.process();
+      delay(100);
+    }
+    Particle.syncTime();
+    while(Particle.syncTimePending()) {
+      Particle.process();
+    }
+    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
+  }
+  WiFi.off();
 }
-
-
+// loop() runs over and over again, as quickly as it can execute.
+bool firstRecord = true; //sets first value to 0
 void loop() {
-  Particle.process();
+  switch (firmwareState) {
+    case BLEWAIT: {
+      //wait for BLE connection
+      Serial.println("BLEWAIT");
+      BLE.on();
+      BLE.addCharacteristic(txCharacteristic);
+      BLE.addCharacteristic(rxCharacteristic);
 
-  //connects to particle cloud if ota command entered through ble
-  if(ota){
-    while(!Particle.connected()){
-      Particle.process();
-      Particle.connect();
-    }
-    ota = false;
-    while(true){Particle.process();}
-  }
-
-  time2 = millis();
-
-  if(bleInput | ((time2 - CONFIG_WAIT_TIME >= time1) && WiFi.hasCredentials() && !(BLE.connected()))){
-    inLoop = true;
-    //connects to particle cloud once to synchronize the time
-    if(!timeFix){
-      Particle.process();
-      WiFi.on();
-      WiFi.connect();
-      while(!WiFi.ready()){}
-      Particle.connect();
-      Particle.syncTime();
-      delay(5000);
-      Particle.process();
-      Particle.disconnect();
-      WiFi.off();
-      timeFix = true;
-    }
-
-    //get values stored in eeprom
-    EEPROM.get(0, dsid);
-    EEPROM.get(100, sleepDuration);
-    EEPROM.get(200, wifiInterval);
-    config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration - SLEEP_DELAY);
-    
-    //connects to wifi and publishes data
-    if(wifiTimeLeft <= 0){
-      wifiConnection = true;
-
-      WiFi.on();
-      WiFi.connect();
-      while(!WiFi.ready()){}
-      Particle.connect();
-      Particle.syncTime();
-      delay(1000);
-      Particle.process();
-      Serial.println(Particle.timeSyncedLast());
-      Serial.println(Time.now());
-
-      //formatting payload into json, sets payload as the http request body
-      payload.remove(payload.length() - 1);
-      request.body = "{\"data\":[" + payload + "]}";
-      payload = "";
-
-      //sends post request to server
-      http.post(request, response, headers);
-      Serial.println("Status: " + response.status);
-      Serial.println("Body: " + response.body);
-      Serial.println("ReqBody: " + request.body);
-
-      //reset variables      
-      wifiTimeLeft = wifiInterval;
-
-      Particle.disconnect();
-      WiFi.off();
-      wifiConnection = false;
-    }
-  }
-}
-
-void threadFunction(void *params){
-  while(true){
-    if(inLoop && timeFix){
-      //get data from accelerometer
-      lis.read();
-      unixTime = Time.now();
-      
-      // Serial.println(lis.x_g);
-      // Serial.println(lis.y_g);
-      // Serial.println(lis.z_g);
-      
-      //determines if the new data has changed enough for different values to be sent
-      if(abs(lis.x_g - prevX) > SENSITIVITY_TOLERANCE || abs(lis.y_g - prevY) > SENSITIVITY_TOLERANCE || abs(lis.z_g - prevZ) > SENSITIVITY_TOLERANCE){
-        prevX = lis.x_g;
-        prevY = lis.y_g;
-        prevZ = lis.z_g;
-
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + 1 + ", \"timestamp\":" + unixTime + "},";
-      }else{
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + 0 + ", \"timestamp\":" + unixTime + "},";
+      BleAdvertisingData data;
+      data.appendServiceUUID(serviceUuid);
+      BLE.advertise(&data);
+      BLE.onConnected(connectCallback);
+      BLE.onDisconnected(disconnectCallback);
+      int BLECountdown = 5000;
+      while(!BLE.connected() && BLECountdown > 0) {
+        BLECountdown = BLECountdown - 10;
+        Serial.println(BLECountdown);
+        delay(10);
       }
-      
-      Serial.println("new previous values: ");
-      Serial.println(prevX);
-      Serial.println(prevY);
-      Serial.println(prevZ);
 
-      Serial.println(payload);
-      Serial.println(dsid);
-      // Serial.println(sleepDuration);
-      // Serial.println(wifiInterval);
+      if(BLE.connected()){ 
+        Serial.println("BLE connected");
+        bleWaitForConfig = true;
+      }
+      else {
+        bleWaitForConfig = false;
+        Serial.println("BLE not connected, continuing with stored settings.");
+      }
 
-      //automatically disconnects from ble if it is still connected before sleep, this step is necessary or else it causes the device to crash
-      BLE.disconnect();
+      while(bleWaitForConfig) {
+        Serial.println("bleWaitForConfig");
+        delay(100);
+      }
+      BLE.disconnectAll();
       BLE.off();
-
-      if(!wifiConnection){
-        System.sleep(config);
-      }else{
-        delay(sleepDuration);
-      }
-      
-      //countdown to wifi publish
-      wifiTimeLeft -= sleepDuration;
+      firmwareState = RECORDING;
+      break;
     }
-    os_thread_yield();
+    case RECORDING: {
+      //record data
+      lis3dh.read();
+      x = lis3dh.x_g;
+      y = lis3dh.y_g;
+      z = lis3dh.z_g;
+      if(abs(x - prevX) > 0.05 || abs(y - prevY) > 0.05 || abs(z - prevZ) > 0.05) {
+        //Serial.println("movement above threshold");
+        if(firstRecord) {
+          firstRecord = false;
+          storedValues[storedValuesPos] = 0; //otherwise first record is always 1
+        }
+        else {
+          storedValues[storedValuesPos] = 1;
+        }
+      }
+      else {
+        storedValues[storedValuesPos] = 0;
+      }
+      //Time.setFormat(TIME_FORMAT_UNIX);
+      storedTimes[storedValuesPos] = Time.now();
+      prevX = x;
+      prevY = y;
+      prevZ = z;
+      storedValuesPos++;
+      if(storedValuesPos >= ((reportingInterval * 1000) / recordingInterval)) {
+        for (int i = 0; i < storedValuesPos; i++) {
+          //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+          payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+        }
+        Serial.println("\n");
+        storedValuesPos = 0;
+        int WiFiConnectCountdown = 20000;
+        //sync time
+        WiFi.on();
+        WiFi.connect();
+        while(!WiFi.ready() && WiFiConnectCountdown != 0) {
+          WiFiConnectCountdown= WiFiConnectCountdown - 100;
+          delay(100);
+        }
+        if(WiFi.ready() != true) {
+          Serial.println("WiFi failed to connect, data not reported");
+        }
+        else {
+          Serial.println("WiFi connected, reporting data");
+          payload.remove(payload.length() - 1);
+          request.body = "{\"data\":[" + payload + "]}";
+          payload = "";
+          http.post(request, response, headers);
+          Serial.println("Status: " + response.status);
+          Serial.println("Body: " + response.body);
+          Serial.println("ReqBody: " + request.body);
+
+        }
+        WiFi.off();
+      }
+      delay(recordingInterval);
+      break;
+    }
+    case SENDING: {
+      //send data to server, not used 
+      break;
+    }
   }
 }
+
 
 //ble interface
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context){
@@ -327,32 +304,6 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         Serial.println(data[i]);
         inputBuffer += (char)data[i];
       }
-      if(inputBuffer == "test" && WiFi.hasCredentials()){
-        //attempt to connect with credentials, times out if unsuccessful
-        t4 = millis();
-        WiFi.on();
-        WiFi.connect();
-        while(WiFi.connecting() || !WiFi.ready()){
-          if(millis() >= t4 + WIFI_TEST_TIMEOUT){
-            wifiTest = false;
-            Serial.println("timeout");
-            Serial.println(millis());
-            Serial.println(t4);
-            break;
-          }
-        }
-        WiFi.off();
-        if(wifiTest){
-          txCharacteristic.setValue("Success!\n");
-        }else{
-          //go back to ssid prompt if test failed
-          txCharacteristic.setValue("ERROR: WiFi connection timeout\n");
-          count = 0;
-          wifiTest = true;
-          goto SSID;
-        }
-      }
-
       //dsid prompt
       EEPROM.get(0, dsid);
       txCharacteristic.setValue("\nCurrent DSID is [");
@@ -375,12 +326,12 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       }
       EEPROM.get(0, dsid);
       Serial.println("dsid: " + dsid);
-      EEPROM.get(100, sleepDuration);
+      EEPROM.get(100, recordingInterval);
 
       //prompt for data collection interval
       txCharacteristic.setValue("\nCurrent value for data collection interval is [");
-      if(sleepDuration != -1){
-        txCharacteristic.setValue(String(sleepDuration));
+      if(recordingInterval != -1){
+        txCharacteristic.setValue(String(recordingInterval));
       }
       txCharacteristic.setValue("]\nEnter time between data collection as an integer in milliseconds (blank to skip): ");
       break;
@@ -390,21 +341,20 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       for(int i = 0; i < len - 1; i++){
         Serial.println(data[i]);
         inputBuffer += (char)data[i];
-        sleepDuration = atoi(inputBuffer);
+        recordingInterval = atoi(inputBuffer);
       }
       if(inputBuffer == ""){
-        EEPROM.get(100, sleepDuration);
+        EEPROM.get(100, recordingInterval);
       }
-      EEPROM.put(100, sleepDuration);
-      EEPROM.get(100, sleepDuration);
-      config.mode(SystemSleepMode::ULTRA_LOW_POWER).duration(sleepDuration - SLEEP_DELAY);
-      Serial.println(sleepDuration);
-      EEPROM.get(200, wifiInterval);
+      EEPROM.put(100, recordingInterval);
+      EEPROM.get(100, recordingInterval);
+      //Serial.println(recordingInterval);
+      EEPROM.get(200, reportingInterval);
 
       //prompt for wifi connection interval
       txCharacteristic.setValue("\nCurrent value for WiFi connection interval is [");
-      if(wifiInterval != -1){
-        txCharacteristic.setValue(String(wifiInterval / 1000));
+      if(reportingInterval != -1){
+        txCharacteristic.setValue(String(reportingInterval / 1000));
       }
       txCharacteristic.setValue("]\nEnter time between WiFi connections as an integer in seconds (blank to skip): ");
       break;
@@ -414,15 +364,14 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       for(int i = 0; i < len - 1; i++){
         Serial.println(data[i]);
         inputBuffer += (char)data[i];
-        wifiInterval = atoi(inputBuffer) * 1000;
+        reportingInterval = atoi(inputBuffer) * 1000;
       }
       if(inputBuffer == ""){
-        EEPROM.get(200, wifiInterval);
+        EEPROM.get(200, reportingInterval);
       }
-      EEPROM.put(200, wifiInterval);
-      EEPROM.get(200, wifiInterval);
-      wifiTimeLeft = wifiInterval;
-      Serial.println(wifiInterval);
+      EEPROM.put(200, reportingInterval);
+      EEPROM.get(200, reportingInterval);
+      Serial.println(reportingInterval);
 
       //prompt for ota
       txCharacteristic.setValue("\nEnter 'ota' to wait for OTA update (blank to skip): ");
@@ -440,8 +389,32 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       }
 
       //causes data collection to begin
-      bleInput = true;
-      digitalWrite(D7, LOW);
+      //firmwareState = RECORDING;
+      if(ota) {
+        System.updatesEnabled();
+        WiFi.on();
+        WiFi.connect();
+        while(!WiFi.ready()) {
+          delay(100);
+        }
+        if(WiFi.ready() != true) {
+          Serial.println("WiFi failed to connect, skipping time synchronization");
+        }
+        else {
+          Serial.println("WiFi connected, awaiting update");
+          txCharacteristic.setValue("\nAwaiting OTA update");
+          Particle.connect();
+          while(!Particle.connected()) {
+            //Particle.process();
+            delay(100);
+          }
+          while(1){
+            Particle.process();
+          }
+        }
+      }
+      System.reset();
+      //digitalWrite(D7, LOW);
     }
   }
 

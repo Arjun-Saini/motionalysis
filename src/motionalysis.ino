@@ -220,9 +220,13 @@ void reportingThread(void) {
     //Serial.println("reportingThread");
     //delay(reportingInterval * 1000);
     //sync time
-    Serial.println("runningReporting");
+    WITH_LOCK(Serial) {
+      Serial.println("runningReporting");
+    }
     if(storedValuesPos >= ((reportingInterval * 1000) / recordingInterval)) {
-      Serial.println("reporting");
+      WITH_LOCK(Serial) {
+        Serial.println("reporting");
+      }
       String localPayload = payload;
       payload = "";
       WiFi.on();
@@ -231,16 +235,22 @@ void reportingThread(void) {
         delay(100);
       }
       if(WiFi.ready() != true) {
-        Serial.println("WiFi failed to connect, data not reported");
+        WITH_LOCK(Serial) {
+          Serial.println("WiFi failed to connect, data not reported");
+        }
       }
       else {
-        Serial.println("WiFi connected, reporting data");
+        WITH_LOCK(Serial) {
+          Serial.println("WiFi connected, reporting data");
+        }
         localPayload.remove(localPayload.length() - 1);
         request.body = "{\"data\":[" + localPayload + "]}";
         http.post(request, response, headers);
-        Serial.println("Status: " + response.status);
-        Serial.println("Body: " + response.body);
-        Serial.println("ReqBody: " + request.body);
+        WITH_LOCK(Serial) {
+          Serial.println("Status: " + response.status);
+          Serial.println("Body: " + response.body);
+          Serial.println("ReqBody: " + request.body);
+        }
       }
       WiFi.off();
     }
@@ -249,7 +259,9 @@ void reportingThread(void) {
 
 //ble interface
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context){
-  Serial.println(len);
+  WITH_LOCK(Serial) {
+    Serial.println(len);
+  }
   inputBuffer = "";
 
   //each case is a separate prompt
@@ -261,12 +273,16 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       networkCount = WiFi.getCredentials(networks, 5);
       for(int i = 0; i < networkCount - 1; i++){
         networkBuffer = networks[i].ssid;
-        Serial.println(networkBuffer.length());
+        WITH_LOCK(Serial) {
+          Serial.println(networkBuffer.length());
+        }
         txCharacteristic.setValue(networkBuffer);
         txCharacteristic.setValue(",\n");
       }
       networkBuffer = networks[networkCount - 1].ssid;
-      Serial.println(networkBuffer.length());
+      WITH_LOCK(Serial) {
+        Serial.println(networkBuffer.length());
+      }
       txCharacteristic.setValue(networkBuffer);
       txCharacteristic.setValue("]\nEnter network SSID (blank to skip, 'clear' to reset credentials): ");
       break;
@@ -276,10 +292,14 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       for(int i = 0; i < len - 1; i++){
         inputBuffer += (char)data[i];
         ssid = inputBuffer;
-        Serial.println(data[i]);
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
       }
-      Serial.println(ssid);
-      Serial.println(ssid.length());
+      WITH_LOCK(Serial) {
+        Serial.println(ssid);
+        Serial.println(ssid.length());
+      }
       if(ssid == ""){
         //dsid prompt if wifi prompt skipped
         count = 3;
@@ -303,14 +323,20 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     case 2:{
       //save credentials with given ssid and password
       for(int i = 0; i < len - 1; i++){
-        Serial.println(data[i]);
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
         inputBuffer += (char)data[i];
         password = inputBuffer;
       }
-      Serial.println(password);
-      Serial.println(password.length());
+      WITH_LOCK(Serial) {
+        Serial.println(password);
+        Serial.println(password.length());
+      }
       WiFi.setCredentials(ssid, password);
-      Serial.println("\n\nCredentials set with ssid: " + ssid + "\npassword: " + password + "\n\n");
+      WITH_LOCK(Serial) {
+        Serial.println("\n\nCredentials set with ssid: " + ssid + "\npassword: " + password + "\n\n");
+      }
 
       //wifi test prompt
       txCharacteristic.setValue("\nEnter 'test' to test credentials (blank to skip): ");
@@ -318,7 +344,9 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     }
     case 3:{
       for(int i = 0; i < len - 1; i++){
-        Serial.println(data[i]);
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
         inputBuffer += (char)data[i];
       }
       //dsid prompt
@@ -333,13 +361,17 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     case 4:{
       //store dsid in eeprom
       for(int i = 0; i < len - 1; i++){
-        Serial.println(data[i]);
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
         inputBuffer += (char)data[i];
         dsid = atoi(inputBuffer);
       }
       if(inputBuffer != ""){
         EEPROM.put(0, dsid);
-        Serial.println("dsid entered");
+        WITH_LOCK(Serial) {
+          Serial.println("dsid entered");
+        }
       }
       EEPROM.get(0, dsid);
       Serial.println("dsid: " + dsid);
@@ -356,7 +388,9 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     case 5:{
       //store data collection interval in eeprom
       for(int i = 0; i < len - 1; i++){
-        Serial.println(data[i]);
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
         inputBuffer += (char)data[i];
         recordingInterval = atoi(inputBuffer);
       }
@@ -379,7 +413,9 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     case 6:{
       //store wifi connection interval in eeprom
       for(int i = 0; i < len - 1; i++){
-        Serial.println(data[i]);
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
         inputBuffer += (char)data[i];
         reportingInterval = atoi(inputBuffer) * 1000;
       }
@@ -388,7 +424,9 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       }
       EEPROM.put(200, reportingInterval);
       EEPROM.get(200, reportingInterval);
-      Serial.println(reportingInterval);
+      WITH_LOCK(Serial) {
+        Serial.println(reportingInterval);
+      }
 
       //prompt for ota
       txCharacteristic.setValue("\nEnter 'ota' to wait for OTA update (blank to skip): ");
@@ -397,7 +435,9 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     case 7:{
       //enter ota mode if command entered
       for(int i = 0; i < len - 1; i++){
-        Serial.println(data[i]);
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
         inputBuffer += (char)data[i];
       }
       if(inputBuffer == "ota"){
@@ -415,10 +455,14 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
           delay(100);
         }
         if(WiFi.ready() != true) {
-          Serial.println("WiFi failed to connect, skipping time synchronization");
+          WITH_LOCK(Serial) {
+            Serial.println("WiFi failed to connect, skipping time synchronization");
+          }
         }
         else {
-          Serial.println("WiFi connected, awaiting update");
+          WITH_LOCK(Serial) {
+            Serial.println("WiFi connected, awaiting update");
+          }
           txCharacteristic.setValue("\nAwaiting OTA update");
           Particle.connect();
           while(!Particle.connected()) {
@@ -441,12 +485,16 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
 //d7 led turns on when ble connected
 void connectCallback(const BlePeerDevice& peer, void* context){
   count = 0;
-  Serial.println("connected");
+  WITH_LOCK(Serial) {
+    Serial.println("connected");
+  }
   digitalWrite(D7, HIGH);
 }
 
 //d7 led turns off when ble disconnected
 void disconnectCallback(const BlePeerDevice& peer, void* context){
-  Serial.println("disconnected");
+  WITH_LOCK(Serial) {
+    Serial.println("disconnected");
+  }
   digitalWrite(D7, LOW);
 }

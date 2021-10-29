@@ -10,7 +10,7 @@ void connectCallback(const BlePeerDevice& peer, void* context);
 void disconnectCallback(const BlePeerDevice& peer, void* context);
 #line 1 "/Users/trylaarsdam/Documents/dev/motionalysis/src/motionalysis.ino"
 SYSTEM_MODE(MANUAL)
-
+SYSTEM_THREAD(ENABLED)
 /*
  * Project motionalysis-testFirmware
  * Description: Attempting to diagnose Motionalysis issues
@@ -68,10 +68,13 @@ const BleUuid txUuid("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
 BleCharacteristic txCharacteristic("tx", BleCharacteristicProperty::NOTIFY, txUuid, serviceUuid);
 BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP, rxUuid, serviceUuid, onDataReceived, NULL);
 
+void reportingThread(void);
 
 // setup() runs once, when the device is first turned on.
 void setup() {
   // Put initialization like pinMode and begin functions here.
+  new Thread("reportingThread", reportingThread);
+  pinMode(D7, OUTPUT);
   System.enableReset();
   request.hostname = "digiglue.io";
   request.port = 80;
@@ -165,6 +168,7 @@ void loop() {
     }
     case RECORDING: {
       //record data
+      Serial.println("RECORDING");
       lis3dh.read();
       x = lis3dh.x_g;
       y = lis3dh.y_g;
@@ -188,37 +192,6 @@ void loop() {
       prevY = y;
       prevZ = z;
       storedValuesPos++;
-      if(storedValuesPos >= ((reportingInterval * 1000) / recordingInterval)) {
-        for (int i = 0; i < storedValuesPos; i++) {
-          //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
-          payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
-        }
-        Serial.println("\n");
-        storedValuesPos = 0;
-        int WiFiConnectCountdown = 20000;
-        //sync time
-        WiFi.on();
-        WiFi.connect();
-        while(!WiFi.ready() && WiFiConnectCountdown != 0) {
-          WiFiConnectCountdown= WiFiConnectCountdown - 100;
-          delay(100);
-        }
-        if(WiFi.ready() != true) {
-          Serial.println("WiFi failed to connect, data not reported");
-        }
-        else {
-          Serial.println("WiFi connected, reporting data");
-          payload.remove(payload.length() - 1);
-          request.body = "{\"data\":[" + payload + "]}";
-          payload = "";
-          http.post(request, response, headers);
-          Serial.println("Status: " + response.status);
-          Serial.println("Body: " + response.body);
-          Serial.println("ReqBody: " + request.body);
-
-        }
-        WiFi.off();
-      }
       delay(recordingInterval);
       break;
     }
@@ -229,6 +202,37 @@ void loop() {
   }
 }
 
+void reportingThread(void) {
+  while(true) {
+    //Serial.println("reportingThread");
+    //delay(reportingInterval * 1000);
+    //sync time
+    Serial.println("runningReporting");
+    if(storedValuesPos >= ((reportingInterval * 1000) / recordingInterval)) {
+      Serial.println("reporting");
+      String localPayload = payload;
+      payload = "";
+      WiFi.on();
+      WiFi.connect();
+      while(!WiFi.ready()) {
+        delay(100);
+      }
+      if(WiFi.ready() != true) {
+        Serial.println("WiFi failed to connect, data not reported");
+      }
+      else {
+        Serial.println("WiFi connected, reporting data");
+        localPayload.remove(localPayload.length() - 1);
+        request.body = "{\"data\":[" + localPayload + "]}";
+        http.post(request, response, headers);
+        Serial.println("Status: " + response.status);
+        Serial.println("Body: " + response.body);
+        Serial.println("ReqBody: " + request.body);
+      }
+      WiFi.off();
+    }
+  }
+}
 
 //ble interface
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context){

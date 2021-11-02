@@ -79,15 +79,11 @@ void setup() {
 
   EEPROM.get(100, recordingInterval);
   EEPROM.get(0, dsid);
-  WITH_LOCK(Serial) {
-    Serial.println(recordingInterval);
-  }
+  Serial.println(recordingInterval);
   EEPROM.get(200, reportingInterval);
   reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
-  WITH_LOCK(Serial) {
-    Serial.printlnf("recordingInterval: %i", recordingInterval);
-    Serial.printlnf("reportingInterval: %i", reportingInterval);
-  }
+  Serial.printlnf("recordingInterval: %i", recordingInterval);
+  Serial.printlnf("reportingInterval: %i", reportingInterval);
   if(recordingInterval == -1) {
     recordingInterval = 500; //default value
   }
@@ -103,14 +99,10 @@ void setup() {
     delay(100);
   }
   if(WiFi.ready() != true) {
-    WITH_LOCK(Serial) {
-      Serial.println("WiFi failed to connect, skipping time synchronization");
-    }
+    Serial.println("WiFi failed to connect, skipping time synchronization");
   }
   else {
-    WITH_LOCK(Serial) {
-      Serial.println("WiFi connected, syncing time");
-    }
+    Serial.println("WiFi connected, syncing time");
     Particle.connect();
     while(!Particle.connected()) {
       //Particle.process();
@@ -120,9 +112,7 @@ void setup() {
     while(Particle.syncTimePending()) {
       Particle.process();
     }
-    WITH_LOCK(Serial) {
-      Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
-    }
+    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
   }
   WiFi.off();
 }
@@ -220,9 +210,9 @@ void reportingThread(void) {
     //Serial.println("reportingThread");
     //delay(reportingInterval * 1000);
     //sync time
-    WITH_LOCK(Serial) {
+    /*WITH_LOCK(Serial) {
       Serial.println("runningReporting");
-    }
+    }*/
     if(storedValuesPos >= ((reportingInterval * 1000) / recordingInterval)) {
       WITH_LOCK(Serial) {
         Serial.println("reporting");
@@ -254,6 +244,7 @@ void reportingThread(void) {
       }
       WiFi.off();
     }
+    os_thread_yield();
   }
 }
 

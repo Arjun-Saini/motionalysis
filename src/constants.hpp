@@ -1,4 +1,4 @@
-#include <Adafruit_LIS3DH.h>
+#pragma once
 
 #define kBLEConnectedLED D7
 #define kHTTPRequestPort 80
@@ -14,5 +14,3 @@
 #define kWiFiCheckInterval 100 // in milliseconds
 #define kDeltaAccelThreshold 0.05 // in g
 #define kSecondsToMilliseconds 1000
-
-Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();

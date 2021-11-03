@@ -6,8 +6,10 @@ SYSTEM_THREAD(ENABLED)
  * Author: trylaarsdam
  * Date:
  */
-#include "HttpClient/HttpClient.h"
 #include "constants.hpp"
+#include "http.hpp"
+#include "initHardware.hpp"
+#include "systemSync.hpp"
 
 int recordingInterval; // interval between lis3dh reads
 int reportingInterval; // interval between reporting data to server in seconds
@@ -31,20 +33,6 @@ String bleInputBuffer; // buffer for reading from BLE and writing to EEPROM
 int bleQuestionCount, dsid, size;
 bool waitingForOTA = false;
 
-//setup for http connection
-HttpClient http;
-http_header_t headers[] = {
-  {"Accept", "application/json"},
-  {"Content-Type", "application/json"},
-  {NULL, NULL}
-};
-http_request_t request;
-http_response_t response;
-
-
-int networkCount;
-WiFiAccessPoint networks[5];
-String networkBuffer;
 
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context);
 
@@ -75,51 +63,6 @@ void initFromEEPROM() {
   if(dsid == kEEPROMEmptyValue) {
     Serial.println("DSID not stored in EEPROM. BLE config required"); 
     //TODO notify user somehow
-  }
-}
-
-void syncSystemTime() {
-  int WiFiConnectCountdown = kWiFiConnectionTimeout;
-
-  WiFi.on();
-  WiFi.connect();
-  //wait for WiFi to connect for kWiFiConnectionTimeout
-  while(!WiFi.ready() && WiFiConnectCountdown <= 0) {
-    WiFiConnectCountdown = WiFiConnectCountdown - kWiFiCheckInterval;
-    delay(kWiFiCheckInterval);
-  }
-  if(WiFi.ready()) {
-    Serial.println("WiFi connected, syncing time");
-    Particle.connect();
-    while(!Particle.connected()) {} // wait forever until cloud connects
-    Particle.syncTime(); // is async
-    while(Particle.syncTimePending()) { // wait for syncTime to complete
-      Particle.process();
-    }
-    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
-  }
-  else {
-    Serial.println("WiFi failed to connect, skipping time synchronization");
-  }
-
-  WiFi.off();
-}
-
-void HTTPRequestSetup() {
-  request.hostname = kHTTPHostname;
-  request.port = kHTTPRequestPort;
-  request.path = "/";
-}
-
-void initHardware() {
-  System.enableReset(); //allows System.reset() to work
-  pinMode(kBLEConnectedLED, OUTPUT); //BLE connected indicator 
-  digitalWrite(kBLEConnectedLED, LOW);
-  if(!lis3dh.begin(kLis3dhAddress)) {
-    delay(1000);
-    WITH_LOCK(Serial) {
-      Serial.println("Failed to initialize LIS3DH");
-    }
   }
 }
 
@@ -322,7 +265,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         //go back to ssid prompt if credentials are cleared
         WiFi.clearCredentials();
         bleQuestionCount = 0;
-        goto SSID;
+        goto SSID; //TODO let kevin have fun fixing this
       }else{
         //password prompt if ssid entered
         txCharacteristic.setValue("\nEnter network password: ");

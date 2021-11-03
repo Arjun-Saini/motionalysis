@@ -19,23 +19,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   7 .module_info_crc 00000004  000ba830  000ba830  0002a830  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .debug_info   0011d4bf  00000000  00000000  0002a834  2**0
+  8 .debug_info   0011d4a9  00000000  00000000  0002a834  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
-  9 .debug_abbrev 00013273  00000000  00000000  00147cf3  2**0
+  9 .debug_abbrev 00013273  00000000  00000000  00147cdd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 10 .debug_loc    000391d0  00000000  00000000  0015af66  2**0
+ 10 .debug_loc    000391d0  00000000  00000000  0015af50  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 11 .debug_aranges 00003180  00000000  00000000  00194136  2**0
+ 11 .debug_aranges 00003180  00000000  00000000  00194120  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 12 .debug_ranges 0000aeb8  00000000  00000000  001972b6  2**0
+ 12 .debug_ranges 0000aeb8  00000000  00000000  001972a0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_macro  00037e43  00000000  00000000  001a216e  2**0
+ 13 .debug_macro  00037e48  00000000  00000000  001a2158  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_line   0003f408  00000000  00000000  001d9fb1  2**0
+ 14 .debug_line   0003f418  00000000  00000000  001d9fa0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str    0012a728  00000000  00000000  002193b9  2**0
+ 15 .debug_str    0012a728  00000000  00000000  002193b8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_frame  00008a48  00000000  00000000  00343ae4  2**2
+ 16 .debug_frame  00008a48  00000000  00000000  00343ae0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -430,216 +430,214 @@ void HTTPRequestSetup() {
    b41c0:	000b99b4 	.word	0x000b99b4
    b41c4:	000b99c0 	.word	0x000b99c0
 
-000b41c8 <_Z14syncSystemTimev>:
-#pragma once
-
-#include "constants.hpp"
-
-void syncSystemTime() {
-   b41c8:	b51f      	push	{r0, r1, r2, r3, r4, lr}
-  int WiFiConnectCountdown = kWiFiConnectionTimeout;
-
-  WiFi.on();
-   b41ca:	4825      	ldr	r0, [pc, #148]	; (b4260 <_Z14syncSystemTimev+0x98>)
-   b41cc:	f7ff ffd0 	bl	b4170 <_ZN5spark9WiFiClass2onEv>
-  WiFi.connect();
-   b41d0:	4823      	ldr	r0, [pc, #140]	; (b4260 <_Z14syncSystemTimev+0x98>)
-   b41d2:	2100      	movs	r1, #0
-   b41d4:	f7ff ffd8 	bl	b4188 <_ZN5spark9WiFiClass7connectEj>
-  //wait for WiFi to connect for kWiFiConnectionTimeout
-  while(!WiFi.ready() && WiFiConnectCountdown <= 0) {
-   b41d8:	4821      	ldr	r0, [pc, #132]	; (b4260 <_Z14syncSystemTimev+0x98>)
-   b41da:	f7ff ffda 	bl	b4192 <_ZN5spark9WiFiClass5readyEv>
-    WiFiConnectCountdown = WiFiConnectCountdown - kWiFiCheckInterval;
-    delay(kWiFiCheckInterval);
-  }
-  if(WiFi.ready()) {
-   b41de:	4820      	ldr	r0, [pc, #128]	; (b4260 <_Z14syncSystemTimev+0x98>)
-   b41e0:	f7ff ffd7 	bl	b4192 <_ZN5spark9WiFiClass5readyEv>
-   b41e4:	b3a8      	cbz	r0, b4252 <_Z14syncSystemTimev+0x8a>
-    Serial.println("WiFi connected, syncing time");
-   b41e6:	f004 fcc3 	bl	b8b70 <_Z16_fetch_usbserialv>
-   b41ea:	491e      	ldr	r1, [pc, #120]	; (b4264 <_Z14syncSystemTimev+0x9c>)
-   b41ec:	f003 fde5 	bl	b7dba <_ZN5Print7printlnEPKc>
-    { SystemClass::sleep(wakeUpPin, edgeTriggerMode, seconds); }
-
-    static bool connected(void) { return spark_cloud_flag_connected(); }
-    static bool disconnected(void) { return !connected(); }
-    static void connect(void) {
-        spark_cloud_flag_connect();
-   b41f0:	f002 f86a 	bl	b62c8 <spark_cloud_flag_connect>
-    static bool connected(void) { return spark_cloud_flag_connected(); }
-   b41f4:	f002 f870 	bl	b62d8 <spark_cloud_flag_connected>
-    Particle.connect();
-    while(!Particle.connected()) {} // wait forever until cloud connects
-   b41f8:	2800      	cmp	r0, #0
-   b41fa:	d0fb      	beq.n	b41f4 <_Z14syncSystemTimev+0x2c>
-   b41fc:	f002 f86c 	bl	b62d8 <spark_cloud_flag_connected>
-        if (!connected()) {
-   b4200:	b110      	cbz	r0, b4208 <_Z14syncSystemTimev+0x40>
-        return spark_sync_time(NULL);
-   b4202:	2000      	movs	r0, #0
-   b4204:	f002 f870 	bl	b62e8 <spark_sync_time>
-	/**
-	 * Lifesign that the application is still working normally.
-	 */
-	static void checkin()
-	{
-		last_checkin = current_time();
-   b4208:	4c17      	ldr	r4, [pc, #92]	; (b4268 <_Z14syncSystemTimev+0xa0>)
-    static bool connected(void) { return spark_cloud_flag_connected(); }
-   b420a:	f002 f865 	bl	b62d8 <spark_cloud_flag_connected>
-        return connected() && spark_sync_time_pending(nullptr);
-   b420e:	b148      	cbz	r0, b4224 <_Z14syncSystemTimev+0x5c>
-   b4210:	2000      	movs	r0, #0
-   b4212:	f002 f871 	bl	b62f8 <spark_sync_time_pending>
-   b4216:	b128      	cbz	r0, b4224 <_Z14syncSystemTimev+0x5c>
-		return HAL_Timer_Get_Milli_Seconds();
-   b4218:	f001 fe00 	bl	b5e1c <HAL_Timer_Get_Milli_Seconds>
-		last_checkin = current_time();
-   b421c:	6020      	str	r0, [r4, #0]
+000b41c8 <_Z14initFromEEPROMv>:
+      Serial.println("Failed to initialize LIS3DH");
     }
-    static void disconnect(const CloudDisconnectOptions& options = CloudDisconnectOptions());
-    static void process(void) {
-    		application_checkin();
-    		spark_process();
-   b421e:	f002 f84b 	bl	b62b8 <spark_process>
-    }
-   b4222:	e7f2      	b.n	b420a <_Z14syncSystemTimev+0x42>
-    Particle.syncTime(); // is async
-    while(Particle.syncTimePending()) { // wait for syncTime to complete
-      Particle.process();
-    }
-    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
-   b4224:	f004 fca4 	bl	b8b70 <_Z16_fetch_usbserialv>
-   b4228:	4604      	mov	r4, r0
-  static uint8_t isDST();
-
-        /* return string representation of the current time */
-        inline String timeStr()
-        {
-                return timeStr(now());
-   b422a:	f004 fba6 	bl	b897a <_ZN9TimeClass3nowEv>
-   b422e:	4602      	mov	r2, r0
-   b4230:	17c3      	asrs	r3, r0, #31
-   b4232:	4668      	mov	r0, sp
-   b4234:	f004 fb48 	bl	b88c8 <_ZN9TimeClass7timeStrEx>
-   b4238:	9a00      	ldr	r2, [sp, #0]
-   b423a:	490c      	ldr	r1, [pc, #48]	; (b426c <_Z14syncSystemTimev+0xa4>)
-   b423c:	4620      	mov	r0, r4
-   b423e:	f7ff ff89 	bl	b4154 <_ZN5Print8printlnfEPKcz>
-   b4242:	4668      	mov	r0, sp
-   b4244:	f003 fec0 	bl	b7fc8 <_ZN6StringD1Ev>
   }
-  else {
-    Serial.println("WiFi failed to connect, skipping time synchronization");
-  }
-
-  WiFi.off();
-   b4248:	4805      	ldr	r0, [pc, #20]	; (b4260 <_Z14syncSystemTimev+0x98>)
-   b424a:	f7ff ff97 	bl	b417c <_ZN5spark9WiFiClass3offEv>
-   b424e:	b004      	add	sp, #16
-   b4250:	bd10      	pop	{r4, pc}
-    Serial.println("WiFi failed to connect, skipping time synchronization");
-   b4252:	f004 fc8d 	bl	b8b70 <_Z16_fetch_usbserialv>
-   b4256:	4906      	ldr	r1, [pc, #24]	; (b4270 <_Z14syncSystemTimev+0xa8>)
-   b4258:	f003 fdaf 	bl	b7dba <_ZN5Print7printlnEPKc>
-   b425c:	e7f4      	b.n	b4248 <_Z14syncSystemTimev+0x80>
-   b425e:	bf00      	nop
-   b4260:	2003e7c0 	.word	0x2003e7c0
-   b4264:	000b99c2 	.word	0x000b99c2
-   b4268:	2003e7d0 	.word	0x2003e7d0
-   b426c:	000b99df 	.word	0x000b99df
-   b4270:	000b99f3 	.word	0x000b99f3
-
-000b4274 <_Z14initFromEEPROMv>:
-
-void reportingThread(void* args);
-os_thread_t reportingThreadHandle;
-os_mutex_t payloadAccessLock;
+}
 
 void initFromEEPROM() {
-   b4274:	b538      	push	{r3, r4, r5, lr}
+   b41c8:	b538      	push	{r3, r4, r5, lr}
     uint16_t length()                    { return HAL_EEPROM_Length(); }
 
     //Functionality to 'get' and 'put' objects to and from EEPROM.
     template <typename T> T &get( int idx, T &t )
     {
         HAL_EEPROM_Get(idx, &t, sizeof(T));
-   b4276:	4d20      	ldr	r5, [pc, #128]	; (b42f8 <_Z14initFromEEPROMv+0x84>)
-   b4278:	4c20      	ldr	r4, [pc, #128]	; (b42fc <_Z14initFromEEPROMv+0x88>)
+   b41ca:	4d20      	ldr	r5, [pc, #128]	; (b424c <_Z14initFromEEPROMv+0x84>)
+   b41cc:	4c20      	ldr	r4, [pc, #128]	; (b4250 <_Z14initFromEEPROMv+0x88>)
   EEPROM.get(kRecordingIntervalEEPROMAddress, recordingInterval);
-   b427a:	f004 fe59 	bl	b8f30 <_Z21__fetch_global_EEPROMv>
-   b427e:	2204      	movs	r2, #4
-   b4280:	4629      	mov	r1, r5
-   b4282:	2064      	movs	r0, #100	; 0x64
-   b4284:	f001 fdda 	bl	b5e3c <HAL_EEPROM_Get>
+   b41ce:	f004 feaf 	bl	b8f30 <_Z21__fetch_global_EEPROMv>
+   b41d2:	2204      	movs	r2, #4
+   b41d4:	4629      	mov	r1, r5
+   b41d6:	2064      	movs	r0, #100	; 0x64
+   b41d8:	f001 fe30 	bl	b5e3c <HAL_EEPROM_Get>
   EEPROM.get(kDsidEEPROMAddress, dsid);
-   b4288:	f004 fe52 	bl	b8f30 <_Z21__fetch_global_EEPROMv>
-   b428c:	491c      	ldr	r1, [pc, #112]	; (b4300 <_Z14initFromEEPROMv+0x8c>)
-   b428e:	2204      	movs	r2, #4
-   b4290:	2000      	movs	r0, #0
-   b4292:	f001 fdd3 	bl	b5e3c <HAL_EEPROM_Get>
+   b41dc:	f004 fea8 	bl	b8f30 <_Z21__fetch_global_EEPROMv>
+   b41e0:	491c      	ldr	r1, [pc, #112]	; (b4254 <_Z14initFromEEPROMv+0x8c>)
+   b41e2:	2204      	movs	r2, #4
+   b41e4:	2000      	movs	r0, #0
+   b41e6:	f001 fe29 	bl	b5e3c <HAL_EEPROM_Get>
   EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
-   b4296:	f004 fe4b 	bl	b8f30 <_Z21__fetch_global_EEPROMv>
-   b429a:	4621      	mov	r1, r4
-   b429c:	2204      	movs	r2, #4
-   b429e:	20c8      	movs	r0, #200	; 0xc8
-   b42a0:	f001 fdcc 	bl	b5e3c <HAL_EEPROM_Get>
+   b41ea:	f004 fea1 	bl	b8f30 <_Z21__fetch_global_EEPROMv>
+   b41ee:	4621      	mov	r1, r4
+   b41f0:	2204      	movs	r2, #4
+   b41f2:	20c8      	movs	r0, #200	; 0xc8
+   b41f4:	f001 fe22 	bl	b5e3c <HAL_EEPROM_Get>
   reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
-   b42a4:	6823      	ldr	r3, [r4, #0]
-   b42a6:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
-   b42aa:	fb93 f3f2 	sdiv	r3, r3, r2
-   b42ae:	6023      	str	r3, [r4, #0]
+   b41f8:	6823      	ldr	r3, [r4, #0]
+   b41fa:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+   b41fe:	fb93 f3f2 	sdiv	r3, r3, r2
+   b4202:	6023      	str	r3, [r4, #0]
   Serial.printlnf("recordingInterval: %i", recordingInterval);
-   b42b0:	f004 fc5e 	bl	b8b70 <_Z16_fetch_usbserialv>
-   b42b4:	682a      	ldr	r2, [r5, #0]
-   b42b6:	4913      	ldr	r1, [pc, #76]	; (b4304 <_Z14initFromEEPROMv+0x90>)
-   b42b8:	f7ff ff4c 	bl	b4154 <_ZN5Print8printlnfEPKcz>
+   b4204:	f004 fcb4 	bl	b8b70 <_Z16_fetch_usbserialv>
+   b4208:	682a      	ldr	r2, [r5, #0]
+   b420a:	4913      	ldr	r1, [pc, #76]	; (b4258 <_Z14initFromEEPROMv+0x90>)
+   b420c:	f7ff ffa2 	bl	b4154 <_ZN5Print8printlnfEPKcz>
   Serial.printlnf("reportingInterval: %i", reportingInterval);
-   b42bc:	f004 fc58 	bl	b8b70 <_Z16_fetch_usbserialv>
-   b42c0:	6822      	ldr	r2, [r4, #0]
-   b42c2:	4911      	ldr	r1, [pc, #68]	; (b4308 <_Z14initFromEEPROMv+0x94>)
-   b42c4:	f7ff ff46 	bl	b4154 <_ZN5Print8printlnfEPKcz>
+   b4210:	f004 fcae 	bl	b8b70 <_Z16_fetch_usbserialv>
+   b4214:	6822      	ldr	r2, [r4, #0]
+   b4216:	4911      	ldr	r1, [pc, #68]	; (b425c <_Z14initFromEEPROMv+0x94>)
+   b4218:	f7ff ff9c 	bl	b4154 <_ZN5Print8printlnfEPKcz>
   if(recordingInterval == kEEPROMEmptyValue) { // if no value stored in EEPROM, set to default
-   b42c8:	682b      	ldr	r3, [r5, #0]
-   b42ca:	3301      	adds	r3, #1
+   b421c:	682b      	ldr	r3, [r5, #0]
+   b421e:	3301      	adds	r3, #1
     recordingInterval = kDefaultRecordingInterval; //default value
-   b42cc:	bf04      	itt	eq
-   b42ce:	f44f 73fa 	moveq.w	r3, #500	; 0x1f4
-   b42d2:	602b      	streq	r3, [r5, #0]
+   b4220:	bf04      	itt	eq
+   b4222:	f44f 73fa 	moveq.w	r3, #500	; 0x1f4
+   b4226:	602b      	streq	r3, [r5, #0]
   }
   if(reportingInterval == kEEPROMEmptyValue) {
-   b42d4:	6823      	ldr	r3, [r4, #0]
-   b42d6:	3301      	adds	r3, #1
+   b4228:	6823      	ldr	r3, [r4, #0]
+   b422a:	3301      	adds	r3, #1
     reportingInterval = kDefaultReportingInterval; //default value
-   b42d8:	bf04      	itt	eq
-   b42da:	230f      	moveq	r3, #15
-   b42dc:	6023      	streq	r3, [r4, #0]
+   b422c:	bf04      	itt	eq
+   b422e:	230f      	moveq	r3, #15
+   b4230:	6023      	streq	r3, [r4, #0]
   }
   if(dsid == kEEPROMEmptyValue) {
-   b42de:	4b08      	ldr	r3, [pc, #32]	; (b4300 <_Z14initFromEEPROMv+0x8c>)
-   b42e0:	681b      	ldr	r3, [r3, #0]
-   b42e2:	3301      	adds	r3, #1
-   b42e4:	d106      	bne.n	b42f4 <_Z14initFromEEPROMv+0x80>
+   b4232:	4b08      	ldr	r3, [pc, #32]	; (b4254 <_Z14initFromEEPROMv+0x8c>)
+   b4234:	681b      	ldr	r3, [r3, #0]
+   b4236:	3301      	adds	r3, #1
+   b4238:	d106      	bne.n	b4248 <_Z14initFromEEPROMv+0x80>
     Serial.println("DSID not stored in EEPROM. BLE config required"); 
-   b42e6:	f004 fc43 	bl	b8b70 <_Z16_fetch_usbserialv>
+   b423a:	f004 fc99 	bl	b8b70 <_Z16_fetch_usbserialv>
     //TODO notify user somehow
   }
-}
-   b42ea:	e8bd 4038 	ldmia.w	sp!, {r3, r4, r5, lr}
+   b423e:	e8bd 4038 	ldmia.w	sp!, {r3, r4, r5, lr}
     Serial.println("DSID not stored in EEPROM. BLE config required"); 
-   b42ee:	4907      	ldr	r1, [pc, #28]	; (b430c <_Z14initFromEEPROMv+0x98>)
-   b42f0:	f003 bd63 	b.w	b7dba <_ZN5Print7printlnEPKc>
-}
-   b42f4:	bd38      	pop	{r3, r4, r5, pc}
-   b42f6:	bf00      	nop
-   b42f8:	2003e070 	.word	0x2003e070
-   b42fc:	2003e074 	.word	0x2003e074
-   b4300:	2003dac4 	.word	0x2003dac4
-   b4304:	000b9a29 	.word	0x000b9a29
-   b4308:	000b9a3f 	.word	0x000b9a3f
-   b430c:	000b9a55 	.word	0x000b9a55
+   b4242:	4907      	ldr	r1, [pc, #28]	; (b4260 <_Z14initFromEEPROMv+0x98>)
+   b4244:	f003 bdb9 	b.w	b7dba <_ZN5Print7printlnEPKc>
+   b4248:	bd38      	pop	{r3, r4, r5, pc}
+   b424a:	bf00      	nop
+   b424c:	2003e070 	.word	0x2003e070
+   b4250:	2003e074 	.word	0x2003e074
+   b4254:	2003dac4 	.word	0x2003dac4
+   b4258:	000b99c2 	.word	0x000b99c2
+   b425c:	000b99d8 	.word	0x000b99d8
+   b4260:	000b99ee 	.word	0x000b99ee
+
+000b4264 <_Z14syncSystemTimev>:
+#pragma once
+#include "globalVariables.hpp"
+#include "constants.hpp"
+
+void syncSystemTime() {
+   b4264:	b51f      	push	{r0, r1, r2, r3, r4, lr}
+  int WiFiConnectCountdown = kWiFiConnectionTimeout;
+
+  WiFi.on();
+   b4266:	4825      	ldr	r0, [pc, #148]	; (b42fc <_Z14syncSystemTimev+0x98>)
+   b4268:	f7ff ff82 	bl	b4170 <_ZN5spark9WiFiClass2onEv>
+  WiFi.connect();
+   b426c:	4823      	ldr	r0, [pc, #140]	; (b42fc <_Z14syncSystemTimev+0x98>)
+   b426e:	2100      	movs	r1, #0
+   b4270:	f7ff ff8a 	bl	b4188 <_ZN5spark9WiFiClass7connectEj>
+  //wait for WiFi to connect for kWiFiConnectionTimeout
+  while(!WiFi.ready() && WiFiConnectCountdown <= 0) {
+   b4274:	4821      	ldr	r0, [pc, #132]	; (b42fc <_Z14syncSystemTimev+0x98>)
+   b4276:	f7ff ff8c 	bl	b4192 <_ZN5spark9WiFiClass5readyEv>
+    WiFiConnectCountdown = WiFiConnectCountdown - kWiFiCheckInterval;
+    delay(kWiFiCheckInterval);
+  }
+  if(WiFi.ready()) {
+   b427a:	4820      	ldr	r0, [pc, #128]	; (b42fc <_Z14syncSystemTimev+0x98>)
+   b427c:	f7ff ff89 	bl	b4192 <_ZN5spark9WiFiClass5readyEv>
+   b4280:	b3a8      	cbz	r0, b42ee <_Z14syncSystemTimev+0x8a>
+    Serial.println("WiFi connected, syncing time");
+   b4282:	f004 fc75 	bl	b8b70 <_Z16_fetch_usbserialv>
+   b4286:	491e      	ldr	r1, [pc, #120]	; (b4300 <_Z14syncSystemTimev+0x9c>)
+   b4288:	f003 fd97 	bl	b7dba <_ZN5Print7printlnEPKc>
+    { SystemClass::sleep(wakeUpPin, edgeTriggerMode, seconds); }
+
+    static bool connected(void) { return spark_cloud_flag_connected(); }
+    static bool disconnected(void) { return !connected(); }
+    static void connect(void) {
+        spark_cloud_flag_connect();
+   b428c:	f002 f81c 	bl	b62c8 <spark_cloud_flag_connect>
+    static bool connected(void) { return spark_cloud_flag_connected(); }
+   b4290:	f002 f822 	bl	b62d8 <spark_cloud_flag_connected>
+    Particle.connect();
+    while(!Particle.connected()) {} // wait forever until cloud connects
+   b4294:	2800      	cmp	r0, #0
+   b4296:	d0fb      	beq.n	b4290 <_Z14syncSystemTimev+0x2c>
+   b4298:	f002 f81e 	bl	b62d8 <spark_cloud_flag_connected>
+        if (!connected()) {
+   b429c:	b110      	cbz	r0, b42a4 <_Z14syncSystemTimev+0x40>
+        return spark_sync_time(NULL);
+   b429e:	2000      	movs	r0, #0
+   b42a0:	f002 f822 	bl	b62e8 <spark_sync_time>
+	/**
+	 * Lifesign that the application is still working normally.
+	 */
+	static void checkin()
+	{
+		last_checkin = current_time();
+   b42a4:	4c17      	ldr	r4, [pc, #92]	; (b4304 <_Z14syncSystemTimev+0xa0>)
+    static bool connected(void) { return spark_cloud_flag_connected(); }
+   b42a6:	f002 f817 	bl	b62d8 <spark_cloud_flag_connected>
+        return connected() && spark_sync_time_pending(nullptr);
+   b42aa:	b148      	cbz	r0, b42c0 <_Z14syncSystemTimev+0x5c>
+   b42ac:	2000      	movs	r0, #0
+   b42ae:	f002 f823 	bl	b62f8 <spark_sync_time_pending>
+   b42b2:	b128      	cbz	r0, b42c0 <_Z14syncSystemTimev+0x5c>
+		return HAL_Timer_Get_Milli_Seconds();
+   b42b4:	f001 fdb2 	bl	b5e1c <HAL_Timer_Get_Milli_Seconds>
+		last_checkin = current_time();
+   b42b8:	6020      	str	r0, [r4, #0]
+    }
+    static void disconnect(const CloudDisconnectOptions& options = CloudDisconnectOptions());
+    static void process(void) {
+    		application_checkin();
+    		spark_process();
+   b42ba:	f001 fffd 	bl	b62b8 <spark_process>
+    }
+   b42be:	e7f2      	b.n	b42a6 <_Z14syncSystemTimev+0x42>
+    Particle.syncTime(); // is async
+    while(Particle.syncTimePending()) { // wait for syncTime to complete
+      Particle.process();
+    }
+    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
+   b42c0:	f004 fc56 	bl	b8b70 <_Z16_fetch_usbserialv>
+   b42c4:	4604      	mov	r4, r0
+  static uint8_t isDST();
+
+        /* return string representation of the current time */
+        inline String timeStr()
+        {
+                return timeStr(now());
+   b42c6:	f004 fb58 	bl	b897a <_ZN9TimeClass3nowEv>
+   b42ca:	4602      	mov	r2, r0
+   b42cc:	17c3      	asrs	r3, r0, #31
+   b42ce:	4668      	mov	r0, sp
+   b42d0:	f004 fafa 	bl	b88c8 <_ZN9TimeClass7timeStrEx>
+   b42d4:	9a00      	ldr	r2, [sp, #0]
+   b42d6:	490c      	ldr	r1, [pc, #48]	; (b4308 <_Z14syncSystemTimev+0xa4>)
+   b42d8:	4620      	mov	r0, r4
+   b42da:	f7ff ff3b 	bl	b4154 <_ZN5Print8printlnfEPKcz>
+   b42de:	4668      	mov	r0, sp
+   b42e0:	f003 fe72 	bl	b7fc8 <_ZN6StringD1Ev>
+  }
+  else {
+    Serial.println("WiFi failed to connect, skipping time synchronization");
+  }
+
+  WiFi.off();
+   b42e4:	4805      	ldr	r0, [pc, #20]	; (b42fc <_Z14syncSystemTimev+0x98>)
+   b42e6:	f7ff ff49 	bl	b417c <_ZN5spark9WiFiClass3offEv>
+   b42ea:	b004      	add	sp, #16
+   b42ec:	bd10      	pop	{r4, pc}
+    Serial.println("WiFi failed to connect, skipping time synchronization");
+   b42ee:	f004 fc3f 	bl	b8b70 <_Z16_fetch_usbserialv>
+   b42f2:	4906      	ldr	r1, [pc, #24]	; (b430c <_Z14syncSystemTimev+0xa8>)
+   b42f4:	f003 fd61 	bl	b7dba <_ZN5Print7printlnEPKc>
+   b42f8:	e7f4      	b.n	b42e4 <_Z14syncSystemTimev+0x80>
+   b42fa:	bf00      	nop
+   b42fc:	2003e7c0 	.word	0x2003e7c0
+   b4300:	000b9a1d 	.word	0x000b9a1d
+   b4304:	2003e7d0 	.word	0x2003e7d0
+   b4308:	000b9a3a 	.word	0x000b9a3a
+   b430c:	000b9a4e 	.word	0x000b9a4e
 
 000b4310 <_ZNSt10lock_guardIR9USBSerialED1Ev>:
       { _M_device.lock(); }
@@ -665,11 +663,6 @@ void initFromEEPROM() {
    b4322:	bd10      	pop	{r4, pc}
 
 000b4324 <_Z12initHardwarev>:
-
-
-Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
-
-
 void initHardware() {
    b4324:	b507      	push	{r0, r1, r2, lr}
         system_get_flag(flag, &value, nullptr);
@@ -682,7 +675,6 @@ void initHardware() {
    b4328:	2101      	movs	r1, #1
    b432a:	2003      	movs	r0, #3
    b432c:	f001 ff8e 	bl	b624c <system_set_flag>
-  System.enableReset(); //allows System.reset() to work
   pinMode(kBLEConnectedLED, OUTPUT); //BLE connected indicator 
    b4330:	2101      	movs	r1, #1
    b4332:	2007      	movs	r0, #7
@@ -712,8 +704,7 @@ void initHardware() {
     WITH_LOCK(Serial) {
    b4366:	a801      	add	r0, sp, #4
    b4368:	f7ff ffd2 	bl	b4310 <_ZNSt10lock_guardIR9USBSerialED1Ev>
-    }
-  }
+}
    b436c:	b003      	add	sp, #12
    b436e:	f85d fb04 	ldr.w	pc, [sp], #4
    b4372:	bf00      	nop
@@ -721,6 +712,9 @@ void initHardware() {
    b4378:	000b9a84 	.word	0x000b9a84
 
 000b437c <setup>:
+void reportingThread(void* args);
+os_thread_t reportingThreadHandle;
+os_mutex_t payloadAccessLock;
 
 // setup() runs once, when the device is first turned on.
 void setup() {
@@ -740,9 +734,9 @@ void setup() {
   HTTPRequestSetup();
    b439a:	f7ff feff 	bl	b419c <_Z16HTTPRequestSetupv>
   initFromEEPROM();
-   b439e:	f7ff ff69 	bl	b4274 <_Z14initFromEEPROMv>
+   b439e:	f7ff ff13 	bl	b41c8 <_Z14initFromEEPROMv>
   syncSystemTime();
-   b43a2:	f7ff ff11 	bl	b41c8 <_Z14syncSystemTimev>
+   b43a2:	f7ff ff5f 	bl	b4264 <_Z14syncSystemTimev>
 
   os_mutex_create(&payloadAccessLock);
    b43a6:	4808      	ldr	r0, [pc, #32]	; (b43c8 <setup+0x4c>)
@@ -2351,7 +2345,7 @@ class StringSumHelper : public String
    b5060:	2003daac 	.word	0x2003daac
    b5064:	2003e610 	.word	0x2003e610
    b5068:	2003e7c0 	.word	0x2003e7c0
-   b506c:	000b99f3 	.word	0x000b99f3
+   b506c:	000b9a4e 	.word	0x000b9a4e
    b5070:	000b9e18 	.word	0x000b9e18
    b5074:	000b9e38 	.word	0x000b9e38
    b5078:	2003e5f8 	.word	0x2003e5f8
@@ -2504,51 +2498,61 @@ String networkBuffer;
    b5168:	494f      	ldr	r1, [pc, #316]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
    b516a:	484e      	ldr	r0, [pc, #312]	; (b52a4 <_GLOBAL__sub_I_SystemMode+0x1d0>)
    b516c:	f003 ff34 	bl	b8fd8 <__aeabi_atexit>
-Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
-   b5170:	484e      	ldr	r0, [pc, #312]	; (b52ac <_GLOBAL__sub_I_SystemMode+0x1d8>)
-   b5172:	f000 f8d9 	bl	b5328 <_ZN15Adafruit_LIS3DHC1Ev>
-   b5176:	4a3d      	ldr	r2, [pc, #244]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
-   b5178:	494d      	ldr	r1, [pc, #308]	; (b52b0 <_GLOBAL__sub_I_SystemMode+0x1dc>)
-   b517a:	484c      	ldr	r0, [pc, #304]	; (b52ac <_GLOBAL__sub_I_SystemMode+0x1d8>)
-   b517c:	f003 ff2c 	bl	b8fd8 <__aeabi_atexit>
+#pragma once
+
+int recordingInterval; // interval between lis3dh reads
+int reportingInterval; // interval between reporting data to server in seconds
 String payload = "";
-   b5180:	493f      	ldr	r1, [pc, #252]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
-   b5182:	484c      	ldr	r0, [pc, #304]	; (b52b4 <_GLOBAL__sub_I_SystemMode+0x1e0>)
-   b5184:	f002 ff6b 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
-   b5188:	4a38      	ldr	r2, [pc, #224]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
-   b518a:	4947      	ldr	r1, [pc, #284]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
-   b518c:	4849      	ldr	r0, [pc, #292]	; (b52b4 <_GLOBAL__sub_I_SystemMode+0x1e0>)
-   b518e:	f003 ff23 	bl	b8fd8 <__aeabi_atexit>
+   b5170:	4943      	ldr	r1, [pc, #268]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
+   b5172:	484e      	ldr	r0, [pc, #312]	; (b52ac <_GLOBAL__sub_I_SystemMode+0x1d8>)
+   b5174:	f002 ff73 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
+   b5178:	4a3c      	ldr	r2, [pc, #240]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
+   b517a:	494b      	ldr	r1, [pc, #300]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
+   b517c:	484b      	ldr	r0, [pc, #300]	; (b52ac <_GLOBAL__sub_I_SystemMode+0x1d8>)
+   b517e:	f003 ff2b 	bl	b8fd8 <__aeabi_atexit>
+bool valuesChanged = false;
 String unixTime;
-   b5192:	493b      	ldr	r1, [pc, #236]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
-   b5194:	4848      	ldr	r0, [pc, #288]	; (b52b8 <_GLOBAL__sub_I_SystemMode+0x1e4>)
-   b5196:	f002 ff62 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
-   b519a:	4a34      	ldr	r2, [pc, #208]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
-   b519c:	4942      	ldr	r1, [pc, #264]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
-   b519e:	4846      	ldr	r0, [pc, #280]	; (b52b8 <_GLOBAL__sub_I_SystemMode+0x1e4>)
-   b51a0:	f003 ff1a 	bl	b8fd8 <__aeabi_atexit>
+   b5182:	493f      	ldr	r1, [pc, #252]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
+   b5184:	484a      	ldr	r0, [pc, #296]	; (b52b0 <_GLOBAL__sub_I_SystemMode+0x1dc>)
+   b5186:	f002 ff6a 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
+   b518a:	4a38      	ldr	r2, [pc, #224]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
+   b518c:	4946      	ldr	r1, [pc, #280]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
+   b518e:	4848      	ldr	r0, [pc, #288]	; (b52b0 <_GLOBAL__sub_I_SystemMode+0x1dc>)
+   b5190:	f003 ff22 	bl	b8fd8 <__aeabi_atexit>
 String ssid, password = "";
-   b51a4:	4936      	ldr	r1, [pc, #216]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
-   b51a6:	4845      	ldr	r0, [pc, #276]	; (b52bc <_GLOBAL__sub_I_SystemMode+0x1e8>)
-   b51a8:	f002 ff59 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
-   b51ac:	4a2f      	ldr	r2, [pc, #188]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
-   b51ae:	493e      	ldr	r1, [pc, #248]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
-   b51b0:	4842      	ldr	r0, [pc, #264]	; (b52bc <_GLOBAL__sub_I_SystemMode+0x1e8>)
-   b51b2:	f003 ff11 	bl	b8fd8 <__aeabi_atexit>
-   b51b6:	4932      	ldr	r1, [pc, #200]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
-   b51b8:	4841      	ldr	r0, [pc, #260]	; (b52c0 <_GLOBAL__sub_I_SystemMode+0x1ec>)
-   b51ba:	f002 ff50 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
-   b51be:	4a2b      	ldr	r2, [pc, #172]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
-   b51c0:	4939      	ldr	r1, [pc, #228]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
-   b51c2:	483f      	ldr	r0, [pc, #252]	; (b52c0 <_GLOBAL__sub_I_SystemMode+0x1ec>)
-   b51c4:	f003 ff08 	bl	b8fd8 <__aeabi_atexit>
+   b5194:	493a      	ldr	r1, [pc, #232]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
+   b5196:	4847      	ldr	r0, [pc, #284]	; (b52b4 <_GLOBAL__sub_I_SystemMode+0x1e0>)
+   b5198:	f002 ff61 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
+   b519c:	4a33      	ldr	r2, [pc, #204]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
+   b519e:	4942      	ldr	r1, [pc, #264]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
+   b51a0:	4844      	ldr	r0, [pc, #272]	; (b52b4 <_GLOBAL__sub_I_SystemMode+0x1e0>)
+   b51a2:	f003 ff19 	bl	b8fd8 <__aeabi_atexit>
+   b51a6:	4936      	ldr	r1, [pc, #216]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
+   b51a8:	4843      	ldr	r0, [pc, #268]	; (b52b8 <_GLOBAL__sub_I_SystemMode+0x1e4>)
+   b51aa:	f002 ff58 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
+   b51ae:	4a2f      	ldr	r2, [pc, #188]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
+   b51b0:	493d      	ldr	r1, [pc, #244]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
+   b51b2:	4841      	ldr	r0, [pc, #260]	; (b52b8 <_GLOBAL__sub_I_SystemMode+0x1e4>)
+   b51b4:	f003 ff10 	bl	b8fd8 <__aeabi_atexit>
+  RECORDING,
+  SENDING
+};
+uint8_t firmwareState = BLEWAIT;
+bool bleWaitForConfig = false; //when true, firmware is waiting for user input over BLE b/c BLE was connected
 String bleInputBuffer; // buffer for reading from BLE and writing to EEPROM
-   b51c8:	492d      	ldr	r1, [pc, #180]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
-   b51ca:	483e      	ldr	r0, [pc, #248]	; (b52c4 <_GLOBAL__sub_I_SystemMode+0x1f0>)
-   b51cc:	f002 ff47 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
+   b51b8:	4931      	ldr	r1, [pc, #196]	; (b5280 <_GLOBAL__sub_I_SystemMode+0x1ac>)
+   b51ba:	4840      	ldr	r0, [pc, #256]	; (b52bc <_GLOBAL__sub_I_SystemMode+0x1e8>)
+   b51bc:	f002 ff4f 	bl	b805e <_ZN6StringC1EPK19__FlashStringHelper>
+   b51c0:	4a2a      	ldr	r2, [pc, #168]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
+   b51c2:	4939      	ldr	r1, [pc, #228]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
+   b51c4:	483d      	ldr	r0, [pc, #244]	; (b52bc <_GLOBAL__sub_I_SystemMode+0x1e8>)
+   b51c6:	f003 ff07 	bl	b8fd8 <__aeabi_atexit>
+Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
+   b51ca:	483d      	ldr	r0, [pc, #244]	; (b52c0 <_GLOBAL__sub_I_SystemMode+0x1ec>)
+   b51cc:	f000 f8ac 	bl	b5328 <_ZN15Adafruit_LIS3DHC1Ev>
    b51d0:	4a26      	ldr	r2, [pc, #152]	; (b526c <_GLOBAL__sub_I_SystemMode+0x198>)
-   b51d2:	4935      	ldr	r1, [pc, #212]	; (b52a8 <_GLOBAL__sub_I_SystemMode+0x1d4>)
-   b51d4:	483b      	ldr	r0, [pc, #236]	; (b52c4 <_GLOBAL__sub_I_SystemMode+0x1f0>)
+   b51d2:	493c      	ldr	r1, [pc, #240]	; (b52c4 <_GLOBAL__sub_I_SystemMode+0x1f0>)
+   b51d4:	483a      	ldr	r0, [pc, #232]	; (b52c0 <_GLOBAL__sub_I_SystemMode+0x1ec>)
    b51d6:	f003 feff 	bl	b8fd8 <__aeabi_atexit>
 const BleUuid serviceUuid("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
    b51da:	493b      	ldr	r1, [pc, #236]	; (b52c8 <_GLOBAL__sub_I_SystemMode+0x1f4>)
@@ -2629,13 +2633,13 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b52a0:	2003e0c8 	.word	0x2003e0c8
    b52a4:	2003df14 	.word	0x2003df14
    b52a8:	000b7fc9 	.word	0x000b7fc9
-   b52ac:	2003dee8 	.word	0x2003dee8
-   b52b0:	000b40b3 	.word	0x000b40b3
-   b52b4:	2003e050 	.word	0x2003e050
-   b52b8:	2003e600 	.word	0x2003e600
-   b52bc:	2003e0e4 	.word	0x2003e0e4
-   b52c0:	2003e040 	.word	0x2003e040
-   b52c4:	2003daac 	.word	0x2003daac
+   b52ac:	2003e050 	.word	0x2003e050
+   b52b0:	2003e600 	.word	0x2003e600
+   b52b4:	2003e0e4 	.word	0x2003e0e4
+   b52b8:	2003e040 	.word	0x2003e040
+   b52bc:	2003daac 	.word	0x2003daac
+   b52c0:	2003dee8 	.word	0x2003dee8
+   b52c4:	000b40b3 	.word	0x000b40b3
    b52c8:	000b9e4d 	.word	0x000b9e4d
    b52cc:	2003da70 	.word	0x2003da70
    b52d0:	000b9e72 	.word	0x000b9e72
@@ -14357,19 +14361,19 @@ TwoWire& __fetch_global_Wire()
 000b99a0 <dynalib_user>:
    b99a0:	000b4021 000b405d 000b4085 000b4089     !@..]@...@...@..
    b99b0:	00000000 69676964 65756c67 006f692e     ....digiglue.io.
-   b99c0:	6957002f 63206946 656e6e6f 64657463     /.WiFi connected
-   b99d0:	7973202c 6e69636e 69742067 4300656d     , syncing time.C
-   b99e0:	65727275 7420746e 20656d69 203a7369     urrent time is: 
-   b99f0:	57007325 20694669 6c696166 74206465     %s.WiFi failed t
-   b9a00:	6f63206f 63656e6e 73202c74 7070696b     o connect, skipp
-   b9a10:	20676e69 656d6974 6e797320 6f726863     ing time synchro
-   b9a20:	617a696e 6e6f6974 63657200 6964726f     nization.recordi
-   b9a30:	6e49676e 76726574 203a6c61 72006925     ngInterval: %i.r
-   b9a40:	726f7065 676e6974 65746e49 6c617672     eportingInterval
-   b9a50:	6925203a 49534400 6f6e2044 74732074     : %i.DSID not st
-   b9a60:	6465726f 206e6920 52504545 202e4d4f     ored in EEPROM. 
-   b9a70:	20454c42 666e6f63 72206769 69757165     BLE config requi
-   b9a80:	00646572 6c696146 74206465 6e69206f     red.Failed to in
+   b99c0:	6572002f 64726f63 49676e69 7265746e     /.recordingInter
+   b99d0:	3a6c6176 00692520 6f706572 6e697472     val: %i.reportin
+   b99e0:	746e4967 61767265 25203a6c 53440069     gInterval: %i.DS
+   b99f0:	6e204449 7320746f 65726f74 6e692064     ID not stored in
+   b9a00:	50454520 2e4d4f52 454c4220 6e6f6320      EEPROM. BLE con
+   b9a10:	20676966 75716572 64657269 46695700     fig required.WiF
+   b9a20:	6f632069 63656e6e 2c646574 6e797320     i connected, syn
+   b9a30:	676e6963 6d697420 75430065 6e657272     cing time.Curren
+   b9a40:	69742074 6920656d 25203a73 69570073     t time is: %s.Wi
+   b9a50:	66206946 656c6961 6f742064 6e6f6320     Fi failed to con
+   b9a60:	7463656e 6b73202c 69707069 7420676e     nect, skipping t
+   b9a70:	20656d69 636e7973 6e6f7268 74617a69     ime synchronizat
+   b9a80:	006e6f69 6c696146 74206465 6e69206f     ion.Failed to in
    b9a90:	61697469 657a696c 53494c20 00484433     itialize LIS3DH.
    b9aa0:	6f706572 68547472 64616572 46695700     reportThread.WiF
    b9ab0:	61662069 64656c69 206f7420 6e6e6f63     i failed to conn

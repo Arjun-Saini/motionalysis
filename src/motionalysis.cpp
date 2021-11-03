@@ -4,7 +4,6 @@
 
 #include "Particle.h"
 #line 1 "/Users/trylaarsdam/Documents/dev/motionalysis/src/motionalysis.ino"
-void initFromEEPROM();
 void setup();
 void loop();
 void reportData(String payload);
@@ -24,28 +23,7 @@ SYSTEM_THREAD(ENABLED)
 #include "http.hpp"
 #include "initHardware.hpp"
 #include "systemSync.hpp"
-
-int recordingInterval; // interval between lis3dh reads
-int reportingInterval; // interval between reporting data to server in seconds
-String payload = "";
-bool valuesChanged = false;
-String unixTime;
-String ssid, password = "";
-float x, y, z;
-uint8_t storedValues [256];
-long storedTimes [256];
-float prevX, prevY, prevZ;
-int storedValuesIndex = 0;
-enum firmwareStateEnum {
-  BLEWAIT,
-  RECORDING,
-  SENDING
-};
-uint8_t firmwareState = BLEWAIT;
-bool bleWaitForConfig = false; //when true, firmware is waiting for user input over BLE b/c BLE was connected
-String bleInputBuffer; // buffer for reading from BLE and writing to EEPROM
-int bleQuestionCount, dsid, size;
-bool waitingForOTA = false;
+#include "globalVariables.hpp"
 
 
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context);
@@ -61,25 +39,6 @@ void reportingThread(void* args);
 os_thread_t reportingThreadHandle;
 os_mutex_t payloadAccessLock;
 
-void initFromEEPROM() {
-  EEPROM.get(kRecordingIntervalEEPROMAddress, recordingInterval);
-  EEPROM.get(kDsidEEPROMAddress, dsid);
-  EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
-  reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
-  Serial.printlnf("recordingInterval: %i", recordingInterval);
-  Serial.printlnf("reportingInterval: %i", reportingInterval);
-  if(recordingInterval == kEEPROMEmptyValue) { // if no value stored in EEPROM, set to default
-    recordingInterval = kDefaultRecordingInterval; //default value
-  }
-  if(reportingInterval == kEEPROMEmptyValue) {
-    reportingInterval = kDefaultReportingInterval; //default value
-  }
-  if(dsid == kEEPROMEmptyValue) {
-    Serial.println("DSID not stored in EEPROM. BLE config required"); 
-    //TODO notify user somehow
-  }
-}
-
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
@@ -94,7 +53,6 @@ void setup() {
   os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
 }
 
-// loop() runs over and over again, as quickly as it can execute.
 bool firstLIS3DHReading = true; //sets first recorded value to 0
 void loop() {
   switch (firmwareState) {

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "globalVariables.hpp"
 #include "constants.hpp"
 
 void syncSystemTime() {

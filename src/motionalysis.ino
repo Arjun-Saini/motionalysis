@@ -132,9 +132,6 @@ void loop() {
 void reportingThread(void *args) {
   while(true) {
     if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
-      WITH_LOCK(Serial) {
-        Serial.println("reporting");
-      }
       os_mutex_lock(&payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
       for (int i = 0; i < storedValuesIndex; i++) {
         //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);

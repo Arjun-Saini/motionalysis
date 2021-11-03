@@ -6,14 +6,12 @@ SYSTEM_THREAD(ENABLED)
  * Author: trylaarsdam
  * Date:
  */
-#include <Adafruit_LIS3DH.h>
 #include "HttpClient/HttpClient.h"
+#include "constants.hpp"
 
-
-Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
 int recordingInterval; // interval between lis3dh reads
 int reportingInterval; // interval between reporting data to server in seconds
-String payload, prevPayload = "";
+String payload = "";
 bool valuesChanged = false;
 String unixTime;
 String ssid, password = "";
@@ -21,17 +19,17 @@ float x, y, z;
 uint8_t storedValues [256];
 long storedTimes [256];
 float prevX, prevY, prevZ;
-int storedValuesPos = 0;
+int storedValuesIndex = 0;
 enum firmwareStateEnum {
   BLEWAIT,
   RECORDING,
   SENDING
 };
 uint8_t firmwareState = BLEWAIT;
-bool bleWaitForConfig = false;
-String inputBuffer;
-int count, dsid, size;
-bool ota = false;
+bool bleWaitForConfig = false; //when true, firmware is waiting for user input over BLE b/c BLE was connected
+String bleInputBuffer; // buffer for reading from BLE and writing to EEPROM
+int bleQuestionCount, dsid, size;
+bool waitingForOTA = false;
 
 //setup for http connection
 HttpClient http;
@@ -57,67 +55,90 @@ const BleUuid txUuid("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
 BleCharacteristic txCharacteristic("tx", BleCharacteristicProperty::NOTIFY, txUuid, serviceUuid);
 BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP, rxUuid, serviceUuid, onDataReceived, NULL);
 
-void reportingThread(void);
+void reportingThread(void* args);
+os_thread_t reportingThreadHandle;
+os_mutex_t payloadAccessLock;
 
-// setup() runs once, when the device is first turned on.
-void setup() {
-  // Put initialization like pinMode and begin functions here.
-  pinMode(D7, OUTPUT);
-  System.enableReset();
-  request.hostname = "digiglue.io";
-  request.port = 80;
+void initFromEEPROM() {
+  EEPROM.get(kRecordingIntervalEEPROMAddress, recordingInterval);
+  EEPROM.get(kDsidEEPROMAddress, dsid);
+  EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
+  reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
+  Serial.printlnf("recordingInterval: %i", recordingInterval);
+  Serial.printlnf("reportingInterval: %i", reportingInterval);
+  if(recordingInterval == kEEPROMEmptyValue) { // if no value stored in EEPROM, set to default
+    recordingInterval = kDefaultRecordingInterval; //default value
+  }
+  if(reportingInterval == kEEPROMEmptyValue) {
+    reportingInterval = kDefaultReportingInterval; //default value
+  }
+  if(dsid == kEEPROMEmptyValue) {
+    Serial.println("DSID not stored in EEPROM. BLE config required"); 
+    //TODO notify user somehow
+  }
+}
+
+void syncSystemTime() {
+  int WiFiConnectCountdown = kWiFiConnectionTimeout;
+
+  WiFi.on();
+  WiFi.connect();
+  //wait for WiFi to connect for kWiFiConnectionTimeout
+  while(!WiFi.ready() && WiFiConnectCountdown <= 0) {
+    WiFiConnectCountdown = WiFiConnectCountdown - kWiFiCheckInterval;
+    delay(kWiFiCheckInterval);
+  }
+  if(WiFi.ready()) {
+    Serial.println("WiFi connected, syncing time");
+    Particle.connect();
+    while(!Particle.connected()) {} // wait forever until cloud connects
+    Particle.syncTime(); // is async
+    while(Particle.syncTimePending()) { // wait for syncTime to complete
+      Particle.process();
+    }
+    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
+  }
+  else {
+    Serial.println("WiFi failed to connect, skipping time synchronization");
+  }
+
+  WiFi.off();
+}
+
+void HTTPRequestSetup() {
+  request.hostname = kHTTPHostname;
+  request.port = kHTTPRequestPort;
   request.path = "/";
-  Serial.begin(9600);
-  if(!lis3dh.begin(0x18)) {
+}
+
+void initHardware() {
+  System.enableReset(); //allows System.reset() to work
+  pinMode(kBLEConnectedLED, OUTPUT); //BLE connected indicator 
+  digitalWrite(kBLEConnectedLED, LOW);
+  if(!lis3dh.begin(kLis3dhAddress)) {
     delay(1000);
     WITH_LOCK(Serial) {
       Serial.println("Failed to initialize LIS3DH");
     }
   }
-  new Thread("reportingThread", reportingThread);
-  //Wire.end();
-
-  EEPROM.get(100, recordingInterval);
-  EEPROM.get(0, dsid);
-  Serial.println(recordingInterval);
-  EEPROM.get(200, reportingInterval);
-  reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
-  Serial.printlnf("recordingInterval: %i", recordingInterval);
-  Serial.printlnf("reportingInterval: %i", reportingInterval);
-  if(recordingInterval == -1) {
-    recordingInterval = 500; //default value
-  }
-  if(reportingInterval == -1) {
-    reportingInterval = 10; //default value
-  }
-  int WiFiConnectCountdown = 20000;
-  //sync time
-  WiFi.on();
-  WiFi.connect();
-  while(!WiFi.ready() && WiFiConnectCountdown != 0) {
-    WiFiConnectCountdown= WiFiConnectCountdown - 100;
-    delay(100);
-  }
-  if(WiFi.ready() != true) {
-    Serial.println("WiFi failed to connect, skipping time synchronization");
-  }
-  else {
-    Serial.println("WiFi connected, syncing time");
-    Particle.connect();
-    while(!Particle.connected()) {
-      //Particle.process();
-      delay(100);
-    }
-    Particle.syncTime();
-    while(Particle.syncTimePending()) {
-      Particle.process();
-    }
-    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
-  }
-  WiFi.off();
 }
+
+// setup() runs once, when the device is first turned on.
+void setup() {
+  Serial.begin(9600);
+  while(!Serial.isConnected()){} //TODO REMOVE BEFORE RELEASE
+
+  initHardware();
+  HTTPRequestSetup();
+  initFromEEPROM();
+  syncSystemTime();
+
+  os_mutex_create(&payloadAccessLock);
+  os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
+}
+
 // loop() runs over and over again, as quickly as it can execute.
-bool firstRecord = true; //sets first value to 0
+bool firstLIS3DHReading = true; //sets first recorded value to 0
 void loop() {
   switch (firmwareState) {
     case BLEWAIT: {
@@ -176,25 +197,25 @@ void loop() {
       x = lis3dh.x_g;
       y = lis3dh.y_g;
       z = lis3dh.z_g;
-      if(abs(x - prevX) > 0.05 || abs(y - prevY) > 0.05 || abs(z - prevZ) > 0.05) {
-        //Serial.println("movement above threshold");
-        if(firstRecord) {
-          firstRecord = false;
-          storedValues[storedValuesPos] = 0; //otherwise first record is always 1
+      if(!firstLIS3DHReading) {
+        if(abs(x - prevX) > kDeltaAccelThreshold || abs(y - prevY) > kDeltaAccelThreshold || abs(z - prevZ) > kDeltaAccelThreshold) {
+          storedValues[storedValuesIndex] = 1;
+        } else {
+          storedValues[storedValuesIndex] = 0;
         }
-        else {
-          storedValues[storedValuesPos] = 1;
-        }
+        storedTimes[storedValuesIndex] = Time.now(); 
+        storedValuesIndex++; // TODO re-add payload creation
+        os_mutex_lock(&payloadAccessLock);
+        //payload = whatever
+        os_mutex_unlock(&payloadAccessLock);
       }
       else {
-        storedValues[storedValuesPos] = 0;
+        firstLIS3DHReading = false;
       }
-      //Time.setFormat(TIME_FORMAT_UNIX);
-      storedTimes[storedValuesPos] = Time.now();
+      
       prevX = x;
       prevY = y;
       prevZ = z;
-      storedValuesPos++;
       delay(recordingInterval);
       break;
     }
@@ -205,44 +226,44 @@ void loop() {
   }
 }
 
-void reportingThread(void) {
+void reportData(String payload) {
+  WiFi.on();
+  WiFi.connect();
+  while(!WiFi.ready()) {
+    delay(100);
+  }
+  if(WiFi.ready() != true) {
+    WITH_LOCK(Serial) {
+      Serial.println("WiFi failed to connect, data not reported");
+    }
+  }
+  else {
+    WITH_LOCK(Serial) {
+      Serial.println("WiFi connected, reporting data");
+    }
+    payload.remove(payload.length() - 1);
+    request.body = "{\"data\":[" + payload + "]}";
+    http.post(request, response, headers);
+    WITH_LOCK(Serial) {
+      Serial.println("Status: " + response.status);
+      Serial.println("Body: " + response.body);
+      Serial.println("ReqBody: " + request.body);
+    }
+  }
+  WiFi.off();
+}
+
+void reportingThread(void *args) {
   while(true) {
-    //Serial.println("reportingThread");
-    //delay(reportingInterval * 1000);
-    //sync time
-    /*WITH_LOCK(Serial) {
-      Serial.println("runningReporting");
-    }*/
-    if(storedValuesPos >= ((reportingInterval * 1000) / recordingInterval)) {
+    if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
       WITH_LOCK(Serial) {
         Serial.println("reporting");
       }
+      os_mutex_lock(&payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
       String localPayload = payload;
       payload = "";
-      WiFi.on();
-      WiFi.connect();
-      while(!WiFi.ready()) {
-        delay(100);
-      }
-      if(WiFi.ready() != true) {
-        WITH_LOCK(Serial) {
-          Serial.println("WiFi failed to connect, data not reported");
-        }
-      }
-      else {
-        WITH_LOCK(Serial) {
-          Serial.println("WiFi connected, reporting data");
-        }
-        localPayload.remove(localPayload.length() - 1);
-        request.body = "{\"data\":[" + localPayload + "]}";
-        http.post(request, response, headers);
-        WITH_LOCK(Serial) {
-          Serial.println("Status: " + response.status);
-          Serial.println("Body: " + response.body);
-          Serial.println("ReqBody: " + request.body);
-        }
-      }
-      WiFi.off();
+      os_mutex_unlock(&payloadAccessLock);
+      reportData(localPayload);
     }
     os_thread_yield();
   }
@@ -250,13 +271,10 @@ void reportingThread(void) {
 
 //ble interface
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context){
-  WITH_LOCK(Serial) {
-    Serial.println(len);
-  }
-  inputBuffer = "";
+  bleInputBuffer = "";
 
   //each case is a separate prompt
-  switch(count){
+  switch(bleQuestionCount){
     case 0:{
       //ssid prompt
       SSID:
@@ -281,8 +299,8 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     case 1:{
       //store ssid
       for(int i = 0; i < len - 1; i++){
-        inputBuffer += (char)data[i];
-        ssid = inputBuffer;
+        bleInputBuffer += (char)data[i];
+        ssid = bleInputBuffer;
         WITH_LOCK(Serial) {
           Serial.println(data[i]);
         }
@@ -293,7 +311,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       }
       if(ssid == ""){
         //dsid prompt if wifi prompt skipped
-        count = 3;
+        bleQuestionCount = 3;
         EEPROM.get(0, dsid);
         txCharacteristic.setValue("\nCurrent DSID is [");
         if(dsid != -1){
@@ -303,7 +321,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       }else if(ssid == "clear"){
         //go back to ssid prompt if credentials are cleared
         WiFi.clearCredentials();
-        count = 0;
+        bleQuestionCount = 0;
         goto SSID;
       }else{
         //password prompt if ssid entered
@@ -317,8 +335,8 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         WITH_LOCK(Serial) {
           Serial.println(data[i]);
         }
-        inputBuffer += (char)data[i];
-        password = inputBuffer;
+        bleInputBuffer += (char)data[i];
+        password = bleInputBuffer;
       }
       WITH_LOCK(Serial) {
         Serial.println(password);
@@ -338,7 +356,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         WITH_LOCK(Serial) {
           Serial.println(data[i]);
         }
-        inputBuffer += (char)data[i];
+        bleInputBuffer += (char)data[i];
       }
       //dsid prompt
       EEPROM.get(0, dsid);
@@ -355,10 +373,10 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         WITH_LOCK(Serial) {
           Serial.println(data[i]);
         }
-        inputBuffer += (char)data[i];
-        dsid = atoi(inputBuffer);
+        bleInputBuffer += (char)data[i];
+        dsid = atoi(bleInputBuffer);
       }
-      if(inputBuffer != ""){
+      if(bleInputBuffer != ""){
         EEPROM.put(0, dsid);
         WITH_LOCK(Serial) {
           Serial.println("dsid entered");
@@ -382,10 +400,10 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         WITH_LOCK(Serial) {
           Serial.println(data[i]);
         }
-        inputBuffer += (char)data[i];
-        recordingInterval = atoi(inputBuffer);
+        bleInputBuffer += (char)data[i];
+        recordingInterval = atoi(bleInputBuffer);
       }
-      if(inputBuffer == ""){
+      if(bleInputBuffer == ""){
         EEPROM.get(100, recordingInterval);
       }
       EEPROM.put(100, recordingInterval);
@@ -407,10 +425,10 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         WITH_LOCK(Serial) {
           Serial.println(data[i]);
         }
-        inputBuffer += (char)data[i];
-        reportingInterval = atoi(inputBuffer) * 1000;
+        bleInputBuffer += (char)data[i];
+        reportingInterval = atoi(bleInputBuffer) * 1000;
       }
-      if(inputBuffer == ""){
+      if(bleInputBuffer == ""){
         EEPROM.get(200, reportingInterval);
       }
       EEPROM.put(200, reportingInterval);
@@ -429,16 +447,16 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         WITH_LOCK(Serial) {
           Serial.println(data[i]);
         }
-        inputBuffer += (char)data[i];
+        bleInputBuffer += (char)data[i];
       }
-      if(inputBuffer == "ota"){
+      if(bleInputBuffer == "ota"){
         System.updatesEnabled();
-        ota = true;
+        waitingForOTA = true;
       }
 
       //causes data collection to begin
       //firmwareState = RECORDING;
-      if(ota) {
+      if(waitingForOTA) {
         System.updatesEnabled();
         WiFi.on();
         WiFi.connect();
@@ -466,26 +484,25 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         }
       }
       System.reset();
-      //digitalWrite(D7, LOW);
     }
   }
 
-  count++;
+  bleQuestionCount++;
 }
 
-//d7 led turns on when ble connected
+//kBLEConnectedLED turns on when ble connected
 void connectCallback(const BlePeerDevice& peer, void* context){
-  count = 0;
+  bleQuestionCount = 0;
   WITH_LOCK(Serial) {
     Serial.println("connected");
   }
-  digitalWrite(D7, HIGH);
+  digitalWrite(kBLEConnectedLED, HIGH);
 }
 
-//d7 led turns off when ble disconnected
+//kBLEConnectedLED turns off when ble disconnected
 void disconnectCallback(const BlePeerDevice& peer, void* context){
   WITH_LOCK(Serial) {
     Serial.println("disconnected");
   }
-  digitalWrite(D7, LOW);
+  digitalWrite(kBLEConnectedLED, LOW);
 }

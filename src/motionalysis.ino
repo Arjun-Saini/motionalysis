@@ -106,9 +106,10 @@ void loop() {
           storedValues[storedValuesIndex] = 0;
         }
         storedTimes[storedValuesIndex] = Time.now(); 
-        storedValuesIndex++; // TODO re-add payload creation
+        storedValuesIndex++; 
         os_mutex_lock(&payloadAccessLock);
-        //payload = whatever
+        //Lock the recording loop until reporting thread has completed making the payload
+        //if lock was not present there could be data that was not reported if recordingDelay was low enough
         os_mutex_unlock(&payloadAccessLock);
       }
       else {
@@ -128,33 +129,6 @@ void loop() {
   }
 }
 
-void reportData(String payload) {
-  WiFi.on();
-  WiFi.connect();
-  while(!WiFi.ready()) {
-    delay(100);
-  }
-  if(WiFi.ready() != true) {
-    WITH_LOCK(Serial) {
-      Serial.println("WiFi failed to connect, data not reported");
-    }
-  }
-  else {
-    WITH_LOCK(Serial) {
-      Serial.println("WiFi connected, reporting data");
-    }
-    payload.remove(payload.length() - 1);
-    request.body = "{\"data\":[" + payload + "]}";
-    http.post(request, response, headers);
-    WITH_LOCK(Serial) {
-      Serial.println("Status: " + response.status);
-      Serial.println("Body: " + response.body);
-      Serial.println("ReqBody: " + request.body);
-    }
-  }
-  WiFi.off();
-}
-
 void reportingThread(void *args) {
   while(true) {
     if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
@@ -162,6 +136,10 @@ void reportingThread(void *args) {
         Serial.println("reporting");
       }
       os_mutex_lock(&payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
+      for (int i = 0; i < storedValuesIndex; i++) {
+        //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+        payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+      }
       String localPayload = payload;
       payload = "";
       os_mutex_unlock(&payloadAccessLock);

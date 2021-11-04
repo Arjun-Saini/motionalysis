@@ -41,10 +41,9 @@ os_mutex_t payloadAccessLock;
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  while(!Serial.isConnected()){} //TODO REMOVE BEFORE RELEASE
-
+  while(!Serial.isConnected()){}
   initHardware();
-  HTTPRequestSetup();
+  HTTPRequestSetup(); 
   initFromEEPROM();
   syncSystemTime();
 

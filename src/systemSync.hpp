@@ -13,17 +13,23 @@ void syncSystemTime() {
     delay(kWiFiCheckInterval);
   }
   if(WiFi.ready()) {
-    Serial.println("WiFi connected, syncing time");
+    WITH_LOCK(Serial){
+      Serial.println("WiFi connected, syncing time");
+    }
     Particle.connect();
     while(!Particle.connected()) {} // wait forever until cloud connects
     Particle.syncTime(); // is async
     while(Particle.syncTimePending()) { // wait for syncTime to complete
       Particle.process();
     }
-    Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
+    WITH_LOCK(Serial){
+      Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
+    }
   }
   else {
-    Serial.println("WiFi failed to connect, skipping time synchronization");
+    WITH_LOCK(Serial) {
+      Serial.println("WiFi failed to connect, skipping time synchronization");
+    }
   }
 
   WiFi.off();

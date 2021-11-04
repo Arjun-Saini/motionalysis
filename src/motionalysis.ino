@@ -30,7 +30,7 @@ os_mutex_t payloadAccessLock;
 void setup() {
   Serial.begin(9600);
   while(!Serial.isConnected()){} //TODO REMOVE BEFORE RELEASE
-
+  
   initHardware();
   HTTPRequestSetup();
   initFromEEPROM();

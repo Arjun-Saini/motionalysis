@@ -41,10 +41,16 @@ void reportData(String payload) {
     }
     payload.remove(payload.length() - 1);
     request.body = "{\"data\":[" + payload + "]}";
-    http.post(request, response, headers);
+    WITH_LOCK(Serial){
+      http.post(request, response, headers); //http library is not thread safe with serial, so we need to lock it to prevent panic
+    }
     WITH_LOCK(Serial) {
       Serial.println("Status: " + response.status);
+    }
+    WITH_LOCK(Serial) {
       Serial.println("Body: " + response.body);
+    }
+    WITH_LOCK(Serial) {
       Serial.println("ReqBody: " + request.body);
     }
   }

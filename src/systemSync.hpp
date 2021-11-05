@@ -8,9 +8,12 @@ void syncSystemTime() {
   WiFi.on();
   WiFi.connect();
   //wait for WiFi to connect for kWiFiConnectionTimeout
-  while(!WiFi.ready() && WiFiConnectCountdown <= 0) {
+  while(!WiFi.ready() && WiFiConnectCountdown != 0) {
     WiFiConnectCountdown = WiFiConnectCountdown - kWiFiCheckInterval;
     delay(kWiFiCheckInterval);
+    WITH_LOCK(Serial) {
+      Serial.println(WiFiConnectCountdown);
+    }
   }
   if(WiFi.ready()) {
     WITH_LOCK(Serial){

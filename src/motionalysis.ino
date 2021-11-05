@@ -107,13 +107,24 @@ void loop() {
         }
         storedTimes[storedValuesIndex] = Time.now(); 
         storedValuesIndex++; 
-        os_mutex_lock(&payloadAccessLock);
+        WITH_LOCK(Serial) {
+          Serial.println("requesting payloadAccessLock");
+        }
+        
+        os_mutex_lock(payloadAccessLock);
         //Lock the recording loop until reporting thread has completed making the payload
         //if lock was not present there could be data that was not reported if recordingDelay was low enough
-        os_mutex_unlock(&payloadAccessLock);
+        delay(100);
+        os_mutex_unlock(payloadAccessLock);
+        WITH_LOCK(Serial) {
+          Serial.println("payloadAccessLock released by RECORDING");
+        }
       }
       else {
         firstLIS3DHReading = false;
+        WITH_LOCK(Serial) {
+          Serial.println("First reading");
+        }
       }
       
       prevX = x;
@@ -132,14 +143,14 @@ void loop() {
 void reportingThread(void *args) {
   while(true) {
     if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
-      os_mutex_lock(&payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
+      os_mutex_lock(payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
       for (int i = 0; i < storedValuesIndex; i++) {
         //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
         payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
       }
       String localPayload = payload;
       payload = "";
-      os_mutex_unlock(&payloadAccessLock);
+      os_mutex_unlock(payloadAccessLock);
       reportData(localPayload);
     }
     os_thread_yield();

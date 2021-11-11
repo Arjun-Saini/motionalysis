@@ -259,6 +259,32 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         }
         bleInputBuffer += (char)data[i];
       }
+      if(bleInputBuffer == "test" && WiFi.hasCredentials()){
+        //attempt to connect with credentials, times out if unsuccessful
+        bool wifiTest = true;
+        int wifiTimeout = 20000;
+        WiFi.on();
+        WiFi.connect();
+        while(WiFi.connecting() || !WiFi.ready()){
+          if(wifiTimeout >= 20000){
+            wifiTest = false;
+            Serial.println("timeout");
+            break;
+          }
+          wifiTimeout = wifiTimeout + 100;
+          delay(100);
+        }
+        WiFi.off();
+        if(wifiTest){
+          txCharacteristic.setValue("Success!\n");
+        }else{
+          //go back to ssid prompt if test failed
+          txCharacteristic.setValue("ERROR: WiFi connection timeout\n");
+          bleQuestionCount = 0;
+          wifiTest = true;
+          goto SSID;
+        }
+      }
       //dsid prompt
       EEPROM.get(0, dsid);
       txCharacteristic.setValue("\nCurrent DSID is [");

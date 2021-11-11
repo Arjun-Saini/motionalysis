@@ -164,6 +164,7 @@ void reportingThread(void *args) {
       payload = "";
       os_mutex_unlock(payloadAccessLock);
       reportData(localPayload);
+      storedValuesIndex = 0;
     }
     os_thread_yield();
   }

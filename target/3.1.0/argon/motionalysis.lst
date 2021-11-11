@@ -31,11 +31,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  13 .debug_macro  00037e48  00000000  00000000  001a2fd7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_line   0003f6bb  00000000  00000000  001dae1f  2**0
+ 14 .debug_line   0003f6c9  00000000  00000000  001dae1f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str    0012a728  00000000  00000000  0021a4da  2**0
+ 15 .debug_str    0012a728  00000000  00000000  0021a4e8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_frame  00008aa4  00000000  00000000  00344c04  2**2
+ 16 .debug_frame  00008aa4  00000000  00000000  00344c10  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -124,7 +124,7 @@ void module_user_init()
  */
 void module_user_setup() {
     setup();
-   b4084:	f000 bb44 	b.w	b4710 <setup>
+   b4084:	f000 bb46 	b.w	b4714 <setup>
 
 000b4088 <module_user_loop>:
 }
@@ -788,43 +788,43 @@ void reportingThread(void *args) {
    b442c:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
   while(true) {
     if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
-   b4430:	f8df a100 	ldr.w	sl, [pc, #256]	; b4534 <_Z15reportingThreadPv+0x108>
-   b4434:	4e36      	ldr	r6, [pc, #216]	; (b4510 <_Z15reportingThreadPv+0xe4>)
+   b4430:	f8df a104 	ldr.w	sl, [pc, #260]	; b4538 <_Z15reportingThreadPv+0x10c>
+   b4434:	4c37      	ldr	r4, [pc, #220]	; (b4514 <_Z15reportingThreadPv+0xe8>)
 void reportingThread(void *args) {
    b4436:	b08d      	sub	sp, #52	; 0x34
     if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
    b4438:	f8da 3000 	ldr.w	r3, [sl]
    b443c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
    b4440:	4353      	muls	r3, r2
-   b4442:	4a34      	ldr	r2, [pc, #208]	; (b4514 <_Z15reportingThreadPv+0xe8>)
+   b4442:	4a35      	ldr	r2, [pc, #212]	; (b4518 <_Z15reportingThreadPv+0xec>)
    b4444:	6812      	ldr	r2, [r2, #0]
    b4446:	fb93 f3f2 	sdiv	r3, r3, r2
-   b444a:	6832      	ldr	r2, [r6, #0]
+   b444a:	6822      	ldr	r2, [r4, #0]
    b444c:	4293      	cmp	r3, r2
-   b444e:	dc5c      	bgt.n	b450a <_Z15reportingThreadPv+0xde>
+   b444e:	dc5e      	bgt.n	b450e <_Z15reportingThreadPv+0xe2>
       os_mutex_lock(payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
-   b4450:	4f31      	ldr	r7, [pc, #196]	; (b4518 <_Z15reportingThreadPv+0xec>)
-   b4452:	f8df 90e4 	ldr.w	r9, [pc, #228]	; b4538 <_Z15reportingThreadPv+0x10c>
+   b4450:	4f32      	ldr	r7, [pc, #200]	; (b451c <_Z15reportingThreadPv+0xf0>)
+   b4452:	f8df 90e8 	ldr.w	r9, [pc, #232]	; b453c <_Z15reportingThreadPv+0x110>
    b4456:	6838      	ldr	r0, [r7, #0]
-   b4458:	f8df 80e0 	ldr.w	r8, [pc, #224]	; b453c <_Z15reportingThreadPv+0x110>
+   b4458:	f8df 80e4 	ldr.w	r8, [pc, #228]	; b4540 <_Z15reportingThreadPv+0x114>
       for (int i = 0; i < storedValuesIndex; i++) {
         //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
         payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
-   b445c:	f8df b0e0 	ldr.w	fp, [pc, #224]	; b4540 <_Z15reportingThreadPv+0x114>
+   b445c:	f8df b0e4 	ldr.w	fp, [pc, #228]	; b4544 <_Z15reportingThreadPv+0x118>
       os_mutex_lock(payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
    b4460:	f001 fd60 	bl	b5f24 <os_mutex_lock>
 	StringSumHelper(const char *p) : String(p) {}
-   b4464:	4b2d      	ldr	r3, [pc, #180]	; (b451c <_Z15reportingThreadPv+0xf0>)
+   b4464:	4b2e      	ldr	r3, [pc, #184]	; (b4520 <_Z15reportingThreadPv+0xf4>)
       for (int i = 0; i < storedValuesIndex; i++) {
-   b4466:	2400      	movs	r4, #0
-   b4468:	6832      	ldr	r2, [r6, #0]
-   b446a:	42a2      	cmp	r2, r4
+   b4466:	2500      	movs	r5, #0
+   b4468:	6822      	ldr	r2, [r4, #0]
+   b446a:	42aa      	cmp	r2, r5
    b446c:	dd35      	ble.n	b44da <_Z15reportingThreadPv+0xae>
    b446e:	4619      	mov	r1, r3
    b4470:	a804      	add	r0, sp, #16
    b4472:	f003 feb8 	bl	b81e6 <_ZN6StringC1EPK19__FlashStringHelper>
         payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
-   b4476:	4b2a      	ldr	r3, [pc, #168]	; (b4520 <_Z15reportingThreadPv+0xf4>)
+   b4476:	4b2b      	ldr	r3, [pc, #172]	; (b4524 <_Z15reportingThreadPv+0xf8>)
    b4478:	220a      	movs	r2, #10
    b447a:	6819      	ldr	r1, [r3, #0]
    b447c:	4668      	mov	r0, sp
@@ -836,21 +836,21 @@ void reportingThread(void *args) {
    b448c:	f003 ff56 	bl	b833c <_ZplRK15StringSumHelperPKc>
    b4490:	f819 1b01 	ldrb.w	r1, [r9], #1
    b4494:	f003 ff67 	bl	b8366 <_ZplRK15StringSumHelperh>
-   b4498:	4922      	ldr	r1, [pc, #136]	; (b4524 <_Z15reportingThreadPv+0xf8>)
+   b4498:	4923      	ldr	r1, [pc, #140]	; (b4528 <_Z15reportingThreadPv+0xfc>)
    b449a:	f003 ff4f 	bl	b833c <_ZplRK15StringSumHelperPKc>
    b449e:	220a      	movs	r2, #10
    b44a0:	f858 1b04 	ldr.w	r1, [r8], #4
-   b44a4:	4605      	mov	r5, r0
+   b44a4:	4606      	mov	r6, r0
    b44a6:	a808      	add	r0, sp, #32
    b44a8:	f003 fef0 	bl	b828c <_ZN6StringC1Elh>
    b44ac:	a908      	add	r1, sp, #32
-   b44ae:	4628      	mov	r0, r5
+   b44ae:	4630      	mov	r0, r6
    b44b0:	f003 ff38 	bl	b8324 <_ZplRK15StringSumHelperRK6String>
-   b44b4:	491c      	ldr	r1, [pc, #112]	; (b4528 <_Z15reportingThreadPv+0xfc>)
+   b44b4:	491d      	ldr	r1, [pc, #116]	; (b452c <_Z15reportingThreadPv+0x100>)
    b44b6:	f003 ff41 	bl	b833c <_ZplRK15StringSumHelperPKc>
    b44ba:	4601      	mov	r1, r0
 	String & operator += (const String &rhs)	{concat(rhs); return (*this);}
-   b44bc:	481b      	ldr	r0, [pc, #108]	; (b452c <_Z15reportingThreadPv+0x100>)
+   b44bc:	481c      	ldr	r0, [pc, #112]	; (b4530 <_Z15reportingThreadPv+0x104>)
    b44be:	f003 ff0f 	bl	b82e0 <_ZN6String6concatERKS_>
    b44c2:	a808      	add	r0, sp, #32
    b44c4:	f003 fe44 	bl	b8150 <_ZN6StringD1Ev>
@@ -860,17 +860,17 @@ class StringSumHelper : public String
    b44ce:	a804      	add	r0, sp, #16
    b44d0:	f003 fe3e 	bl	b8150 <_ZN6StringD1Ev>
       for (int i = 0; i < storedValuesIndex; i++) {
-   b44d4:	3401      	adds	r4, #1
-   b44d6:	4b11      	ldr	r3, [pc, #68]	; (b451c <_Z15reportingThreadPv+0xf0>)
+   b44d4:	3501      	adds	r5, #1
+   b44d6:	4b12      	ldr	r3, [pc, #72]	; (b4520 <_Z15reportingThreadPv+0xf4>)
    b44d8:	e7c6      	b.n	b4468 <_Z15reportingThreadPv+0x3c>
       }
       String localPayload = payload;
-   b44da:	4914      	ldr	r1, [pc, #80]	; (b452c <_Z15reportingThreadPv+0x100>)
+   b44da:	4915      	ldr	r1, [pc, #84]	; (b4530 <_Z15reportingThreadPv+0x104>)
    b44dc:	a804      	add	r0, sp, #16
    b44de:	f003 fea5 	bl	b822c <_ZN6StringC1ERKS_>
       payload = "";
-   b44e2:	4913      	ldr	r1, [pc, #76]	; (b4530 <_Z15reportingThreadPv+0x104>)
-   b44e4:	4811      	ldr	r0, [pc, #68]	; (b452c <_Z15reportingThreadPv+0x100>)
+   b44e2:	4914      	ldr	r1, [pc, #80]	; (b4534 <_Z15reportingThreadPv+0x108>)
+   b44e4:	4812      	ldr	r0, [pc, #72]	; (b4530 <_Z15reportingThreadPv+0x104>)
    b44e6:	f003 feac 	bl	b8242 <_ZN6StringaSEPKc>
       os_mutex_unlock(payloadAccessLock);
    b44ea:	6838      	ldr	r0, [r7, #0]
@@ -883,370 +883,374 @@ class StringSumHelper : public String
    b44fa:	f7ff fedb 	bl	b42b4 <_Z10reportData6String>
    b44fe:	a808      	add	r0, sp, #32
    b4500:	f003 fe26 	bl	b8150 <_ZN6StringD1Ev>
+      storedValuesIndex = 0;
+   b4504:	2300      	movs	r3, #0
       String localPayload = payload;
-   b4504:	a804      	add	r0, sp, #16
-   b4506:	f003 fe23 	bl	b8150 <_ZN6StringD1Ev>
+   b4506:	a804      	add	r0, sp, #16
+      storedValuesIndex = 0;
+   b4508:	6023      	str	r3, [r4, #0]
+      String localPayload = payload;
+   b450a:	f003 fe21 	bl	b8150 <_ZN6StringD1Ev>
     }
     os_thread_yield();
-   b450a:	f001 fcfb 	bl	b5f04 <os_thread_yield>
+   b450e:	f001 fcf9 	bl	b5f04 <os_thread_yield>
   }
-   b450e:	e793      	b.n	b4438 <_Z15reportingThreadPv+0xc>
-   b4510:	2003e5f4 	.word	0x2003e5f4
-   b4514:	2003e070 	.word	0x2003e070
-   b4518:	2003e060 	.word	0x2003e060
-   b451c:	000b9d1f 	.word	0x000b9d1f
-   b4520:	2003dac4 	.word	0x2003dac4
-   b4524:	000b9d33 	.word	0x000b9d33
-   b4528:	000b9d42 	.word	0x000b9d42
-   b452c:	2003e050 	.word	0x2003e050
-   b4530:	000b9f86 	.word	0x000b9f86
-   b4534:	2003e074 	.word	0x2003e074
-   b4538:	2003e4f4 	.word	0x2003e4f4
-   b453c:	2003e0f4 	.word	0x2003e0f4
-   b4540:	000b9d28 	.word	0x000b9d28
+   b4512:	e791      	b.n	b4438 <_Z15reportingThreadPv+0xc>
+   b4514:	2003e5f4 	.word	0x2003e5f4
+   b4518:	2003e070 	.word	0x2003e070
+   b451c:	2003e060 	.word	0x2003e060
+   b4520:	000b9d1f 	.word	0x000b9d1f
+   b4524:	2003dac4 	.word	0x2003dac4
+   b4528:	000b9d33 	.word	0x000b9d33
+   b452c:	000b9d42 	.word	0x000b9d42
+   b4530:	2003e050 	.word	0x2003e050
+   b4534:	000b9f86 	.word	0x000b9f86
+   b4538:	2003e074 	.word	0x2003e074
+   b453c:	2003e4f4 	.word	0x2003e4f4
+   b4540:	2003e0f4 	.word	0x2003e0f4
+   b4544:	000b9d28 	.word	0x000b9d28
 
-000b4544 <_Z12initHardwarev>:
+000b4548 <_Z12initHardwarev>:
 void initHardware() {
-   b4544:	b507      	push	{r0, r1, r2, lr}
+   b4548:	b507      	push	{r0, r1, r2, lr}
         system_get_flag(flag, &value, nullptr);
         return value;
     }
 
     static inline void set_flag(system_flag_t flag, uint8_t value) {
         system_set_flag(flag, value, nullptr);
-   b4546:	2200      	movs	r2, #0
-   b4548:	2101      	movs	r1, #1
-   b454a:	2003      	movs	r0, #3
-   b454c:	f001 ff42 	bl	b63d4 <system_set_flag>
+   b454a:	2200      	movs	r2, #0
+   b454c:	2101      	movs	r1, #1
+   b454e:	2003      	movs	r0, #3
+   b4550:	f001 ff40 	bl	b63d4 <system_set_flag>
   pinMode(kBLEConnectedLED, OUTPUT); //BLE connected indicator 
-   b4550:	2101      	movs	r1, #1
-   b4552:	2007      	movs	r0, #7
-   b4554:	f004 fde4 	bl	b9120 <pinMode>
+   b4554:	2101      	movs	r1, #1
+   b4556:	2007      	movs	r0, #7
+   b4558:	f004 fde2 	bl	b9120 <pinMode>
   digitalWrite(kBLEConnectedLED, LOW);
-   b4558:	2100      	movs	r1, #0
-   b455a:	2007      	movs	r0, #7
-   b455c:	f004 fdf1 	bl	b9142 <digitalWrite>
+   b455c:	2100      	movs	r1, #0
+   b455e:	2007      	movs	r0, #7
+   b4560:	f004 fdef 	bl	b9142 <digitalWrite>
   if(!lis3dh.begin(kLis3dhAddress)) {
-   b4560:	480c      	ldr	r0, [pc, #48]	; (b4594 <_Z12initHardwarev+0x50>)
-   b4562:	2118      	movs	r1, #24
-   b4564:	f001 f993 	bl	b588e <_ZN15Adafruit_LIS3DH5beginEh>
-   b4568:	b980      	cbnz	r0, b458c <_Z12initHardwarev+0x48>
+   b4564:	480c      	ldr	r0, [pc, #48]	; (b4598 <_Z12initHardwarev+0x50>)
+   b4566:	2118      	movs	r1, #24
+   b4568:	f001 f991 	bl	b588e <_ZN15Adafruit_LIS3DH5beginEh>
+   b456c:	b980      	cbnz	r0, b4590 <_Z12initHardwarev+0x48>
     delay(1000);
-   b456a:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
-   b456e:	f002 f857 	bl	b6620 <delay>
+   b456e:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
+   b4572:	f002 f855 	bl	b6620 <delay>
     WITH_LOCK(Serial) {
-   b4572:	f004 fbef 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b4576:	f004 fbed 	bl	b8d54 <_Z16_fetch_usbserialv>
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
-   b4576:	9001      	str	r0, [sp, #4]
+   b457a:	9001      	str	r0, [sp, #4]
       { _M_device.lock(); }
-   b4578:	f7ff fe00 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
+   b457c:	f7ff fdfe 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
       Serial.println("Failed to initialize LIS3DH");
-   b457c:	f004 fbea 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b4580:	4905      	ldr	r1, [pc, #20]	; (b4598 <_Z12initHardwarev+0x54>)
-   b4582:	f003 fcde 	bl	b7f42 <_ZN5Print7printlnEPKc>
+   b4580:	f004 fbe8 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b4584:	4905      	ldr	r1, [pc, #20]	; (b459c <_Z12initHardwarev+0x54>)
+   b4586:	f003 fcdc 	bl	b7f42 <_ZN5Print7printlnEPKc>
     WITH_LOCK(Serial) {
-   b4586:	a801      	add	r0, sp, #4
-   b4588:	f7ff fe8a 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
+   b458a:	a801      	add	r0, sp, #4
+   b458c:	f7ff fe88 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
 }
-   b458c:	b003      	add	sp, #12
-   b458e:	f85d fb04 	ldr.w	pc, [sp], #4
-   b4592:	bf00      	nop
-   b4594:	2003dee8 	.word	0x2003dee8
-   b4598:	000b9d45 	.word	0x000b9d45
+   b4590:	b003      	add	sp, #12
+   b4592:	f85d fb04 	ldr.w	pc, [sp], #4
+   b4596:	bf00      	nop
+   b4598:	2003dee8 	.word	0x2003dee8
+   b459c:	000b9d45 	.word	0x000b9d45
 
-000b459c <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv>:
+000b45a0 <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv>:
 
   bleQuestionCount++;
 }
 
 //kBLEConnectedLED turns on when ble connected
 void connectCallback(const BlePeerDevice& peer, void* context){
-   b459c:	b507      	push	{r0, r1, r2, lr}
+   b45a0:	b507      	push	{r0, r1, r2, lr}
   bleQuestionCount = 0;
-   b459e:	4b0b      	ldr	r3, [pc, #44]	; (b45cc <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv+0x30>)
-   b45a0:	2200      	movs	r2, #0
-   b45a2:	601a      	str	r2, [r3, #0]
+   b45a2:	4b0b      	ldr	r3, [pc, #44]	; (b45d0 <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv+0x30>)
+   b45a4:	2200      	movs	r2, #0
+   b45a6:	601a      	str	r2, [r3, #0]
   WITH_LOCK(Serial) {
-   b45a4:	f004 fbd6 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b45a8:	f004 fbd4 	bl	b8d54 <_Z16_fetch_usbserialv>
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
-   b45a8:	9001      	str	r0, [sp, #4]
+   b45ac:	9001      	str	r0, [sp, #4]
       { _M_device.lock(); }
-   b45aa:	f7ff fde7 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
+   b45ae:	f7ff fde5 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
     Serial.println("connected");
-   b45ae:	f004 fbd1 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b45b2:	4907      	ldr	r1, [pc, #28]	; (b45d0 <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv+0x34>)
-   b45b4:	f003 fcc5 	bl	b7f42 <_ZN5Print7printlnEPKc>
+   b45b2:	f004 fbcf 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b45b6:	4907      	ldr	r1, [pc, #28]	; (b45d4 <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv+0x34>)
+   b45b8:	f003 fcc3 	bl	b7f42 <_ZN5Print7printlnEPKc>
   WITH_LOCK(Serial) {
-   b45b8:	a801      	add	r0, sp, #4
-   b45ba:	f7ff fe71 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
+   b45bc:	a801      	add	r0, sp, #4
+   b45be:	f7ff fe6f 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
   }
   digitalWrite(kBLEConnectedLED, HIGH);
-   b45be:	2101      	movs	r1, #1
-   b45c0:	2007      	movs	r0, #7
+   b45c2:	2101      	movs	r1, #1
+   b45c4:	2007      	movs	r0, #7
 }
-   b45c2:	b003      	add	sp, #12
-   b45c4:	f85d eb04 	ldr.w	lr, [sp], #4
+   b45c6:	b003      	add	sp, #12
+   b45c8:	f85d eb04 	ldr.w	lr, [sp], #4
   digitalWrite(kBLEConnectedLED, HIGH);
-   b45c8:	f004 bdbb 	b.w	b9142 <digitalWrite>
-   b45cc:	2003dabc 	.word	0x2003dabc
-   b45d0:	000b9dee 	.word	0x000b9dee
+   b45cc:	f004 bdb9 	b.w	b9142 <digitalWrite>
+   b45d0:	2003dabc 	.word	0x2003dabc
+   b45d4:	000b9dee 	.word	0x000b9dee
 
-000b45d4 <_Z18disconnectCallbackRKN8particle13BlePeerDeviceEPv>:
+000b45d8 <_Z18disconnectCallbackRKN8particle13BlePeerDeviceEPv>:
 
 //kBLEConnectedLED turns off when ble disconnected
 void disconnectCallback(const BlePeerDevice& peer, void* context){
-   b45d4:	b507      	push	{r0, r1, r2, lr}
+   b45d8:	b507      	push	{r0, r1, r2, lr}
   WITH_LOCK(Serial) {
-   b45d6:	f004 fbbd 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b45da:	f004 fbbb 	bl	b8d54 <_Z16_fetch_usbserialv>
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
-   b45da:	9001      	str	r0, [sp, #4]
+   b45de:	9001      	str	r0, [sp, #4]
       { _M_device.lock(); }
-   b45dc:	f7ff fdce 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
+   b45e0:	f7ff fdcc 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
     Serial.println("disconnected");
-   b45e0:	f004 fbb8 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b45e4:	4906      	ldr	r1, [pc, #24]	; (b4600 <_Z18disconnectCallbackRKN8particle13BlePeerDeviceEPv+0x2c>)
-   b45e6:	f003 fcac 	bl	b7f42 <_ZN5Print7printlnEPKc>
+   b45e4:	f004 fbb6 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b45e8:	4906      	ldr	r1, [pc, #24]	; (b4604 <_Z18disconnectCallbackRKN8particle13BlePeerDeviceEPv+0x2c>)
+   b45ea:	f003 fcaa 	bl	b7f42 <_ZN5Print7printlnEPKc>
   WITH_LOCK(Serial) {
-   b45ea:	a801      	add	r0, sp, #4
-   b45ec:	f7ff fe58 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
+   b45ee:	a801      	add	r0, sp, #4
+   b45f0:	f7ff fe56 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
   }
   digitalWrite(kBLEConnectedLED, LOW);
-   b45f0:	2100      	movs	r1, #0
-   b45f2:	2007      	movs	r0, #7
-   b45f4:	b003      	add	sp, #12
-   b45f6:	f85d eb04 	ldr.w	lr, [sp], #4
+   b45f4:	2100      	movs	r1, #0
+   b45f6:	2007      	movs	r0, #7
+   b45f8:	b003      	add	sp, #12
+   b45fa:	f85d eb04 	ldr.w	lr, [sp], #4
   digitalWrite(kBLEConnectedLED, LOW);
-   b45fa:	f004 bda2 	b.w	b9142 <digitalWrite>
-   b45fe:	bf00      	nop
-   b4600:	000b9d61 	.word	0x000b9d61
+   b45fe:	f004 bda0 	b.w	b9142 <digitalWrite>
+   b4602:	bf00      	nop
+   b4604:	000b9d61 	.word	0x000b9d61
 
-000b4604 <_Z14syncSystemTimev>:
+000b4608 <_Z14syncSystemTimev>:
 #pragma once
 #include "globalVariables.hpp"
 #include "constants.hpp"
 
 void syncSystemTime() {
-   b4604:	b530      	push	{r4, r5, lr}
+   b4608:	b530      	push	{r4, r5, lr}
   int WiFiConnectCountdown = kWiFiConnectionTimeout;
 
   WiFi.on();
-   b4606:	483d      	ldr	r0, [pc, #244]	; (b46fc <_Z14syncSystemTimev+0xf8>)
+   b460a:	483d      	ldr	r0, [pc, #244]	; (b4700 <_Z14syncSystemTimev+0xf8>)
   WiFi.connect();
   //wait for WiFi to connect for kWiFiConnectionTimeout
   while(!WiFi.ready() && WiFiConnectCountdown != 0) {
-   b4608:	4d3c      	ldr	r5, [pc, #240]	; (b46fc <_Z14syncSystemTimev+0xf8>)
+   b460c:	4d3c      	ldr	r5, [pc, #240]	; (b4700 <_Z14syncSystemTimev+0xf8>)
 void syncSystemTime() {
-   b460a:	b087      	sub	sp, #28
+   b460e:	b087      	sub	sp, #28
   WiFi.on();
-   b460c:	f7ff fdcd 	bl	b41aa <_ZN5spark9WiFiClass2onEv>
+   b4610:	f7ff fdcb 	bl	b41aa <_ZN5spark9WiFiClass2onEv>
   WiFi.connect();
-   b4610:	483a      	ldr	r0, [pc, #232]	; (b46fc <_Z14syncSystemTimev+0xf8>)
-   b4612:	2100      	movs	r1, #0
-   b4614:	f7ff fdd5 	bl	b41c2 <_ZN5spark9WiFiClass7connectEj>
+   b4614:	483a      	ldr	r0, [pc, #232]	; (b4700 <_Z14syncSystemTimev+0xf8>)
+   b4616:	2100      	movs	r1, #0
+   b4618:	f7ff fdd3 	bl	b41c2 <_ZN5spark9WiFiClass7connectEj>
   int WiFiConnectCountdown = kWiFiConnectionTimeout;
-   b4618:	f644 6420 	movw	r4, #20000	; 0x4e20
+   b461c:	f644 6420 	movw	r4, #20000	; 0x4e20
   while(!WiFi.ready() && WiFiConnectCountdown != 0) {
-   b461c:	4628      	mov	r0, r5
-   b461e:	f7ff fdd5 	bl	b41cc <_ZN5spark9WiFiClass5readyEv>
-   b4622:	b998      	cbnz	r0, b464c <_Z14syncSystemTimev+0x48>
-   b4624:	b194      	cbz	r4, b464c <_Z14syncSystemTimev+0x48>
+   b4620:	4628      	mov	r0, r5
+   b4622:	f7ff fdd3 	bl	b41cc <_ZN5spark9WiFiClass5readyEv>
+   b4626:	b998      	cbnz	r0, b4650 <_Z14syncSystemTimev+0x48>
+   b4628:	b194      	cbz	r4, b4650 <_Z14syncSystemTimev+0x48>
     WiFiConnectCountdown = WiFiConnectCountdown - kWiFiCheckInterval;
     delay(kWiFiCheckInterval);
-   b4626:	2064      	movs	r0, #100	; 0x64
-   b4628:	f001 fffa 	bl	b6620 <delay>
+   b462a:	2064      	movs	r0, #100	; 0x64
+   b462c:	f001 fff8 	bl	b6620 <delay>
     WITH_LOCK(Serial) {
-   b462c:	f004 fb92 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b4630:	f004 fb90 	bl	b8d54 <_Z16_fetch_usbserialv>
     WiFiConnectCountdown = WiFiConnectCountdown - kWiFiCheckInterval;
-   b4630:	3c64      	subs	r4, #100	; 0x64
+   b4634:	3c64      	subs	r4, #100	; 0x64
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
-   b4632:	9002      	str	r0, [sp, #8]
+   b4636:	9002      	str	r0, [sp, #8]
       { _M_device.lock(); }
-   b4634:	f7ff fda2 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
+   b4638:	f7ff fda0 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
       Serial.println(WiFiConnectCountdown);
-   b4638:	f004 fb8c 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b463c:	220a      	movs	r2, #10
-   b463e:	4621      	mov	r1, r4
-   b4640:	f7ff fd64 	bl	b410c <_ZN5Print7printlnIiLi0EEEjT_i.isra.0>
+   b463c:	f004 fb8a 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b4640:	220a      	movs	r2, #10
+   b4642:	4621      	mov	r1, r4
+   b4644:	f7ff fd62 	bl	b410c <_ZN5Print7printlnIiLi0EEEjT_i.isra.0>
     WITH_LOCK(Serial) {
-   b4644:	a802      	add	r0, sp, #8
-   b4646:	f7ff fe2b 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
-   b464a:	e7e7      	b.n	b461c <_Z14syncSystemTimev+0x18>
+   b4648:	a802      	add	r0, sp, #8
+   b464a:	f7ff fe29 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
+   b464e:	e7e7      	b.n	b4620 <_Z14syncSystemTimev+0x18>
     }
   }
   if(WiFi.ready()) {
-   b464c:	482b      	ldr	r0, [pc, #172]	; (b46fc <_Z14syncSystemTimev+0xf8>)
-   b464e:	f7ff fdbd 	bl	b41cc <_ZN5spark9WiFiClass5readyEv>
-   b4652:	2800      	cmp	r0, #0
-   b4654:	d045      	beq.n	b46e2 <_Z14syncSystemTimev+0xde>
+   b4650:	482b      	ldr	r0, [pc, #172]	; (b4700 <_Z14syncSystemTimev+0xf8>)
+   b4652:	f7ff fdbb 	bl	b41cc <_ZN5spark9WiFiClass5readyEv>
+   b4656:	2800      	cmp	r0, #0
+   b4658:	d045      	beq.n	b46e6 <_Z14syncSystemTimev+0xde>
     WITH_LOCK(Serial){
-   b4656:	f004 fb7d 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b465a:	f004 fb7b 	bl	b8d54 <_Z16_fetch_usbserialv>
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
-   b465a:	9002      	str	r0, [sp, #8]
+   b465e:	9002      	str	r0, [sp, #8]
       { _M_device.lock(); }
-   b465c:	f7ff fd8e 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
+   b4660:	f7ff fd8c 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
       Serial.println("WiFi connected, syncing time");
-   b4660:	f004 fb78 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b4664:	4926      	ldr	r1, [pc, #152]	; (b4700 <_Z14syncSystemTimev+0xfc>)
-   b4666:	f003 fc6c 	bl	b7f42 <_ZN5Print7printlnEPKc>
+   b4664:	f004 fb76 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b4668:	4926      	ldr	r1, [pc, #152]	; (b4704 <_Z14syncSystemTimev+0xfc>)
+   b466a:	f003 fc6a 	bl	b7f42 <_ZN5Print7printlnEPKc>
     WITH_LOCK(Serial){
-   b466a:	a802      	add	r0, sp, #8
-   b466c:	f7ff fe18 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
+   b466e:	a802      	add	r0, sp, #8
+   b4670:	f7ff fe16 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
     { SystemClass::sleep(wakeUpPin, edgeTriggerMode, seconds); }
 
     static bool connected(void) { return spark_cloud_flag_connected(); }
     static bool disconnected(void) { return !connected(); }
     static void connect(void) {
         spark_cloud_flag_connect();
-   b4670:	f001 feee 	bl	b6450 <spark_cloud_flag_connect>
+   b4674:	f001 feec 	bl	b6450 <spark_cloud_flag_connect>
     static bool connected(void) { return spark_cloud_flag_connected(); }
-   b4674:	f001 fef4 	bl	b6460 <spark_cloud_flag_connected>
+   b4678:	f001 fef2 	bl	b6460 <spark_cloud_flag_connected>
     }
     Particle.connect();
     while(!Particle.connected()) {} // wait forever until cloud connects
-   b4678:	2800      	cmp	r0, #0
-   b467a:	d0fb      	beq.n	b4674 <_Z14syncSystemTimev+0x70>
-   b467c:	f001 fef0 	bl	b6460 <spark_cloud_flag_connected>
+   b467c:	2800      	cmp	r0, #0
+   b467e:	d0fb      	beq.n	b4678 <_Z14syncSystemTimev+0x70>
+   b4680:	f001 feee 	bl	b6460 <spark_cloud_flag_connected>
         if (!connected()) {
-   b4680:	b110      	cbz	r0, b4688 <_Z14syncSystemTimev+0x84>
+   b4684:	b110      	cbz	r0, b468c <_Z14syncSystemTimev+0x84>
         return spark_sync_time(NULL);
-   b4682:	2000      	movs	r0, #0
-   b4684:	f001 fef4 	bl	b6470 <spark_sync_time>
+   b4686:	2000      	movs	r0, #0
+   b4688:	f001 fef2 	bl	b6470 <spark_sync_time>
 	/**
 	 * Lifesign that the application is still working normally.
 	 */
 	static void checkin()
 	{
 		last_checkin = current_time();
-   b4688:	4c1e      	ldr	r4, [pc, #120]	; (b4704 <_Z14syncSystemTimev+0x100>)
+   b468c:	4c1e      	ldr	r4, [pc, #120]	; (b4708 <_Z14syncSystemTimev+0x100>)
     static bool connected(void) { return spark_cloud_flag_connected(); }
-   b468a:	f001 fee9 	bl	b6460 <spark_cloud_flag_connected>
+   b468e:	f001 fee7 	bl	b6460 <spark_cloud_flag_connected>
         return connected() && spark_sync_time_pending(nullptr);
-   b468e:	b148      	cbz	r0, b46a4 <_Z14syncSystemTimev+0xa0>
-   b4690:	2000      	movs	r0, #0
-   b4692:	f001 fef5 	bl	b6480 <spark_sync_time_pending>
-   b4696:	b128      	cbz	r0, b46a4 <_Z14syncSystemTimev+0xa0>
+   b4692:	b148      	cbz	r0, b46a8 <_Z14syncSystemTimev+0xa0>
+   b4694:	2000      	movs	r0, #0
+   b4696:	f001 fef3 	bl	b6480 <spark_sync_time_pending>
+   b469a:	b128      	cbz	r0, b46a8 <_Z14syncSystemTimev+0xa0>
 		return HAL_Timer_Get_Milli_Seconds();
-   b4698:	f001 fc84 	bl	b5fa4 <HAL_Timer_Get_Milli_Seconds>
+   b469c:	f001 fc82 	bl	b5fa4 <HAL_Timer_Get_Milli_Seconds>
 		last_checkin = current_time();
-   b469c:	6020      	str	r0, [r4, #0]
+   b46a0:	6020      	str	r0, [r4, #0]
     }
     static void disconnect(const CloudDisconnectOptions& options = CloudDisconnectOptions());
     static void process(void) {
     		application_checkin();
     		spark_process();
-   b469e:	f001 fecf 	bl	b6440 <spark_process>
+   b46a2:	f001 fecd 	bl	b6440 <spark_process>
     }
-   b46a2:	e7f2      	b.n	b468a <_Z14syncSystemTimev+0x86>
+   b46a6:	e7f2      	b.n	b468e <_Z14syncSystemTimev+0x86>
     Particle.syncTime(); // is async
     while(Particle.syncTimePending()) { // wait for syncTime to complete
       Particle.process();
     }
     WITH_LOCK(Serial){
-   b46a4:	f004 fb56 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b46a8:	f004 fb54 	bl	b8d54 <_Z16_fetch_usbserialv>
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
-   b46a8:	9001      	str	r0, [sp, #4]
+   b46ac:	9001      	str	r0, [sp, #4]
       { _M_device.lock(); }
-   b46aa:	f7ff fd67 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
+   b46ae:	f7ff fd65 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
       Serial.printlnf("Current time is: %s", Time.timeStr().c_str());
-   b46ae:	f004 fb51 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b46b2:	4604      	mov	r4, r0
+   b46b2:	f004 fb4f 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b46b6:	4604      	mov	r4, r0
   static uint8_t isDST();
 
         /* return string representation of the current time */
         inline String timeStr()
         {
                 return timeStr(now());
-   b46b4:	f004 fa53 	bl	b8b5e <_ZN9TimeClass3nowEv>
-   b46b8:	17c3      	asrs	r3, r0, #31
-   b46ba:	4602      	mov	r2, r0
-   b46bc:	a802      	add	r0, sp, #8
-   b46be:	f004 f9f5 	bl	b8aac <_ZN9TimeClass7timeStrEx>
-   b46c2:	9a02      	ldr	r2, [sp, #8]
-   b46c4:	4910      	ldr	r1, [pc, #64]	; (b4708 <_Z14syncSystemTimev+0x104>)
-   b46c6:	4620      	mov	r0, r4
-   b46c8:	f7ff fd61 	bl	b418e <_ZN5Print8printlnfEPKcz>
-   b46cc:	a802      	add	r0, sp, #8
-   b46ce:	f003 fd3f 	bl	b8150 <_ZN6StringD1Ev>
+   b46b8:	f004 fa51 	bl	b8b5e <_ZN9TimeClass3nowEv>
+   b46bc:	17c3      	asrs	r3, r0, #31
+   b46be:	4602      	mov	r2, r0
+   b46c0:	a802      	add	r0, sp, #8
+   b46c2:	f004 f9f3 	bl	b8aac <_ZN9TimeClass7timeStrEx>
+   b46c6:	9a02      	ldr	r2, [sp, #8]
+   b46c8:	4910      	ldr	r1, [pc, #64]	; (b470c <_Z14syncSystemTimev+0x104>)
+   b46ca:	4620      	mov	r0, r4
+   b46cc:	f7ff fd5f 	bl	b418e <_ZN5Print8printlnfEPKcz>
+   b46d0:	a802      	add	r0, sp, #8
+   b46d2:	f003 fd3d 	bl	b8150 <_ZN6StringD1Ev>
     WITH_LOCK(Serial){
-   b46d2:	a801      	add	r0, sp, #4
+   b46d6:	a801      	add	r0, sp, #4
     }
   }
   else {
     WITH_LOCK(Serial) {
-   b46d4:	f7ff fde4 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
+   b46d8:	f7ff fde2 	bl	b42a0 <_ZNSt10lock_guardIR9USBSerialED1Ev>
       Serial.println("WiFi failed to connect, skipping time synchronization");
     }
   }
 
   WiFi.off();
-   b46d8:	4808      	ldr	r0, [pc, #32]	; (b46fc <_Z14syncSystemTimev+0xf8>)
-   b46da:	f7ff fd6c 	bl	b41b6 <_ZN5spark9WiFiClass3offEv>
-   b46de:	b007      	add	sp, #28
-   b46e0:	bd30      	pop	{r4, r5, pc}
+   b46dc:	4808      	ldr	r0, [pc, #32]	; (b4700 <_Z14syncSystemTimev+0xf8>)
+   b46de:	f7ff fd6a 	bl	b41b6 <_ZN5spark9WiFiClass3offEv>
+   b46e2:	b007      	add	sp, #28
+   b46e4:	bd30      	pop	{r4, r5, pc}
     WITH_LOCK(Serial) {
-   b46e2:	f004 fb37 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b46e6:	f004 fb35 	bl	b8d54 <_Z16_fetch_usbserialv>
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
-   b46e6:	9002      	str	r0, [sp, #8]
+   b46ea:	9002      	str	r0, [sp, #8]
       { _M_device.lock(); }
-   b46e8:	f7ff fd48 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
+   b46ec:	f7ff fd46 	bl	b417c <_ZN9USBSerial4lockEv.isra.0>
       Serial.println("WiFi failed to connect, skipping time synchronization");
-   b46ec:	f004 fb32 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b46f0:	4906      	ldr	r1, [pc, #24]	; (b470c <_Z14syncSystemTimev+0x108>)
-   b46f2:	f003 fc26 	bl	b7f42 <_ZN5Print7printlnEPKc>
+   b46f0:	f004 fb30 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b46f4:	4906      	ldr	r1, [pc, #24]	; (b4710 <_Z14syncSystemTimev+0x108>)
+   b46f6:	f003 fc24 	bl	b7f42 <_ZN5Print7printlnEPKc>
     WITH_LOCK(Serial) {
-   b46f6:	a802      	add	r0, sp, #8
-   b46f8:	e7ec      	b.n	b46d4 <_Z14syncSystemTimev+0xd0>
-   b46fa:	bf00      	nop
-   b46fc:	2003e7c0 	.word	0x2003e7c0
-   b4700:	000b9d6e 	.word	0x000b9d6e
-   b4704:	2003e7d0 	.word	0x2003e7d0
-   b4708:	000b9d8b 	.word	0x000b9d8b
-   b470c:	000b9d9f 	.word	0x000b9d9f
+   b46fa:	a802      	add	r0, sp, #8
+   b46fc:	e7ec      	b.n	b46d8 <_Z14syncSystemTimev+0xd0>
+   b46fe:	bf00      	nop
+   b4700:	2003e7c0 	.word	0x2003e7c0
+   b4704:	000b9d6e 	.word	0x000b9d6e
+   b4708:	2003e7d0 	.word	0x2003e7d0
+   b470c:	000b9d8b 	.word	0x000b9d8b
+   b4710:	000b9d9f 	.word	0x000b9d9f
 
-000b4710 <setup>:
+000b4714 <setup>:
 void setup() {
-   b4710:	b507      	push	{r0, r1, r2, lr}
+   b4714:	b507      	push	{r0, r1, r2, lr}
   Serial.begin(9600);
-   b4712:	f004 fb1f 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b4716:	f44f 5116 	mov.w	r1, #9600	; 0x2580
-   b471a:	f004 fb0b 	bl	b8d34 <_ZN9USBSerial5beginEl>
+   b4716:	f004 fb1d 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b471a:	f44f 5116 	mov.w	r1, #9600	; 0x2580
+   b471e:	f004 fb09 	bl	b8d34 <_ZN9USBSerial5beginEl>
   while(!Serial.isConnected()){}
-   b471e:	f004 fb19 	bl	b8d54 <_Z16_fetch_usbserialv>
-   b4722:	f004 fb0b 	bl	b8d3c <_ZN9USBSerial11isConnectedEv>
-   b4726:	2800      	cmp	r0, #0
-   b4728:	d0f9      	beq.n	b471e <setup+0xe>
+   b4722:	f004 fb17 	bl	b8d54 <_Z16_fetch_usbserialv>
+   b4726:	f004 fb09 	bl	b8d3c <_ZN9USBSerial11isConnectedEv>
+   b472a:	2800      	cmp	r0, #0
+   b472c:	d0f9      	beq.n	b4722 <setup+0xe>
   initHardware();
-   b472a:	f7ff ff0b 	bl	b4544 <_Z12initHardwarev>
+   b472e:	f7ff ff0b 	bl	b4548 <_Z12initHardwarev>
   HTTPRequestSetup(); 
-   b472e:	f7ff fd53 	bl	b41d8 <_Z16HTTPRequestSetupv>
+   b4732:	f7ff fd51 	bl	b41d8 <_Z16HTTPRequestSetupv>
   initFromEEPROM();
-   b4732:	f7ff fd67 	bl	b4204 <_Z14initFromEEPROMv>
+   b4736:	f7ff fd65 	bl	b4204 <_Z14initFromEEPROMv>
   syncSystemTime();
-   b4736:	f7ff ff65 	bl	b4604 <_Z14syncSystemTimev>
+   b473a:	f7ff ff65 	bl	b4608 <_Z14syncSystemTimev>
   os_mutex_create(&payloadAccessLock);
-   b473a:	480a      	ldr	r0, [pc, #40]	; (b4764 <setup+0x54>)
-   b473c:	f001 fbea 	bl	b5f14 <os_mutex_create>
+   b473e:	480a      	ldr	r0, [pc, #40]	; (b4768 <setup+0x54>)
+   b4740:	f001 fbe8 	bl	b5f14 <os_mutex_create>
   os_mutex_unlock(&payloadAccessLock);
-   b4740:	4808      	ldr	r0, [pc, #32]	; (b4764 <setup+0x54>)
-   b4742:	f001 fbf7 	bl	b5f34 <os_mutex_unlock>
+   b4744:	4808      	ldr	r0, [pc, #32]	; (b4768 <setup+0x54>)
+   b4746:	f001 fbf5 	bl	b5f34 <os_mutex_unlock>
   os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
-   b4746:	2300      	movs	r3, #0
-   b4748:	f44f 6280 	mov.w	r2, #1024	; 0x400
-   b474c:	e9cd 3200 	strd	r3, r2, [sp]
-   b4750:	4905      	ldr	r1, [pc, #20]	; (b4768 <setup+0x58>)
-   b4752:	4b06      	ldr	r3, [pc, #24]	; (b476c <setup+0x5c>)
-   b4754:	4806      	ldr	r0, [pc, #24]	; (b4770 <setup+0x60>)
-   b4756:	2202      	movs	r2, #2
-   b4758:	f001 fbcc 	bl	b5ef4 <os_thread_create>
+   b474a:	2300      	movs	r3, #0
+   b474c:	f44f 6280 	mov.w	r2, #1024	; 0x400
+   b4750:	e9cd 3200 	strd	r3, r2, [sp]
+   b4754:	4905      	ldr	r1, [pc, #20]	; (b476c <setup+0x58>)
+   b4756:	4b06      	ldr	r3, [pc, #24]	; (b4770 <setup+0x5c>)
+   b4758:	4806      	ldr	r0, [pc, #24]	; (b4774 <setup+0x60>)
+   b475a:	2202      	movs	r2, #2
+   b475c:	f001 fbca 	bl	b5ef4 <os_thread_create>
 }
-   b475c:	b003      	add	sp, #12
-   b475e:	f85d fb04 	ldr.w	pc, [sp], #4
-   b4762:	bf00      	nop
-   b4764:	2003e060 	.word	0x2003e060
-   b4768:	000b9dd5 	.word	0x000b9dd5
-   b476c:	000b442d 	.word	0x000b442d
-   b4770:	2003e078 	.word	0x2003e078
-   b4774:	00000000 	.word	0x00000000
+   b4760:	b003      	add	sp, #12
+   b4762:	f85d fb04 	ldr.w	pc, [sp], #4
+   b4766:	bf00      	nop
+   b4768:	2003e060 	.word	0x2003e060
+   b476c:	000b9dd5 	.word	0x000b9dd5
+   b4770:	000b442d 	.word	0x000b442d
+   b4774:	2003e078 	.word	0x2003e078
 
 000b4778 <loop>:
 void loop() {
@@ -1634,8 +1638,8 @@ void loop() {
    b4a80:	2003e5f8 	.word	0x2003e5f8
    b4a84:	2003e0dc 	.word	0x2003e0dc
    b4a88:	2003da70 	.word	0x2003da70
-   b4a8c:	000b459d 	.word	0x000b459d
-   b4a90:	000b45d5 	.word	0x000b45d5
+   b4a8c:	000b45a1 	.word	0x000b45a1
+   b4a90:	000b45d9 	.word	0x000b45d9
    b4a94:	2003dac0 	.word	0x2003dac0
    b4a98:	000b9df8 	.word	0x000b9df8
    b4a9c:	000b9dea 	.word	0x000b9dea

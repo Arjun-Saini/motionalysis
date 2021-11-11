@@ -19,23 +19,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   7 .module_info_crc 00000004  000bac00  000bac00  0002ac00  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .debug_info   0011dd9c  00000000  00000000  0002ac04  2**0
+  8 .debug_info   0011dd62  00000000  00000000  0002ac04  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
-  9 .debug_abbrev 0001326d  00000000  00000000  001489a0  2**0
+  9 .debug_abbrev 00013258  00000000  00000000  00148966  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 10 .debug_loc    00039657  00000000  00000000  0015bc0d  2**0
+ 10 .debug_loc    00039657  00000000  00000000  0015bbbe  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 11 .debug_aranges 00003188  00000000  00000000  00195264  2**0
+ 11 .debug_aranges 00003188  00000000  00000000  00195215  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 12 .debug_ranges 0000aff8  00000000  00000000  001983ec  2**0
+ 12 .debug_ranges 0000aff8  00000000  00000000  0019839d  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_macro  00037e48  00000000  00000000  001a33e4  2**0
+ 13 .debug_macro  00037e52  00000000  00000000  001a3395  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_line   0003f7a9  00000000  00000000  001db22c  2**0
+ 14 .debug_line   0003f7a9  00000000  00000000  001db1e7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str    0012a73d  00000000  00000000  0021a9d5  2**0
+ 15 .debug_str    0012a73d  00000000  00000000  0021a990  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_frame  00008aa4  00000000  00000000  00345114  2**2
+ 16 .debug_frame  00008aa4  00000000  00000000  003450d0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2673,6 +2673,7 @@ inline particle::EnumFlags<T, typename std::enable_if_t<std::is_enum<T>::value>>
 	...
 
 000b52e8 <_GLOBAL__sub_I_SystemMode>:
+}
    b52e8:	b570      	push	{r4, r5, r6, lr}
               error_(SYSTEM_ERROR_NONE) {
    b52ea:	4c63      	ldr	r4, [pc, #396]	; (b5478 <_GLOBAL__sub_I_SystemMode+0x190>)
@@ -2804,33 +2805,38 @@ String bleInputBuffer; // buffer for reading from BLE and writing to EEPROM
    b53d6:	4939      	ldr	r1, [pc, #228]	; (b54bc <_GLOBAL__sub_I_SystemMode+0x1d4>)
    b53d8:	483d      	ldr	r0, [pc, #244]	; (b54d0 <_GLOBAL__sub_I_SystemMode+0x1e8>)
    b53da:	f003 ff81 	bl	b92e0 <__aeabi_atexit>
-Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
-   b53de:	483d      	ldr	r0, [pc, #244]	; (b54d4 <_GLOBAL__sub_I_SystemMode+0x1ec>)
-   b53e0:	f000 f8ac 	bl	b553c <_ZN15Adafruit_LIS3DHC1Ev>
-   b53e4:	4a26      	ldr	r2, [pc, #152]	; (b5480 <_GLOBAL__sub_I_SystemMode+0x198>)
-   b53e6:	493c      	ldr	r1, [pc, #240]	; (b54d8 <_GLOBAL__sub_I_SystemMode+0x1f0>)
-   b53e8:	483a      	ldr	r0, [pc, #232]	; (b54d4 <_GLOBAL__sub_I_SystemMode+0x1ec>)
-   b53ea:	f003 ff79 	bl	b92e0 <__aeabi_atexit>
+bool waitingForOTA = false;
+os_thread_t reportingThreadHandle;
+os_mutex_t payloadAccessLock;
+
+
 const BleUuid serviceUuid("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
-   b53ee:	493b      	ldr	r1, [pc, #236]	; (b54dc <_GLOBAL__sub_I_SystemMode+0x1f4>)
-   b53f0:	483b      	ldr	r0, [pc, #236]	; (b54e0 <_GLOBAL__sub_I_SystemMode+0x1f8>)
-   b53f2:	f001 fbed 	bl	b6bd0 <_ZN8particle7BleUuidC1EPKc>
+   b53de:	493d      	ldr	r1, [pc, #244]	; (b54d4 <_GLOBAL__sub_I_SystemMode+0x1ec>)
+   b53e0:	483d      	ldr	r0, [pc, #244]	; (b54d8 <_GLOBAL__sub_I_SystemMode+0x1f0>)
+   b53e2:	f001 fbf5 	bl	b6bd0 <_ZN8particle7BleUuidC1EPKc>
 const BleUuid rxUuid("6E400002-B5A3-F393-E0A9-E50E24DCCA9E");
-   b53f6:	493b      	ldr	r1, [pc, #236]	; (b54e4 <_GLOBAL__sub_I_SystemMode+0x1fc>)
-   b53f8:	483b      	ldr	r0, [pc, #236]	; (b54e8 <_GLOBAL__sub_I_SystemMode+0x200>)
-   b53fa:	f001 fbe9 	bl	b6bd0 <_ZN8particle7BleUuidC1EPKc>
+   b53e6:	493d      	ldr	r1, [pc, #244]	; (b54dc <_GLOBAL__sub_I_SystemMode+0x1f4>)
+   b53e8:	483d      	ldr	r0, [pc, #244]	; (b54e0 <_GLOBAL__sub_I_SystemMode+0x1f8>)
+   b53ea:	f001 fbf1 	bl	b6bd0 <_ZN8particle7BleUuidC1EPKc>
 const BleUuid txUuid("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
-   b53fe:	493b      	ldr	r1, [pc, #236]	; (b54ec <_GLOBAL__sub_I_SystemMode+0x204>)
-   b5400:	483b      	ldr	r0, [pc, #236]	; (b54f0 <_GLOBAL__sub_I_SystemMode+0x208>)
-   b5402:	f001 fbe5 	bl	b6bd0 <_ZN8particle7BleUuidC1EPKc>
+   b53ee:	493d      	ldr	r1, [pc, #244]	; (b54e4 <_GLOBAL__sub_I_SystemMode+0x1fc>)
+   b53f0:	483d      	ldr	r0, [pc, #244]	; (b54e8 <_GLOBAL__sub_I_SystemMode+0x200>)
+   b53f2:	f001 fbed 	bl	b6bd0 <_ZN8particle7BleUuidC1EPKc>
+Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
+   b53f6:	483d      	ldr	r0, [pc, #244]	; (b54ec <_GLOBAL__sub_I_SystemMode+0x204>)
+   b53f8:	f000 f8a0 	bl	b553c <_ZN15Adafruit_LIS3DHC1Ev>
+   b53fc:	4a20      	ldr	r2, [pc, #128]	; (b5480 <_GLOBAL__sub_I_SystemMode+0x198>)
+   b53fe:	493c      	ldr	r1, [pc, #240]	; (b54f0 <_GLOBAL__sub_I_SystemMode+0x208>)
+   b5400:	483a      	ldr	r0, [pc, #232]	; (b54ec <_GLOBAL__sub_I_SystemMode+0x204>)
+   b5402:	f003 ff6d 	bl	b92e0 <__aeabi_atexit>
     value_ = static_cast<ValueType>(value);
    b5406:	2310      	movs	r3, #16
 BleCharacteristic txCharacteristic("tx", BleCharacteristicProperty::NOTIFY, txUuid, serviceUuid);
-   b5408:	4939      	ldr	r1, [pc, #228]	; (b54f0 <_GLOBAL__sub_I_SystemMode+0x208>)
+   b5408:	4937      	ldr	r1, [pc, #220]	; (b54e8 <_GLOBAL__sub_I_SystemMode+0x200>)
    b540a:	f88d 3014 	strb.w	r3, [sp, #20]
    b540e:	a806      	add	r0, sp, #24
    b5410:	f001 fafa 	bl	b6a08 <_ZN8particle7BleUuidC1ERKS0_>
-   b5414:	4932      	ldr	r1, [pc, #200]	; (b54e0 <_GLOBAL__sub_I_SystemMode+0x1f8>)
+   b5414:	4930      	ldr	r1, [pc, #192]	; (b54d8 <_GLOBAL__sub_I_SystemMode+0x1f0>)
    b5416:	a80b      	add	r0, sp, #44	; 0x2c
    b5418:	f001 faf6 	bl	b6a08 <_ZN8particle7BleUuidC1ERKS0_>
    b541c:	ab0b      	add	r3, sp, #44	; 0x2c
@@ -2847,11 +2853,11 @@ BleCharacteristic txCharacteristic("tx", BleCharacteristicProperty::NOTIFY, txUu
    b5436:	f003 ff53 	bl	b92e0 <__aeabi_atexit>
    b543a:	2304      	movs	r3, #4
 BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP, rxUuid, serviceUuid, onDataReceived, NULL);
-   b543c:	492a      	ldr	r1, [pc, #168]	; (b54e8 <_GLOBAL__sub_I_SystemMode+0x200>)
+   b543c:	4928      	ldr	r1, [pc, #160]	; (b54e0 <_GLOBAL__sub_I_SystemMode+0x1f8>)
    b543e:	f88d 3014 	strb.w	r3, [sp, #20]
    b5442:	a806      	add	r0, sp, #24
    b5444:	f001 fae0 	bl	b6a08 <_ZN8particle7BleUuidC1ERKS0_>
-   b5448:	4925      	ldr	r1, [pc, #148]	; (b54e0 <_GLOBAL__sub_I_SystemMode+0x1f8>)
+   b5448:	4923      	ldr	r1, [pc, #140]	; (b54d8 <_GLOBAL__sub_I_SystemMode+0x1f0>)
    b544a:	a80b      	add	r0, sp, #44	; 0x2c
    b544c:	f001 fadc 	bl	b6a08 <_ZN8particle7BleUuidC1ERKS0_>
    b5450:	4b2b      	ldr	r3, [pc, #172]	; (b5500 <_GLOBAL__sub_I_SystemMode+0x218>)
@@ -2867,9 +2873,9 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b5466:	4a06      	ldr	r2, [pc, #24]	; (b5480 <_GLOBAL__sub_I_SystemMode+0x198>)
    b5468:	4924      	ldr	r1, [pc, #144]	; (b54fc <_GLOBAL__sub_I_SystemMode+0x214>)
    b546a:	4827      	ldr	r0, [pc, #156]	; (b5508 <_GLOBAL__sub_I_SystemMode+0x220>)
+}
    b546c:	b010      	add	sp, #64	; 0x40
    b546e:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
-BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP, rxUuid, serviceUuid, onDataReceived, NULL);
    b5472:	f003 bf35 	b.w	b92e0 <__aeabi_atexit>
    b5476:	bf00      	nop
    b5478:	2003da64 	.word	0x2003da64
@@ -2895,14 +2901,14 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b54c8:	2003e0e4 	.word	0x2003e0e4
    b54cc:	2003e040 	.word	0x2003e040
    b54d0:	2003daac 	.word	0x2003daac
-   b54d4:	2003dee8 	.word	0x2003dee8
-   b54d8:	000b40b3 	.word	0x000b40b3
-   b54dc:	000ba219 	.word	0x000ba219
-   b54e0:	2003da70 	.word	0x2003da70
-   b54e4:	000ba23e 	.word	0x000ba23e
-   b54e8:	2003da84 	.word	0x2003da84
-   b54ec:	000ba263 	.word	0x000ba263
-   b54f0:	2003da98 	.word	0x2003da98
+   b54d4:	000ba219 	.word	0x000ba219
+   b54d8:	2003da70 	.word	0x2003da70
+   b54dc:	000ba23e 	.word	0x000ba23e
+   b54e0:	2003da84 	.word	0x2003da84
+   b54e4:	000ba263 	.word	0x000ba263
+   b54e8:	2003da98 	.word	0x2003da98
+   b54ec:	2003dee8 	.word	0x2003dee8
+   b54f0:	000b40b3 	.word	0x000b40b3
    b54f4:	000ba288 	.word	0x000ba288
    b54f8:	2003e5f8 	.word	0x2003e5f8
    b54fc:	000b70ff 	.word	0x000b70ff

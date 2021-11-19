@@ -33,9 +33,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_line   0003f7a9  00000000  00000000  001db849  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str    0012a743  00000000  00000000  0021aff2  2**0
+ 15 .debug_str    0012a742  00000000  00000000  0021aff2  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_frame  00008aa8  00000000  00000000  00345738  2**2
+ 16 .debug_frame  00008aa8  00000000  00000000  00345734  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -465,7 +465,7 @@ void HTTPRequestSetup() {
    b41f2:	bf00      	nop
    b41f4:	2003e06c 	.word	0x2003e06c
    b41f8:	000b9d5c 	.word	0x000b9d5c
-   b41fc:	000b9d69 	.word	0x000b9d69
+   b41fc:	000b9d68 	.word	0x000b9d68
 
 000b4200 <_Z14initFromEEPROMv>:
       Serial.println("Failed to initialize LIS3DH");
@@ -550,9 +550,9 @@ void initFromEEPROM() {
    b4284:	2003e060 	.word	0x2003e060
    b4288:	2003e064 	.word	0x2003e064
    b428c:	2003dab4 	.word	0x2003dab4
-   b4290:	000b9d6b 	.word	0x000b9d6b
-   b4294:	000b9d81 	.word	0x000b9d81
-   b4298:	000b9d97 	.word	0x000b9d97
+   b4290:	000b9d6a 	.word	0x000b9d6a
+   b4294:	000b9d80 	.word	0x000b9d80
+   b4298:	000b9d96 	.word	0x000b9d96
 
 000b429c <_ZNSt10lock_guardIR9USBSerialED1Ev>:
       { _M_device.lock(); }
@@ -813,22 +813,22 @@ class StringSumHelper : public String
    b4448:	e75a      	b.n	b4300 <_Z10reportData6String+0x50>
    b444a:	bf00      	nop
    b444c:	2003e7c0 	.word	0x2003e7c0
-   b4450:	000b9dc6 	.word	0x000b9dc6
+   b4450:	000b9dc5 	.word	0x000b9dc5
    b4454:	2003e0cc 	.word	0x2003e0cc
-   b4458:	000b9df0 	.word	0x000b9df0
-   b445c:	000ba0c2 	.word	0x000ba0c2
-   b4460:	000b9e0f 	.word	0x000b9e0f
+   b4458:	000b9def 	.word	0x000b9def
+   b445c:	000ba0c1 	.word	0x000ba0c1
+   b4460:	000b9e0e 	.word	0x000b9e0e
    b4464:	2003e0b8 	.word	0x2003e0b8
-   b4468:	000b9e22 	.word	0x000b9e22
-   b446c:	000b9e2c 	.word	0x000b9e2c
+   b4468:	000b9e21 	.word	0x000b9e21
+   b446c:	000b9e2b 	.word	0x000b9e2b
    b4470:	2003e0a8 	.word	0x2003e0a8
-   b4474:	000b9e2f 	.word	0x000b9e2f
+   b4474:	000b9e2e 	.word	0x000b9e2e
    b4478:	2003e06c 	.word	0x2003e06c
    b447c:	2003d9cc 	.word	0x2003d9cc
    b4480:	2003dabc 	.word	0x2003dabc
-   b4484:	000b9e34 	.word	0x000b9e34
-   b4488:	000b9e40 	.word	0x000b9e40
-   b448c:	000b9e3d 	.word	0x000b9e3d
+   b4484:	000b9e33 	.word	0x000b9e33
+   b4488:	000b9e3f 	.word	0x000b9e3f
+   b448c:	000b9e3c 	.word	0x000b9e3c
 
 000b4490 <_Z15reportingThreadPv>:
       break;
@@ -952,16 +952,16 @@ class StringSumHelper : public String
    b4578:	2003e5f4 	.word	0x2003e5f4
    b457c:	2003e060 	.word	0x2003e060
    b4580:	2003e050 	.word	0x2003e050
-   b4584:	000b9e47 	.word	0x000b9e47
+   b4584:	000b9e46 	.word	0x000b9e46
    b4588:	2003dab4 	.word	0x2003dab4
-   b458c:	000b9e5b 	.word	0x000b9e5b
-   b4590:	000b9e6a 	.word	0x000b9e6a
+   b458c:	000b9e5a 	.word	0x000b9e5a
+   b4590:	000b9e69 	.word	0x000b9e69
    b4594:	2003e040 	.word	0x2003e040
-   b4598:	000ba0c2 	.word	0x000ba0c2
+   b4598:	000ba0c1 	.word	0x000ba0c1
    b459c:	2003e064 	.word	0x2003e064
    b45a0:	2003e4f4 	.word	0x2003e4f4
    b45a4:	2003e0f4 	.word	0x2003e0f4
-   b45a8:	000b9e50 	.word	0x000b9e50
+   b45a8:	000b9e4f 	.word	0x000b9e4f
 
 000b45ac <_Z12initHardwarev>:
 void initHardware() {
@@ -1010,7 +1010,7 @@ void initHardware() {
    b45f6:	f85d fb04 	ldr.w	pc, [sp], #4
    b45fa:	bf00      	nop
    b45fc:	2003ded8 	.word	0x2003ded8
-   b4600:	000b9e6d 	.word	0x000b9e6d
+   b4600:	000b9e6c 	.word	0x000b9e6c
 
 000b4604 <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv>:
 
@@ -1047,7 +1047,7 @@ void connectCallback(const BlePeerDevice& peer, void* context){
   digitalWrite(kBLEConnectedLED, HIGH);
    b4630:	f004 be11 	b.w	b9256 <digitalWrite>
    b4634:	2003daac 	.word	0x2003daac
-   b4638:	000b9f16 	.word	0x000b9f16
+   b4638:	000b9f15 	.word	0x000b9f15
 
 000b463c <_Z18disconnectCallbackRKN8particle13BlePeerDeviceEPv>:
 
@@ -1076,7 +1076,7 @@ void disconnectCallback(const BlePeerDevice& peer, void* context){
   digitalWrite(kBLEConnectedLED, LOW);
    b4662:	f004 bdf8 	b.w	b9256 <digitalWrite>
    b4666:	bf00      	nop
-   b4668:	000b9e89 	.word	0x000b9e89
+   b4668:	000b9e88 	.word	0x000b9e88
 
 000b466c <_Z14syncSystemTimev>:
 #pragma once
@@ -1256,10 +1256,10 @@ void syncSystemTime() {
    b4760:	e7ec      	b.n	b473c <_Z14syncSystemTimev+0xd0>
    b4762:	bf00      	nop
    b4764:	2003e7c0 	.word	0x2003e7c0
-   b4768:	000b9e96 	.word	0x000b9e96
+   b4768:	000b9e95 	.word	0x000b9e95
    b476c:	2003e7d0 	.word	0x2003e7d0
-   b4770:	000b9eb3 	.word	0x000b9eb3
-   b4774:	000b9ec7 	.word	0x000b9ec7
+   b4770:	000b9eb2 	.word	0x000b9eb2
+   b4774:	000b9ec6 	.word	0x000b9ec6
 
 000b4778 <setup>:
 void setup() {
@@ -1298,7 +1298,7 @@ void setup() {
    b47bc:	bd10      	pop	{r4, pc}
    b47be:	bf00      	nop
    b47c0:	2003e050 	.word	0x2003e050
-   b47c4:	000b9efd 	.word	0x000b9efd
+   b47c4:	000b9efc 	.word	0x000b9efc
    b47c8:	000b4491 	.word	0x000b4491
    b47cc:	2003e068 	.word	0x2003e068
 
@@ -1699,30 +1699,30 @@ void loop() {
    b4ae8:	9999999a 	.word	0x9999999a
    b4aec:	3fa99999 	.word	0x3fa99999
    b4af0:	2003dab8 	.word	0x2003dab8
-   b4af4:	000b9f0a 	.word	0x000b9f0a
+   b4af4:	000b9f09 	.word	0x000b9f09
    b4af8:	2003e5f8 	.word	0x2003e5f8
    b4afc:	2003e0dc 	.word	0x2003e0dc
    b4b00:	2003da60 	.word	0x2003da60
    b4b04:	000b4605 	.word	0x000b4605
    b4b08:	000b463d 	.word	0x000b463d
    b4b0c:	2003dab0 	.word	0x2003dab0
-   b4b10:	000b9f20 	.word	0x000b9f20
-   b4b14:	000b9f12 	.word	0x000b9f12
-   b4b18:	000b9f54 	.word	0x000b9f54
+   b4b10:	000b9f1f 	.word	0x000b9f1f
+   b4b14:	000b9f11 	.word	0x000b9f11
+   b4b18:	000b9f53 	.word	0x000b9f53
    b4b1c:	2003ded8 	.word	0x2003ded8
-   b4b20:	000b9fb4 	.word	0x000b9fb4
+   b4b20:	000b9fb3 	.word	0x000b9fb3
    b4b24:	2003e61c 	.word	0x2003e61c
    b4b28:	2003e05c 	.word	0x2003e05c
    b4b2c:	2003d9c8 	.word	0x2003d9c8
    b4b30:	2003e5f4 	.word	0x2003e5f4
    b4b34:	2003e4f4 	.word	0x2003e4f4
    b4b38:	2003e0f4 	.word	0x2003e0f4
-   b4b3c:	000b9f65 	.word	0x000b9f65
+   b4b3c:	000b9f64 	.word	0x000b9f64
    b4b40:	2003e050 	.word	0x2003e050
-   b4b44:	000b9f79 	.word	0x000b9f79
-   b4b48:	000b9f96 	.word	0x000b9f96
+   b4b44:	000b9f78 	.word	0x000b9f78
+   b4b48:	000b9f95 	.word	0x000b9f95
    b4b4c:	2003e060 	.word	0x2003e060
-   b4b50:	000b9fbe 	.word	0x000b9fbe
+   b4b50:	000b9fbd 	.word	0x000b9fbd
    b4b54:	2003e614 	.word	0x2003e614
    b4b58:	2003e618 	.word	0x2003e618
    b4b5c:	2003e054 	.word	0x2003e054
@@ -2075,17 +2075,17 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
    b4e26:	e7b6      	b.n	b4d96 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x232>
    b4e28:	2003daac 	.word	0x2003daac
    b4e2c:	2003da9c 	.word	0x2003da9c
-   b4e30:	000ba0c2 	.word	0x000ba0c2
+   b4e30:	000ba0c1 	.word	0x000ba0c1
    b4e34:	2003e064 	.word	0x2003e064
    b4e38:	2003e060 	.word	0x2003e060
    b4e3c:	2003dab4 	.word	0x2003dab4
    b4e40:	2003df18 	.word	0x2003df18
    b4e44:	2003df04 	.word	0x2003df04
    b4e48:	2003e5f8 	.word	0x2003e5f8
-   b4e4c:	000b9ff8 	.word	0x000b9ff8
+   b4e4c:	000b9ff7 	.word	0x000b9ff7
    b4e50:	2003e0e4 	.word	0x2003e0e4
-   b4e54:	000ba03d 	.word	0x000ba03d
-   b4e58:	000ba050 	.word	0x000ba050
+   b4e54:	000ba03c 	.word	0x000ba03c
+   b4e58:	000ba04f 	.word	0x000ba04f
    b4e5c:	2003e030 	.word	0x2003e030
    b4e60:	49ba      	ldr	r1, [pc, #744]	; (b514c <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x5e8>)
    b4e62:	4630      	mov	r0, r6
@@ -2479,37 +2479,37 @@ class StringSumHelper : public String
    b5146:	2200      	movs	r2, #0
    b5148:	e625      	b.n	b4d96 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x232>
    b514a:	bf00      	nop
-   b514c:	000ba076 	.word	0x000ba076
+   b514c:	000ba075 	.word	0x000ba075
    b5150:	2003e7c0 	.word	0x2003e7c0
-   b5154:	000b9fcc 	.word	0x000b9fcc
+   b5154:	000b9fcb 	.word	0x000b9fcb
    b5158:	2003e5f8 	.word	0x2003e5f8
    b515c:	2003df1c 	.word	0x2003df1c
    b5160:	2003df04 	.word	0x2003df04
    b5164:	2003df18 	.word	0x2003df18
-   b5168:	000ba07c 	.word	0x000ba07c
+   b5168:	000ba07b 	.word	0x000ba07b
    b516c:	2003e030 	.word	0x2003e030
    b5170:	2003e0e4 	.word	0x2003e0e4
-   b5174:	000ba096 	.word	0x000ba096
-   b5178:	000ba0b4 	.word	0x000ba0b4
-   b517c:	000ba0c0 	.word	0x000ba0c0
-   b5180:	000ba0c3 	.word	0x000ba0c3
-   b5184:	000ba0f7 	.word	0x000ba0f7
+   b5174:	000ba095 	.word	0x000ba095
+   b5178:	000ba0b3 	.word	0x000ba0b3
+   b517c:	000ba0bf 	.word	0x000ba0bf
+   b5180:	000ba0c2 	.word	0x000ba0c2
+   b5184:	000ba0f6 	.word	0x000ba0f6
    b5188:	2003da9c 	.word	0x2003da9c
-   b518c:	000ba0fc 	.word	0x000ba0fc
-   b5190:	000ba104 	.word	0x000ba104
-   b5194:	000ba10e 	.word	0x000ba10e
-   b5198:	000ba0c2 	.word	0x000ba0c2
+   b518c:	000ba0fb 	.word	0x000ba0fb
+   b5190:	000ba103 	.word	0x000ba103
+   b5194:	000ba10d 	.word	0x000ba10d
+   b5198:	000ba0c1 	.word	0x000ba0c1
    b519c:	2003dab4 	.word	0x2003dab4
-   b51a0:	000ba12e 	.word	0x000ba12e
+   b51a0:	000ba12d 	.word	0x000ba12d
    b51a4:	2003e060 	.word	0x2003e060
-   b51a8:	000ba13b 	.word	0x000ba13b
-   b51ac:	000ba142 	.word	0x000ba142
-   b51b0:	000ba173 	.word	0x000ba173
+   b51a8:	000ba13a 	.word	0x000ba13a
+   b51ac:	000ba141 	.word	0x000ba141
+   b51b0:	000ba172 	.word	0x000ba172
    b51b4:	2003e064 	.word	0x2003e064
-   b51b8:	000ba1c8 	.word	0x000ba1c8
-   b51bc:	000ba1f9 	.word	0x000ba1f9
+   b51b8:	000ba1c7 	.word	0x000ba1c7
+   b51bc:	000ba1f8 	.word	0x000ba1f8
    b51c0:	2003df14 	.word	0x2003df14
-   b51c4:	000b9ff5 	.word	0x000b9ff5
+   b51c4:	000b9ff4 	.word	0x000b9ff4
    b51c8:	4945      	ldr	r1, [pc, #276]	; (b52e0 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x77c>)
    b51ca:	4846      	ldr	r0, [pc, #280]	; (b52e4 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x780>)
    b51cc:	f003 f963 	bl	b8496 <_ZNK6String6equalsEPKc>
@@ -2662,16 +2662,16 @@ class StringSumHelper : public String
    b52da:	f001 fa2f 	bl	b673c <delay>
           while(!Particle.connected()) {
    b52de:	e7f1      	b.n	b52c4 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x760>
-   b52e0:	000ba0c2 	.word	0x000ba0c2
+   b52e0:	000ba0c1 	.word	0x000ba0c1
    b52e4:	2003da9c 	.word	0x2003da9c
    b52e8:	2003e064 	.word	0x2003e064
-   b52ec:	000ba24a 	.word	0x000ba24a
-   b52f0:	000ba280 	.word	0x000ba280
+   b52ec:	000ba249 	.word	0x000ba249
+   b52f0:	000ba27f 	.word	0x000ba27f
    b52f4:	2003e610 	.word	0x2003e610
    b52f8:	2003e7c0 	.word	0x2003e7c0
-   b52fc:	000b9ec7 	.word	0x000b9ec7
-   b5300:	000ba284 	.word	0x000ba284
-   b5304:	000ba2a4 	.word	0x000ba2a4
+   b52fc:	000b9ec6 	.word	0x000b9ec6
+   b5300:	000ba283 	.word	0x000ba283
+   b5304:	000ba2a3 	.word	0x000ba2a3
    b5308:	2003e5f8 	.word	0x2003e5f8
    b530c:	2003e7d0 	.word	0x2003e7d0
 
@@ -2961,7 +2961,7 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b5508:	ffff0000 	.word	0xffff0000
    b550c:	2003da50 	.word	0x2003da50
    b5510:	000b40df 	.word	0x000b40df
-   b5514:	000ba0c2 	.word	0x000ba0c2
+   b5514:	000ba0c1 	.word	0x000ba0c1
    b5518:	2003e040 	.word	0x2003e040
    b551c:	2003df18 	.word	0x2003df18
    b5520:	000b826d 	.word	0x000b826d
@@ -2970,11 +2970,11 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b552c:	2003e030 	.word	0x2003e030
    b5530:	2003e0cc 	.word	0x2003e0cc
    b5534:	2003da9c 	.word	0x2003da9c
-   b5538:	000ba2b9 	.word	0x000ba2b9
+   b5538:	000ba2b8 	.word	0x000ba2b8
    b553c:	2003da60 	.word	0x2003da60
-   b5540:	000ba2de 	.word	0x000ba2de
+   b5540:	000ba2dd 	.word	0x000ba2dd
    b5544:	2003da74 	.word	0x2003da74
-   b5548:	000ba303 	.word	0x000ba303
+   b5548:	000ba302 	.word	0x000ba302
    b554c:	2003da88 	.word	0x2003da88
    b5550:	2003dabc 	.word	0x2003dabc
    b5554:	000b4159 	.word	0x000b4159
@@ -2989,11 +2989,11 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b5578:	2003df04 	.word	0x2003df04
    b557c:	2003ded8 	.word	0x2003ded8
    b5580:	000b40b3 	.word	0x000b40b3
-   b5584:	000ba328 	.word	0x000ba328
+   b5584:	000ba327 	.word	0x000ba327
    b5588:	2003e5f8 	.word	0x2003e5f8
    b558c:	000b717f 	.word	0x000b717f
    b5590:	000b4b65 	.word	0x000b4b65
-   b5594:	000ba32b 	.word	0x000ba32b
+   b5594:	000ba32a 	.word	0x000ba32a
    b5598:	2003e0dc 	.word	0x2003e0dc
 
 000b559c <_ZN15Adafruit_Sensor15enableAutoRangeEb>:
@@ -3043,7 +3043,7 @@ void Adafruit_LIS3DH::getSensor(sensor_t *sensor) {
   sensor->resolution  = 0;
 }
    b55c6:	bd38      	pop	{r3, r4, r5, pc}
-   b55c8:	000b9e82 	.word	0x000b9e82
+   b55c8:	000b9e81 	.word	0x000b9e81
 
 000b55cc <_ZN15Adafruit_LIS3DHC1Ev>:
   : _cs(-1), _mosi(-1), _miso(-1), _sck(-1), _sensorID(-1)
@@ -3762,7 +3762,7 @@ void HttpClient::sendHeader(const char* aHeaderName, const char* aHeaderValue)
    b5ab8:	e8bd 40f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, lr}
     Serial.println(aHeaderValue);
    b5abc:	f002 bacf 	b.w	b805e <_ZN5Print7printlnEPKc>
-   b5ac0:	000ba073 	.word	0x000ba073
+   b5ac0:	000ba072 	.word	0x000ba072
 
 000b5ac4 <_ZN10HttpClient10sendHeaderEPKci>:
 
@@ -3815,7 +3815,7 @@ size_t Print::print(T n, int base)
    b5b0e:	e8bd 40f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, lr}
    b5b12:	f002 ba98 	b.w	b8046 <_ZN5Print7printlnEv>
    b5b16:	bf00      	nop
-   b5b18:	000ba073 	.word	0x000ba073
+   b5b18:	000ba072 	.word	0x000ba072
 
 000b5b1c <_ZN10HttpClient10sendHeaderEPKc>:
 
@@ -4280,8 +4280,8 @@ size_t Print::print(T n, int base)
    b5e78:	000ba3eb 	.word	0x000ba3eb
    b5e7c:	000ba774 	.word	0x000ba774
    b5e80:	000ba370 	.word	0x000ba370
-   b5e84:	000b9e4e 	.word	0x000b9e4e
-   b5e88:	000ba074 	.word	0x000ba074
+   b5e84:	000b9e4d 	.word	0x000b9e4d
+   b5e88:	000ba073 	.word	0x000ba073
    b5e8c:	000ba3ab 	.word	0x000ba3ab
    b5e90:	000ba3b7 	.word	0x000ba3b7
    b5e94:	000ba3e0 	.word	0x000ba3e0
@@ -4289,7 +4289,7 @@ size_t Print::print(T n, int base)
    b5e9c:	000ba40a 	.word	0x000ba40a
    b5ea0:	000ba40f 	.word	0x000ba40f
    b5ea4:	000ba38c 	.word	0x000ba38c
-   b5ea8:	000b9e2f 	.word	0x000b9e2f
+   b5ea8:	000b9e2e 	.word	0x000b9e2e
    b5eac:	000ba41e 	.word	0x000ba41e
    b5eb0:	000ba43f 	.word	0x000ba43f
    b5eb4:	000ba46b 	.word	0x000ba46b
@@ -4322,7 +4322,7 @@ size_t Print::print(T n, int base)
    b5efe:	f003 fdb3 	bl	b9a68 <atoi>
    b5f02:	f8c8 0000 	str.w	r0, [r8]
    b5f06:	e7a5      	b.n	b5e54 <_ZN10HttpClient7requestER14http_request_tR15http_response_tP13http_header_tPKc+0x320>
-   b5f08:	000ba0c2 	.word	0x000ba0c2
+   b5f08:	000ba0c1 	.word	0x000ba0c1
 
 000b5f0c <hal_ble_stack_init>:
 
@@ -6928,7 +6928,7 @@ inline particle::EnumFlags<T, typename std::enable_if_t<std::is_enum<T>::value>>
    b6d1a:	4620      	mov	r0, r4
    b6d1c:	bd38      	pop	{r3, r4, r5, pc}
    b6d1e:	bf00      	nop
-   b6d20:	000ba0c2 	.word	0x000ba0c2
+   b6d20:	000ba0c1 	.word	0x000ba0c1
 
 000b6d24 <_ZN8particle18BleLocalDeviceImpl14findPeerDeviceEt>:
     BlePeerDevice* findPeerDevice(BleConnectionHandle connHandle) {
@@ -11261,7 +11261,7 @@ String String::substring(unsigned int left, unsigned int right) const
 }
    b8518:	4630      	mov	r0, r6
    b851a:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
-   b851c:	000ba0c2 	.word	0x000ba0c2
+   b851c:	000ba0c1 	.word	0x000ba0c1
 
 000b8520 <_ZNK6String9substringEj>:
 {
@@ -14882,102 +14882,102 @@ TwoWire& __fetch_global_Wire()
 
 000b9d48 <dynalib_user>:
    b9d48:	000b4021 000b405d 000b4085 000b4089     !@..]@...@...@..
-   b9d58:	00000000 312e3031 312e3832 3939312e     ....10.128.1.199
-   b9d68:	72002f00 726f6365 676e6964 65746e49     ./.recordingInte
-   b9d78:	6c617672 6925203a 70657200 6974726f     rval: %i.reporti
-   b9d88:	6e49676e 76726574 203a6c61 44006925     ngInterval: %i.D
-   b9d98:	20444953 20746f6e 726f7473 69206465     SID not stored i
-   b9da8:	4545206e 4d4f5250 4c42202e 6f632045     n EEPROM. BLE co
-   b9db8:	6769666e 71657220 65726975 69570064     nfig required.Wi
-   b9dc8:	66206946 656c6961 6f742064 6e6f6320     Fi failed to con
-   b9dd8:	7463656e 6164202c 6e206174 7220746f     nect, data not r
-   b9de8:	726f7065 00646574 69466957 6e6f6320     eported.WiFi con
-   b9df8:	7463656e 202c6465 6f706572 6e697472     nected, reportin
-   b9e08:	61642067 52006174 6f6c6c6f 20726576     g data.Rollover 
-   b9e18:	6c796170 3a64616f 227b0020 61746164     payload: .{"data
-   b9e28:	005b3a22 50007d5d 0054534f 74617453     ":[.]}.POST.Stat
-   b9e38:	203a7375 71655200 79646f42 7b00203a     us: .ReqBody: .{
-   b9e48:	69736422 003a2264 7622202c 65756c61     "dsid":., "value
-   b9e58:	2c003a22 69742220 7473656d 22706d61     ":., "timestamp"
-   b9e68:	2c7d003a 69614600 2064656c 69206f74     :.},.Failed to i
-   b9e78:	6974696e 7a696c61 494c2065 48443353     nitialize LIS3DH
-   b9e88:	73696400 6e6e6f63 65746365 69570064     .disconnected.Wi
-   b9e98:	63206946 656e6e6f 64657463 7973202c     Fi connected, sy
-   b9ea8:	6e69636e 69742067 4300656d 65727275     ncing time.Curre
-   b9eb8:	7420746e 20656d69 203a7369 57007325     nt time is: %s.W
-   b9ec8:	20694669 6c696166 74206465 6f63206f     iFi failed to co
-   b9ed8:	63656e6e 73202c74 7070696b 20676e69     nnect, skipping 
-   b9ee8:	656d6974 6e797320 6f726863 617a696e     time synchroniza
-   b9ef8:	6e6f6974 70657200 5474726f 61657268     tion.reportThrea
-   b9f08:	4c420064 49415745 4c420054 6f632045     d.BLEWAIT.BLE co
-   b9f18:	63656e6e 00646574 20454c42 20746f6e     nnected.BLE not 
-   b9f28:	6e6e6f63 65746365 63202c64 69746e6f     connected, conti
-   b9f38:	6e69756e 69772067 73206874 65726f74     nuing with store
-   b9f48:	65732064 6e697474 002e7367 57656c62     d settings..bleW
-   b9f58:	46746961 6f43726f 6769666e 63655200     aitForConfig.Rec
-   b9f68:	6964726f 6920676e 7865646e 6925203a     ording index: %i
-   b9f78:	71657200 74736575 20676e69 6c796170     .requesting payl
-   b9f88:	4164616f 73656363 636f4c73 6170006b     oadAccessLock.pa
-   b9f98:	616f6c79 63634164 4c737365 206b636f     yloadAccessLock 
-   b9fa8:	656c6572 64657361 20796220 4f434552     released by RECO
-   b9fb8:	4e494452 69460047 20747372 64616572     RDING.First read
-   b9fc8:	00676e69 6572430a 746e6564 736c6169     ing..Credentials
-   b9fd8:	65726120 72756320 746e6572 7320796c      are currently s
-   b9fe8:	65726f74 6f662064 5b0a3a72 000a2c00     tored for:.[.,..
-   b9ff8:	6e450a5d 20726574 7774656e 206b726f     ].Enter network 
-   ba008:	44495353 6c622820 206b6e61 73206f74     SSID (blank to s
-   ba018:	2c70696b 6c632720 27726165 206f7420     kip, 'clear' to 
-   ba028:	65736572 72632074 6e656465 6c616974     reset credential
-   ba038:	203a2973 75430a00 6e657272 53442074     s): ..Current DS
-   ba048:	69204449 005b2073 6e450a5d 20726574     ID is [.].Enter 
-   ba058:	69766564 44206563 20444953 616c6228     device DSID (bla
-   ba068:	74206b6e 6b73206f 3a297069 6c630020     nk to skip): .cl
-   ba078:	00726165 746e450a 6e207265 6f777465     ear..Enter netwo
-   ba088:	70206b72 77737361 3a64726f 0a0a0020     rk password: ...
-   ba098:	64657243 69746e65 20736c61 20746573     Credentials set 
-   ba0a8:	68746977 69737320 00203a64 7361700a     with ssid: ..pas
-   ba0b8:	726f7773 00203a64 0a000a0a 65746e45     sword: .....Ente
-   ba0c8:	74272072 27747365 206f7420 74736574     r 'test' to test
-   ba0d8:	65726320 746e6564 736c6169 6c622820      credentials (bl
-   ba0e8:	206b6e61 73206f74 2970696b 7400203a     ank to skip): .t
-   ba0f8:	00747365 656d6974 0074756f 63637553     est.timeout.Succ
-   ba108:	21737365 5245000a 3a524f52 46695720     ess!..ERROR: WiF
-   ba118:	6f632069 63656e6e 6e6f6974 6d697420     i connection tim
-   ba128:	74756f65 7364000a 65206469 7265746e     eout..dsid enter
-   ba138:	64006465 3a646973 430a0020 65727275     ed.dsid: ..Curre
-   ba148:	7620746e 65756c61 726f6620 74616420     nt value for dat
-   ba158:	6f632061 63656c6c 6e6f6974 746e6920     a collection int
-   ba168:	61767265 7369206c 5d005b20 746e450a     erval is [.].Ent
-   ba178:	74207265 20656d69 77746562 206e6565     er time between 
-   ba188:	61746164 6c6f6320 7463656c 206e6f69     data collection 
-   ba198:	61207361 6e69206e 65676574 6e692072     as an integer in
-   ba1a8:	6c696d20 6573696c 646e6f63 62282073      milliseconds (b
-   ba1b8:	6b6e616c 206f7420 70696b73 00203a29     lank to skip): .
-   ba1c8:	7275430a 746e6572 6c617620 66206575     .Current value f
-   ba1d8:	5720726f 20694669 6e6e6f63 69746365     or WiFi connecti
-   ba1e8:	69206e6f 7265746e 206c6176 5b207369     on interval is [
-   ba1f8:	450a5d00 7265746e 6d697420 65622065     .].Enter time be
-   ba208:	65657774 6957206e 63206946 656e6e6f     tween WiFi conne
-   ba218:	6f697463 6120736e 6e612073 746e6920     ctions as an int
-   ba228:	72656765 206e6920 6f636573 2073646e     eger in seconds 
-   ba238:	616c6228 74206b6e 6b73206f 3a297069     (blank to skip):
-   ba248:	450a0020 7265746e 746f2720 74202761      ..Enter 'ota' t
-   ba258:	6177206f 66207469 4f20726f 75204154     o wait for OTA u
-   ba268:	74616470 62282065 6b6e616c 206f7420     pdate (blank to 
-   ba278:	70696b73 00203a29 0061746f 69466957     skip): .ota.WiFi
-   ba288:	6e6f6320 7463656e 202c6465 69617761      connected, awai
-   ba298:	676e6974 64707520 00657461 6177410a     ting update..Awa
-   ba2a8:	6e697469 544f2067 70752041 65746164     iting OTA update
-   ba2b8:	34453600 30303030 35422d31 462d3341     .6E400001-B5A3-F
-   ba2c8:	2d333933 39413045 3035452d 44343245     393-E0A9-E50E24D
-   ba2d8:	39414343 45360045 30303034 422d3230     CCA9E.6E400002-B
-   ba2e8:	2d334135 33393346 4130452d 35452d39     5A3-F393-E0A9-E5
-   ba2f8:	34324530 41434344 36004539 30303445     0E24DCCA9E.6E400
-   ba308:	2d333030 33413542 3933462d 30452d33     003-B5A3-F393-E0
-   ba318:	452d3941 32453035 43434434 00453941     A9-E50E24DCCA9E.
-   ba328:	72007874 63410078 74706563 70706100     tx.rx.Accept.app
-   ba338:	6163696c 6e6f6974 6f736a2f 6f43006e     lication/json.Co
-   ba348:	6e65746e 79542d74 00006570              ntent-Type..
+   b9d58:	00000000 69676964 65756c67 006f692e     ....digiglue.io.
+   b9d68:	6572002f 64726f63 49676e69 7265746e     /.recordingInter
+   b9d78:	3a6c6176 00692520 6f706572 6e697472     val: %i.reportin
+   b9d88:	746e4967 61767265 25203a6c 53440069     gInterval: %i.DS
+   b9d98:	6e204449 7320746f 65726f74 6e692064     ID not stored in
+   b9da8:	50454520 2e4d4f52 454c4220 6e6f6320      EEPROM. BLE con
+   b9db8:	20676966 75716572 64657269 46695700     fig required.WiF
+   b9dc8:	61662069 64656c69 206f7420 6e6e6f63     i failed to conn
+   b9dd8:	2c746365 74616420 6f6e2061 65722074     ect, data not re
+   b9de8:	74726f70 57006465 20694669 6e6e6f63     ported.WiFi conn
+   b9df8:	65746365 72202c64 726f7065 676e6974     ected, reporting
+   b9e08:	74616420 6f520061 766f6c6c 70207265      data.Rollover p
+   b9e18:	6f6c7961 203a6461 64227b00 22617461     ayload: .{"data"
+   b9e28:	5d005b3a 4f50007d 53005453 75746174     :[.]}.POST.Statu
+   b9e38:	00203a73 42716552 3a79646f 227b0020     s: .ReqBody: .{"
+   b9e48:	64697364 2c003a22 61762220 2265756c     dsid":., "value"
+   b9e58:	202c003a 6d697422 61747365 3a22706d     :., "timestamp":
+   b9e68:	002c7d00 6c696146 74206465 6e69206f     .},.Failed to in
+   b9e78:	61697469 657a696c 53494c20 00484433     itialize LIS3DH.
+   b9e88:	63736964 656e6e6f 64657463 46695700     disconnected.WiF
+   b9e98:	6f632069 63656e6e 2c646574 6e797320     i connected, syn
+   b9ea8:	676e6963 6d697420 75430065 6e657272     cing time.Curren
+   b9eb8:	69742074 6920656d 25203a73 69570073     t time is: %s.Wi
+   b9ec8:	66206946 656c6961 6f742064 6e6f6320     Fi failed to con
+   b9ed8:	7463656e 6b73202c 69707069 7420676e     nect, skipping t
+   b9ee8:	20656d69 636e7973 6e6f7268 74617a69     ime synchronizat
+   b9ef8:	006e6f69 6f706572 68547472 64616572     ion.reportThread
+   b9f08:	454c4200 54494157 454c4200 6e6f6320     .BLEWAIT.BLE con
+   b9f18:	7463656e 42006465 6e20454c 6320746f     nected.BLE not c
+   b9f28:	656e6e6f 64657463 6f63202c 6e69746e     onnected, contin
+   b9f38:	676e6975 74697720 74732068 6465726f     uing with stored
+   b9f48:	74657320 676e6974 62002e73 6157656c      settings..bleWa
+   b9f58:	6f467469 6e6f4372 00676966 6f636552     itForConfig.Reco
+   b9f68:	6e696472 6e692067 3a786564 00692520     rding index: %i.
+   b9f78:	75716572 69747365 7020676e 6f6c7961     requesting paylo
+   b9f88:	63416461 73736563 6b636f4c 79617000     adAccessLock.pay
+   b9f98:	64616f6c 65636341 6f4c7373 72206b63     loadAccessLock r
+   b9fa8:	61656c65 20646573 52207962 524f4345     eleased by RECOR
+   b9fb8:	474e4944 72694600 72207473 69646165     DING.First readi
+   b9fc8:	0a00676e 64657243 69746e65 20736c61     ng..Credentials 
+   b9fd8:	20657261 72727563 6c746e65 74732079     are currently st
+   b9fe8:	6465726f 726f6620 005b0a3a 5d000a2c     ored for:.[.,..]
+   b9ff8:	746e450a 6e207265 6f777465 53206b72     .Enter network S
+   ba008:	20444953 616c6228 74206b6e 6b73206f     SID (blank to sk
+   ba018:	202c7069 656c6327 20277261 72206f74     ip, 'clear' to r
+   ba028:	74657365 65726320 746e6564 736c6169     eset credentials
+   ba038:	00203a29 7275430a 746e6572 49534420     ): ..Current DSI
+   ba048:	73692044 5d005b20 746e450a 64207265     D is [.].Enter d
+   ba058:	63697665 53442065 28204449 6e616c62     evice DSID (blan
+   ba068:	6f74206b 696b7320 203a2970 656c6300     k to skip): .cle
+   ba078:	0a007261 65746e45 656e2072 726f7774     ar..Enter networ
+   ba088:	6170206b 6f777373 203a6472 430a0a00     k password: ...C
+   ba098:	65646572 6169746e 7320736c 77207465     redentials set w
+   ba0a8:	20687469 64697373 0a00203a 73736170     ith ssid: ..pass
+   ba0b8:	64726f77 0a00203a 450a000a 7265746e     word: .....Enter
+   ba0c8:	65742720 20277473 74206f74 20747365      'test' to test 
+   ba0d8:	64657263 69746e65 20736c61 616c6228     credentials (bla
+   ba0e8:	74206b6e 6b73206f 3a297069 65740020     nk to skip): .te
+   ba0f8:	74007473 6f656d69 53007475 65636375     st.timeout.Succe
+   ba108:	0a217373 52524500 203a524f 69466957     ss!..ERROR: WiFi
+   ba118:	6e6f6320 7463656e 206e6f69 656d6974      connection time
+   ba128:	0a74756f 69736400 6e652064 65726574     out..dsid entere
+   ba138:	73640064 203a6469 75430a00 6e657272     d.dsid: ..Curren
+   ba148:	61762074 2065756c 20726f66 61746164     t value for data
+   ba158:	6c6f6320 7463656c 206e6f69 65746e69      collection inte
+   ba168:	6c617672 20736920 0a5d005b 65746e45     rval is [.].Ente
+   ba178:	69742072 6220656d 65777465 64206e65     r time between d
+   ba188:	20617461 6c6c6f63 69746365 61206e6f     ata collection a
+   ba198:	6e612073 746e6920 72656765 206e6920     s an integer in 
+   ba1a8:	6c6c696d 63657369 73646e6f 6c622820     milliseconds (bl
+   ba1b8:	206b6e61 73206f74 2970696b 0a00203a     ank to skip): ..
+   ba1c8:	72727543 20746e65 756c6176 6f662065     Current value fo
+   ba1d8:	69572072 63206946 656e6e6f 6f697463     r WiFi connectio
+   ba1e8:	6e69206e 76726574 69206c61 005b2073     n interval is [.
+   ba1f8:	6e450a5d 20726574 656d6974 74656220     ].Enter time bet
+   ba208:	6e656577 46695720 6f632069 63656e6e     ween WiFi connec
+   ba218:	6e6f6974 73612073 206e6120 65746e69     tions as an inte
+   ba228:	20726567 73206e69 6e6f6365 28207364     ger in seconds (
+   ba238:	6e616c62 6f74206b 696b7320 203a2970     blank to skip): 
+   ba248:	6e450a00 20726574 61746f27 6f742027     ..Enter 'ota' to
+   ba258:	69617720 6f662074 544f2072 70752041      wait for OTA up
+   ba268:	65746164 6c622820 206b6e61 73206f74     date (blank to s
+   ba278:	2970696b 6f00203a 57006174 20694669     kip): .ota.WiFi 
+   ba288:	6e6e6f63 65746365 61202c64 74696177     connected, await
+   ba298:	20676e69 61647075 0a006574 69617741     ing update..Awai
+   ba2a8:	676e6974 41544f20 64707520 00657461     ting OTA update.
+   ba2b8:	30344536 31303030 4135422d 33462d33     6E400001-B5A3-F3
+   ba2c8:	452d3339 2d394130 45303545 43443432     93-E0A9-E50E24DC
+   ba2d8:	45394143 34453600 30303030 35422d32     CA9E.6E400002-B5
+   ba2e8:	462d3341 2d333933 39413045 3035452d     A3-F393-E0A9-E50
+   ba2f8:	44343245 39414343 45360045 30303034     E24DCCA9E.6E4000
+   ba308:	422d3330 2d334135 33393346 4130452d     03-B5A3-F393-E0A
+   ba318:	35452d39 34324530 41434344 74004539     9-E50E24DCCA9E.t
+   ba328:	78720078 63634100 00747065 6c707061     x.rx.Accept.appl
+   ba338:	74616369 2f6e6f69 6e6f736a 6e6f4300     ication/json.Con
+   ba348:	746e6574 7079542d 00000065              tent-Type...
 
 000ba354 <_ZTV15Adafruit_LIS3DH>:
 	...

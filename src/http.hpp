@@ -2,6 +2,7 @@
 
 #include "HttpClient/HttpClient.h"
 #include "constants.hpp"
+#include "globalVariables.hpp"
 
 //setup for http connection
 HttpClient http;
@@ -34,10 +35,17 @@ void reportData(String payload) {
     WITH_LOCK(Serial) {
       Serial.println("WiFi failed to connect, data not reported");
     }
+    rolloverPayload += payload;
   }
   else {
     WITH_LOCK(Serial) {
       Serial.println("WiFi connected, reporting data");
+    }
+    if(rolloverPayload != "") {
+      WITH_LOCK(Serial) {
+        Serial.println("Rollover payload: " + rolloverPayload);
+      }
+      payload += rolloverPayload;
     }
     payload.remove(payload.length() - 1);
     request.body = "{\"data\":[" + payload + "]}";
@@ -53,6 +61,7 @@ void reportData(String payload) {
     WITH_LOCK(Serial) {
       Serial.println("ReqBody: " + request.body);
     }
+    rolloverPayload = "";
   }
   WiFi.off();
 }

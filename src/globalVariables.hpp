@@ -11,6 +11,7 @@ uint8_t storedValues [256];
 long storedTimes [256];
 float prevX, prevY, prevZ;
 int storedValuesIndex = 0;
+String rolloverPayload = ""; 
 enum firmwareStateEnum {
   BLEWAIT,
   RECORDING,

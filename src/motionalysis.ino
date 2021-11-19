@@ -21,7 +21,7 @@ void reportingThread(void* args);
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  while(!Serial.isConnected()){}
+  //while(!Serial.isConnected()){}
   initHardware();
   HTTPRequestSetup(); 
   initFromEEPROM();
@@ -98,15 +98,17 @@ void loop() {
           storedValues[storedValuesIndex] = 0;
         }
         storedTimes[storedValuesIndex] = Time.now(); 
+        WITH_LOCK(Serial) {
+          Serial.printlnf("Recording index: %i", storedValuesIndex);
+        }
         storedValuesIndex++; 
         WITH_LOCK(Serial) {
           Serial.println("requesting payloadAccessLock");
         }
-        
         os_mutex_lock(payloadAccessLock);
         //Lock the recording loop until reporting thread has completed making the payload
         //if lock was not present there could be data that was not reported if recordingDelay was low enough
-        delay(100);
+        delay(1);
         os_mutex_unlock(payloadAccessLock);
         WITH_LOCK(Serial) {
           Serial.println("payloadAccessLock released by RECORDING");
@@ -135,16 +137,17 @@ void loop() {
 void reportingThread(void *args) {
   while(true) {
     if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
+
       os_mutex_lock(payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
       for (int i = 0; i < storedValuesIndex; i++) {
         //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
         payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
       }
+      storedValuesIndex = 0;
       String localPayload = payload;
       payload = "";
       os_mutex_unlock(payloadAccessLock);
       reportData(localPayload);
-      storedValuesIndex = 0;
     }
     os_thread_yield();
   }

@@ -2,7 +2,7 @@
 
 #define kBLEConnectedLED D7
 #define kHTTPRequestPort 80
-#define kHTTPHostname "digiglue.io"
+#define kHTTPHostname "10.128.1.199"
 #define kLis3dhAddress 0x18
 #define kRecordingIntervalEEPROMAddress 100
 #define kReportingIntervalEEPROMAddress 200

@@ -12,7 +12,7 @@
 #define kEEPROMEmptyValue -1
 #define kDefaultRecordingInterval 500 // in milliseconds
 #define kDefaultReportingInterval 15 // in seconds
-#define kDefaultSleepPauseDuration 10 // in seconds
+#define kDefaultSleepPauseDuration 5 // in seconds
 #define kWiFiConnectionTimeout 20000 // in milliseconds
 #define kWiFiCheckInterval 100 // in milliseconds
 #define kDeltaAccelThreshold 0.05 // in g

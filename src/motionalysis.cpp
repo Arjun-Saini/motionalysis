@@ -31,13 +31,15 @@ void reportingThread(void* args);
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  //while(!Serial.isConnected()){}
+  //while(!Serial.isConnected()){} 
   initHardware();
   HTTPRequestSetup(); 
   initFromEEPROM();
   syncSystemTime();
 
   os_mutex_create(&payloadAccessLock);
+  os_mutex_create(&reportingSleepProtectionLock);
+  os_mutex_unlock(&reportingSleepProtectionLock);
   os_mutex_unlock(&payloadAccessLock);
   os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
 }

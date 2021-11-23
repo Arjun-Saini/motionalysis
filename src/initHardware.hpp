@@ -31,6 +31,9 @@ void initFromEEPROM() {
   if(reportingInterval == kEEPROMEmptyValue) {
     reportingInterval = kDefaultReportingInterval; //default value
   }
+  if(sleepPauseDuration == kEEPROMEmptyValue) {
+    sleepPauseDuration = kDefaultSleepPauseDuration; //default value
+  }
   if(dsid == kEEPROMEmptyValue) {
     Serial.println("DSID not stored in EEPROM. BLE config required"); 
     //TODO notify user somehow

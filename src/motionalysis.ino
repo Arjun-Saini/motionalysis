@@ -13,7 +13,7 @@ SYSTEM_THREAD(ENABLED)
 #include "globalVariables.hpp"
 #include "motionalysis.hpp"
 #include "ble.hpp"
-
+#include "sleep.hpp"
 
 void reportingThread(void* args);
 
@@ -99,8 +99,8 @@ void loop() {
           storedValues[storedValuesIndex] = 0;
           if(storedValues[storedValuesIndex - 1] == 0) {
             sleepTimeoutCounter++;
-            if(true) {
-
+            if(sleepReadyTest()){
+              engageSleep();
             }
           }
         }

@@ -1,9 +1,10 @@
+#pragma once
 #include "globalVariables.hpp"
 #include "constants.hpp"
 #include "Particle.h"
 
 bool sleepReadyTest(){
-  if(sleepTimeoutCounter >= sleepPauseDuration / recordingInterval){
+  if(sleepTimeoutCounter >= ((sleepPauseDuration * 1000) / recordingInterval)){
     return true;
   }
   else {

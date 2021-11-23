@@ -169,6 +169,7 @@ void reportingThread(void *args) {
       os_mutex_lock(reportingSleepProtectionLock);
       reportData(localPayload);
       os_mutex_unlock(reportingSleepProtectionLock);
+      init_ACC();
     }
     os_thread_yield();
   }

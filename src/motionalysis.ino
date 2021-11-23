@@ -154,7 +154,9 @@ void reportingThread(void *args) {
       String localPayload = payload;
       payload = "";
       os_mutex_unlock(payloadAccessLock);
+      os_mutex_lock(reportingSleepProtectionLock);
       reportData(localPayload);
+      os_mutex_unlock(reportingSleepProtectionLock);
     }
     os_thread_yield();
   }

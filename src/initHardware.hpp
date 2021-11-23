@@ -21,6 +21,7 @@ void initFromEEPROM() {
   EEPROM.get(kRecordingIntervalEEPROMAddress, recordingInterval);
   EEPROM.get(kDsidEEPROMAddress, dsid);
   EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
+  EEPROM.get(kSleepPauseDurationEEPROMAddress, sleepPauseDuration);
   reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
   Serial.printlnf("recordingInterval: %i", recordingInterval);
   Serial.printlnf("reportingInterval: %i", reportingInterval);

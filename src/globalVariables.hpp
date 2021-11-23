@@ -2,6 +2,7 @@
 
 int recordingInterval; // interval between lis3dh reads
 int reportingInterval; // interval between reporting data to server in seconds
+int sleepPauseDuration; // time of inactivity before sleep
 String payload = "";
 bool valuesChanged = false;
 String unixTime;
@@ -24,7 +25,7 @@ int bleQuestionCount, dsid, size;
 bool waitingForOTA = false;
 os_thread_t reportingThreadHandle;
 os_mutex_t payloadAccessLock;
-
+long sleepTimeoutCounter = 0; //counts consecutive data points that have been "0"
 
 const BleUuid serviceUuid("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
 const BleUuid rxUuid("6E400002-B5A3-F393-E0A9-E50E24DCCA9E");

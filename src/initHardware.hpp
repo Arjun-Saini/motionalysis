@@ -48,7 +48,7 @@ void initHardware() {
   sleepConfig.mode(SystemSleepMode::ULTRA_LOW_POWER)
     .gpio(kLIS3DHInterruptPin, RISING); //lowest power that does not resume as if from a reset
   
-  while(!Serial.isConnected()){}
+  //while(!Serial.isConnected()){}
   if(!lis3dh.begin(kLis3dhAddress)) {
     delay(1000);
     WITH_LOCK(Serial) {

@@ -142,14 +142,40 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         dsid = atoi(bleInputBuffer);
       }
       if(bleInputBuffer != ""){
-        EEPROM.put(0, dsid);
+        EEPROM.put(kDsidEEPROMAddress, dsid);
         WITH_LOCK(Serial) {
           Serial.println("dsid entered");
         }
       }
-      EEPROM.get(0, dsid);
+      EEPROM.get(kDsidEEPROMAddress, dsid);
       Serial.println("dsid: " + dsid);
-      EEPROM.get(100, recordingInterval);
+
+      //prompt for data collection interval
+      txCharacteristic.setValue("\nCurrent value for sleep pause duration is [");
+      if(recordingInterval != -1){
+        txCharacteristic.setValue(String(sleepPauseDuration));
+      }
+      txCharacteristic.setValue("]\nEnter sleep pause duration as an integer in seconds (blank to skip): ");
+      break;
+    }
+    case 5:{
+      //store dsid in eeprom
+      for(int i = 0; i < len - 1; i++){
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
+        bleInputBuffer += (char)data[i];
+        sleepPauseDuration = atoi(bleInputBuffer);
+      }
+      if(bleInputBuffer != ""){
+        EEPROM.put(kSleepPauseDurationEEPROMAddress, sleepPauseDuration);
+        WITH_LOCK(Serial) {
+          Serial.println("sleep pause duration entered");
+        }
+      }
+      EEPROM.get(kSleepPauseDurationEEPROMAddress, sleepPauseDuration);
+      Serial.println("sleep pause duration: " + sleepPauseDuration);
+      EEPROM.get(kRecordingIntervalEEPROMAddress, recordingInterval);
 
       //prompt for data collection interval
       txCharacteristic.setValue("\nCurrent value for data collection interval is [");
@@ -159,7 +185,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       txCharacteristic.setValue("]\nEnter time between data collection as an integer in milliseconds (blank to skip): ");
       break;
     }
-    case 5:{
+    case 6:{
       //store data collection interval in eeprom
       for(int i = 0; i < len - 1; i++){
         WITH_LOCK(Serial) {
@@ -169,12 +195,12 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         recordingInterval = atoi(bleInputBuffer);
       }
       if(bleInputBuffer == ""){
-        EEPROM.get(100, recordingInterval);
+        EEPROM.get(kRecordingIntervalEEPROMAddress, recordingInterval);
       }
-      EEPROM.put(100, recordingInterval);
-      EEPROM.get(100, recordingInterval);
+      EEPROM.put(kRecordingIntervalEEPROMAddress, recordingInterval);
+      EEPROM.get(kRecordingIntervalEEPROMAddress, recordingInterval);
       //Serial.println(recordingInterval);
-      EEPROM.get(200, reportingInterval);
+      EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
 
       //prompt for wifi connection interval
       txCharacteristic.setValue("\nCurrent value for WiFi connection interval is [");
@@ -184,7 +210,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       txCharacteristic.setValue("]\nEnter time between WiFi connections as an integer in seconds (blank to skip): ");
       break;
     }
-    case 6:{
+    case 7:{
       //store wifi connection interval in eeprom
       for(int i = 0; i < len - 1; i++){
         WITH_LOCK(Serial) {
@@ -194,10 +220,10 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         reportingInterval = atoi(bleInputBuffer) * 1000;
       }
       if(bleInputBuffer == ""){
-        EEPROM.get(200, reportingInterval);
+        EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
       }
-      EEPROM.put(200, reportingInterval);
-      EEPROM.get(200, reportingInterval);
+      EEPROM.put(kReportingIntervalEEPROMAddress, reportingInterval);
+      EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
       WITH_LOCK(Serial) {
         Serial.println(reportingInterval);
       }
@@ -206,7 +232,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       txCharacteristic.setValue("\nEnter 'ota' to wait for OTA update (blank to skip): ");
       break;
     }
-    case 7:{
+    case 8:{
       //enter ota mode if command entered
       for(int i = 0; i < len - 1; i++){
         WITH_LOCK(Serial) {

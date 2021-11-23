@@ -94,8 +94,15 @@ void loop() {
       if(!firstLIS3DHReading) {
         if(abs(x - prevX) > kDeltaAccelThreshold || abs(y - prevY) > kDeltaAccelThreshold || abs(z - prevZ) > kDeltaAccelThreshold) {
           storedValues[storedValuesIndex] = 1;
+          sleepTimeoutCounter = 0; // reset sleep timeout because movement detected
         } else {
           storedValues[storedValuesIndex] = 0;
+          if(storedValues[storedValuesIndex - 1] == 0) {
+            sleepTimeoutCounter++;
+            if(true) {
+
+            }
+          }
         }
         storedTimes[storedValuesIndex] = Time.now(); 
         WITH_LOCK(Serial) {

@@ -18,5 +18,6 @@ void engageSleep() {
   }
   os_mutex_lock(reportingSleepProtectionLock);
   System.sleep(sleepConfig);
+  sleepTimeoutCounter = 0;
   os_mutex_unlock(reportingSleepProtectionLock);
 }

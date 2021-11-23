@@ -9,10 +9,10 @@ void initHardware() {
   System.enableReset(); //allows System.reset() to work
   pinMode(kBLEConnectedLED, OUTPUT); //BLE connected indicator 
   digitalWrite(kBLEConnectedLED, LOW);
-
+  pinMode(kLIS3DHInterruptPin, INPUT); //LIS3DH interrupt pin
   sleepConfig.mode(SystemSleepMode::ULTRA_LOW_POWER)
-    .gpio(D2, RISING); //lowest power that does not resume as if from a reset
-
+    .gpio(kLIS3DHInterruptPin, FALLING); //lowest power that does not resume as if from a reset
+  
 
   if(!lis3dh.begin(kLis3dhAddress)) {
     delay(1000);

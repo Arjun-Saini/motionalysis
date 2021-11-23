@@ -13,7 +13,7 @@ SYSTEM_THREAD(ENABLED)
 #include "globalVariables.hpp"
 #include "motionalysis.hpp"
 #include "ble.hpp"
-
+#include "sleep.hpp"
 
 void reportingThread(void* args);
 
@@ -21,13 +21,15 @@ void reportingThread(void* args);
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  //while(!Serial.isConnected()){}
+  //while(!Serial.isConnected()){} 
   initHardware();
   HTTPRequestSetup(); 
   initFromEEPROM();
   syncSystemTime();
 
   os_mutex_create(&payloadAccessLock);
+  os_mutex_create(&reportingSleepProtectionLock);
+  os_mutex_unlock(&reportingSleepProtectionLock);
   os_mutex_unlock(&payloadAccessLock);
   os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
 }
@@ -94,8 +96,15 @@ void loop() {
       if(!firstLIS3DHReading) {
         if(abs(x - prevX) > kDeltaAccelThreshold || abs(y - prevY) > kDeltaAccelThreshold || abs(z - prevZ) > kDeltaAccelThreshold) {
           storedValues[storedValuesIndex] = 1;
+          sleepTimeoutCounter = 0; // reset sleep timeout because movement detected
         } else {
           storedValues[storedValuesIndex] = 0;
+          if(storedValues[storedValuesIndex - 1] == 0) {
+            sleepTimeoutCounter++;
+            if(sleepReadyTest()){
+              engageSleep();
+            }
+          }
         }
         storedTimes[storedValuesIndex] = Time.now(); 
         WITH_LOCK(Serial) {
@@ -147,7 +156,10 @@ void reportingThread(void *args) {
       String localPayload = payload;
       payload = "";
       os_mutex_unlock(payloadAccessLock);
+      os_mutex_lock(reportingSleepProtectionLock);
       reportData(localPayload);
+      os_mutex_unlock(reportingSleepProtectionLock);
+      init_ACC();
     }
     os_thread_yield();
   }

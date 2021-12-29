@@ -66,6 +66,7 @@ void initFromEEPROM() {
   reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
   Serial.printlnf("recordingInterval: %i", recordingInterval);
   Serial.printlnf("reportingInterval: %i", reportingInterval);
+  Serial.printlnf("sleepPauseDuration: %i", sleepPauseDuration);
   if(recordingInterval == kEEPROMEmptyValue) { // if no value stored in EEPROM, set to default
     recordingInterval = kDefaultRecordingInterval; //default value
   }

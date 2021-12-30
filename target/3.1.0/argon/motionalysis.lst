@@ -114,8 +114,8 @@ void module_user_init()
     for (ctor_num=0; ctor_num < link_constructors_size/sizeof(constructor_ptr_t); ctor_num++ )
    b4078:	3501      	adds	r5, #1
    b407a:	e7f7      	b.n	b406c <module_user_init+0x10>
-   b407c:	000bb190 	.word	0x000bb190
-   b4080:	000bb1b4 	.word	0x000bb1b4
+   b407c:	000bb194 	.word	0x000bb194
+   b4080:	000bb1b8 	.word	0x000bb1b8
 
 000b4084 <module_user_setup>:
 
@@ -398,7 +398,7 @@ public:
    b419a:	4798      	blx	r3
    b419c:	4628      	mov	r0, r5
    b419e:	bd38      	pop	{r3, r4, r5, pc}
-   b41a0:	000badd4 	.word	0x000badd4
+   b41a0:	000badd8 	.word	0x000badd8
 
 000b41a4 <_ZN5Print8printlnfEPKcz>:
     size_t printlnf(const char* format, ...) __attribute__ ((format(printf, 2, 3)))
@@ -1016,7 +1016,7 @@ class StringSumHelper : public String
    b458c:	000ba28c 	.word	0x000ba28c
    b4590:	2003e0b0 	.word	0x2003e0b0
    b4594:	000ba2b6 	.word	0x000ba2b6
-   b4598:	000ba5c1 	.word	0x000ba5c1
+   b4598:	000ba5c4 	.word	0x000ba5c4
    b459c:	000ba2d5 	.word	0x000ba2d5
    b45a0:	2003e09c 	.word	0x2003e09c
    b45a4:	000ba2e8 	.word	0x000ba2e8
@@ -1171,7 +1171,7 @@ class StringSumHelper : public String
    b46e0:	000ba330 	.word	0x000ba330
    b46e4:	2003e020 	.word	0x2003e020
    b46e8:	2003e048 	.word	0x2003e048
-   b46ec:	000ba5c1 	.word	0x000ba5c1
+   b46ec:	000ba5c4 	.word	0x000ba5c4
    b46f0:	2003e044 	.word	0x2003e044
    b46f4:	2003e4f8 	.word	0x2003e4f8
    b46f8:	2003e0f8 	.word	0x2003e0f8
@@ -1317,7 +1317,7 @@ void initHardware() {
    b47b8:	2003e0c8 	.word	0x2003e0c8
    b47bc:	2003deb8 	.word	0x2003deb8
    b47c0:	000ba333 	.word	0x000ba333
-   b47c4:	000baed0 	.word	0x000baed0
+   b47c4:	000baed4 	.word	0x000baed4
    b47c8:	00030010 	.word	0x00030010
 
 000b47cc <_Z15connectCallbackRKN8particle13BlePeerDeviceEPv>:
@@ -2501,7 +2501,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
    b50d6:	bf00      	nop
    b50d8:	2003da8c 	.word	0x2003da8c
    b50dc:	2003da7c 	.word	0x2003da7c
-   b50e0:	000ba5c1 	.word	0x000ba5c1
+   b50e0:	000ba5c4 	.word	0x000ba5c4
    b50e4:	2003e044 	.word	0x2003e044
    b50e8:	2003e040 	.word	0x2003e040
    b50ec:	2003e0e0 	.word	0x2003e0e0
@@ -2509,10 +2509,10 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
    b50f4:	2003def8 	.word	0x2003def8
    b50f8:	2003dee4 	.word	0x2003dee4
    b50fc:	2003e5fc 	.word	0x2003e5fc
-   b5100:	000ba4f7 	.word	0x000ba4f7
+   b5100:	000ba4fa 	.word	0x000ba4fa
    b5104:	2003e0e8 	.word	0x2003e0e8
-   b5108:	000ba53c 	.word	0x000ba53c
-   b510c:	000ba54f 	.word	0x000ba54f
+   b5108:	000ba53f 	.word	0x000ba53f
+   b510c:	000ba552 	.word	0x000ba552
    b5110:	2003e010 	.word	0x2003e010
    b5114:	49bd      	ldr	r1, [pc, #756]	; (b540c <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x640>)
    b5116:	4628      	mov	r0, r5
@@ -2535,7 +2535,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
    b512c:	f001 fc54 	bl	b69d8 <network_clear_credentials>
           bleQuestionCount = 0;
    b5130:	6034      	str	r4, [r6, #0]
-      txCharacteristic.setValue("\nSLEEP ENABLED CODE\nCredentials are currently stored for:\n[");
+      txCharacteristic.setValue("\nSLEEP ENABLED CODE v2\nCredentials are currently stored for:\n[");
    b5132:	49b8      	ldr	r1, [pc, #736]	; (b5414 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x648>)
    b5134:	48b8      	ldr	r0, [pc, #736]	; (b5418 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x64c>)
       networkCount = WiFi.getCredentials(networks, 5);
@@ -2546,7 +2546,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
    b513e:	f8df 82d8 	ldr.w	r8, [pc, #728]	; b5418 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x64c>
         txCharacteristic.setValue(",\n");
    b5142:	f8df 9348 	ldr.w	r9, [pc, #840]	; b548c <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x6c0>
-      txCharacteristic.setValue("\nSLEEP ENABLED CODE\nCredentials are currently stored for:\n[");
+      txCharacteristic.setValue("\nSLEEP ENABLED CODE v2\nCredentials are currently stored for:\n[");
    b5146:	2200      	movs	r2, #0
    b5148:	f002 f829 	bl	b719e <_ZN8particle17BleCharacteristic8setValueEPKcNS_11BleTxRxTypeE>
       networkCount = WiFi.getCredentials(networks, 5);
@@ -2912,39 +2912,39 @@ class StringSumHelper : public String
    b5406:	2200      	movs	r2, #0
    b5408:	e61c      	b.n	b5044 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x278>
    b540a:	bf00      	nop
-   b540c:	000ba575 	.word	0x000ba575
+   b540c:	000ba578 	.word	0x000ba578
    b5410:	2003e7c0 	.word	0x2003e7c0
    b5414:	000ba4b8 	.word	0x000ba4b8
    b5418:	2003e5fc 	.word	0x2003e5fc
    b541c:	2003defc 	.word	0x2003defc
    b5420:	2003dee4 	.word	0x2003dee4
    b5424:	2003def8 	.word	0x2003def8
-   b5428:	000ba57b 	.word	0x000ba57b
+   b5428:	000ba57e 	.word	0x000ba57e
    b542c:	2003e010 	.word	0x2003e010
    b5430:	2003e0e8 	.word	0x2003e0e8
-   b5434:	000ba595 	.word	0x000ba595
-   b5438:	000ba5b3 	.word	0x000ba5b3
-   b543c:	000ba5bf 	.word	0x000ba5bf
-   b5440:	000ba5c2 	.word	0x000ba5c2
-   b5444:	000ba5f6 	.word	0x000ba5f6
+   b5434:	000ba598 	.word	0x000ba598
+   b5438:	000ba5b6 	.word	0x000ba5b6
+   b543c:	000ba5c2 	.word	0x000ba5c2
+   b5440:	000ba5c5 	.word	0x000ba5c5
+   b5444:	000ba5f9 	.word	0x000ba5f9
    b5448:	2003da7c 	.word	0x2003da7c
-   b544c:	000ba5fb 	.word	0x000ba5fb
-   b5450:	000ba603 	.word	0x000ba603
-   b5454:	000ba60d 	.word	0x000ba60d
-   b5458:	000ba5c1 	.word	0x000ba5c1
+   b544c:	000ba5fe 	.word	0x000ba5fe
+   b5450:	000ba606 	.word	0x000ba606
+   b5454:	000ba610 	.word	0x000ba610
+   b5458:	000ba5c4 	.word	0x000ba5c4
    b545c:	2003da94 	.word	0x2003da94
-   b5460:	000ba62d 	.word	0x000ba62d
-   b5464:	000ba63a 	.word	0x000ba63a
-   b5468:	000ba641 	.word	0x000ba641
+   b5460:	000ba630 	.word	0x000ba630
+   b5464:	000ba63d 	.word	0x000ba63d
+   b5468:	000ba644 	.word	0x000ba644
    b546c:	2003e040 	.word	0x2003e040
    b5470:	2003e0e0 	.word	0x2003e0e0
-   b5474:	000ba66e 	.word	0x000ba66e
-   b5478:	000ba6b6 	.word	0x000ba6b6
-   b547c:	000ba6d3 	.word	0x000ba6d3
-   b5480:	000ba6ea 	.word	0x000ba6ea
-   b5484:	000ba71b 	.word	0x000ba71b
+   b5474:	000ba671 	.word	0x000ba671
+   b5478:	000ba6b9 	.word	0x000ba6b9
+   b547c:	000ba6d6 	.word	0x000ba6d6
+   b5480:	000ba6ed 	.word	0x000ba6ed
+   b5484:	000ba71e 	.word	0x000ba71e
    b5488:	2003def4 	.word	0x2003def4
-   b548c:	000ba4f4 	.word	0x000ba4f4
+   b548c:	000ba4f7 	.word	0x000ba4f7
 	unsigned char operator == (const char *cstr) const {return equals(cstr);}
    b5490:	4964      	ldr	r1, [pc, #400]	; (b5624 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x858>)
    b5492:	4865      	ldr	r0, [pc, #404]	; (b5628 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x85c>)
@@ -3156,20 +3156,20 @@ class StringSumHelper : public String
           while(!Particle.connected()) {
    b5620:	e7f1      	b.n	b5606 <_Z14onDataReceivedPKhjRKN8particle13BlePeerDeviceEPv+0x83a>
    b5622:	bf00      	nop
-   b5624:	000ba5c1 	.word	0x000ba5c1
+   b5624:	000ba5c4 	.word	0x000ba5c4
    b5628:	2003da7c 	.word	0x2003da7c
    b562c:	2003e040 	.word	0x2003e040
    b5630:	2003e044 	.word	0x2003e044
-   b5634:	000ba770 	.word	0x000ba770
+   b5634:	000ba773 	.word	0x000ba773
    b5638:	2003e5fc 	.word	0x2003e5fc
-   b563c:	000ba7a1 	.word	0x000ba7a1
-   b5640:	000ba7f2 	.word	0x000ba7f2
-   b5644:	000ba828 	.word	0x000ba828
+   b563c:	000ba7a4 	.word	0x000ba7a4
+   b5640:	000ba7f5 	.word	0x000ba7f5
+   b5644:	000ba82b 	.word	0x000ba82b
    b5648:	2003e614 	.word	0x2003e614
    b564c:	2003e7c0 	.word	0x2003e7c0
    b5650:	000ba3b3 	.word	0x000ba3b3
-   b5654:	000ba82c 	.word	0x000ba82c
-   b5658:	000ba84c 	.word	0x000ba84c
+   b5654:	000ba82f 	.word	0x000ba82f
+   b5658:	000ba84f 	.word	0x000ba84f
    b565c:	2003e7d0 	.word	0x2003e7d0
 
 000b5660 <_ZN8particle17BleCharacteristicC1INS_7BleUuidES2_EEPKcNS_9EnumFlagsINS_25BleCharacteristicPropertyEvEET_T0_PFvPKhjRKNS_13BlePeerDeviceEPvESF_>:
@@ -3478,7 +3478,7 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b5874:	ffff0000 	.word	0xffff0000
    b5878:	2003da30 	.word	0x2003da30
    b587c:	000b40df 	.word	0x000b40df
-   b5880:	000ba5c1 	.word	0x000ba5c1
+   b5880:	000ba5c4 	.word	0x000ba5c4
    b5884:	2003e020 	.word	0x2003e020
    b5888:	2003def8 	.word	0x2003def8
    b588c:	000b85f9 	.word	0x000b85f9
@@ -3490,11 +3490,11 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b58a4:	2003e0c8 	.word	0x2003e0c8
    b58a8:	000b40ef 	.word	0x000b40ef
    b58ac:	00030010 	.word	0x00030010
-   b58b0:	000ba861 	.word	0x000ba861
+   b58b0:	000ba864 	.word	0x000ba864
    b58b4:	2003da40 	.word	0x2003da40
-   b58b8:	000ba886 	.word	0x000ba886
+   b58b8:	000ba889 	.word	0x000ba889
    b58bc:	2003da54 	.word	0x2003da54
-   b58c0:	000ba8ab 	.word	0x000ba8ab
+   b58c0:	000ba8ae 	.word	0x000ba8ae
    b58c4:	2003da68 	.word	0x2003da68
    b58c8:	2003da9c 	.word	0x2003da9c
    b58cc:	000b4171 	.word	0x000b4171
@@ -3509,11 +3509,11 @@ BleCharacteristic rxCharacteristic("rx", BleCharacteristicProperty::WRITE_WO_RSP
    b58f0:	2003dee4 	.word	0x2003dee4
    b58f4:	2003deb8 	.word	0x2003deb8
    b58f8:	000b40b3 	.word	0x000b40b3
-   b58fc:	000ba8d0 	.word	0x000ba8d0
+   b58fc:	000ba8d3 	.word	0x000ba8d3
    b5900:	2003e5fc 	.word	0x2003e5fc
    b5904:	000b750b 	.word	0x000b750b
    b5908:	000b4dcd 	.word	0x000b4dcd
-   b590c:	000ba8d3 	.word	0x000ba8d3
+   b590c:	000ba8d6 	.word	0x000ba8d6
    b5910:	2003e0c0 	.word	0x2003e0c0
 
 000b5914 <_ZN15Adafruit_Sensor15enableAutoRangeEb>:
@@ -3580,7 +3580,7 @@ void Adafruit_LIS3DH::getSensor(sensor_t *sensor) {
 }
    b595c:	4770      	bx	lr
    b595e:	bf00      	nop
-   b5960:	000ba904 	.word	0x000ba904
+   b5960:	000ba908 	.word	0x000ba908
 
 000b5964 <_ZN8particle8SpiProxyIL19hal_spi_interface_t0EE8instanceEv>:
 namespace particle {
@@ -4282,7 +4282,7 @@ void HttpClient::sendHeader(const char* aHeaderName, const char* aHeaderValue)
    b5e30:	e8bd 40f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, lr}
     Serial.println(aHeaderValue);
    b5e34:	f002 bad9 	b.w	b83ea <_ZN5Print7printlnEPKc>
-   b5e38:	000ba572 	.word	0x000ba572
+   b5e38:	000ba575 	.word	0x000ba575
 
 000b5e3c <_ZN10HttpClient10sendHeaderEPKci>:
 
@@ -4335,7 +4335,7 @@ size_t Print::print(T n, int base)
    b5e86:	e8bd 40f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, lr}
    b5e8a:	f002 baa2 	b.w	b83d2 <_ZN5Print7printlnEv>
    b5e8e:	bf00      	nop
-   b5e90:	000ba572 	.word	0x000ba572
+   b5e90:	000ba575 	.word	0x000ba575
 
 000b5e94 <_ZN10HttpClient10sendHeaderEPKc>:
 
@@ -4797,30 +4797,30 @@ size_t Print::print(T n, int base)
    b61e8:	f002 f8ff 	bl	b83ea <_ZN5Print7printlnEPKc>
    b61ec:	e7af      	b.n	b614e <_ZN10HttpClient7requestER14http_request_tR15http_response_tP13http_header_tPKc+0x2a2>
    b61ee:	bf00      	nop
-   b61f0:	000ba993 	.word	0x000ba993
-   b61f4:	000bad1c 	.word	0x000bad1c
-   b61f8:	000ba918 	.word	0x000ba918
+   b61f0:	000ba997 	.word	0x000ba997
+   b61f4:	000bad20 	.word	0x000bad20
+   b61f8:	000ba91c 	.word	0x000ba91c
    b61fc:	000ba314 	.word	0x000ba314
-   b6200:	000ba573 	.word	0x000ba573
-   b6204:	000ba953 	.word	0x000ba953
-   b6208:	000ba95f 	.word	0x000ba95f
-   b620c:	000ba988 	.word	0x000ba988
-   b6210:	000ba982 	.word	0x000ba982
-   b6214:	000ba9b2 	.word	0x000ba9b2
-   b6218:	000ba9b7 	.word	0x000ba9b7
-   b621c:	000ba934 	.word	0x000ba934
+   b6200:	000ba576 	.word	0x000ba576
+   b6204:	000ba957 	.word	0x000ba957
+   b6208:	000ba963 	.word	0x000ba963
+   b620c:	000ba98c 	.word	0x000ba98c
+   b6210:	000ba986 	.word	0x000ba986
+   b6214:	000ba9b6 	.word	0x000ba9b6
+   b6218:	000ba9bb 	.word	0x000ba9bb
+   b621c:	000ba938 	.word	0x000ba938
    b6220:	000ba2f5 	.word	0x000ba2f5
-   b6224:	000ba9c6 	.word	0x000ba9c6
-   b6228:	000ba9e7 	.word	0x000ba9e7
-   b622c:	000baa13 	.word	0x000baa13
-   b6230:	000baa1b 	.word	0x000baa1b
-   b6234:	000baa50 	.word	0x000baa50
-   b6238:	000baaab 	.word	0x000baaab
-   b623c:	000baad0 	.word	0x000baad0
-   b6240:	000baad5 	.word	0x000baad5
-   b6244:	000baaef 	.word	0x000baaef
-   b6248:	000baaf4 	.word	0x000baaf4
-   b624c:	000baa76 	.word	0x000baa76
+   b6224:	000ba9ca 	.word	0x000ba9ca
+   b6228:	000ba9eb 	.word	0x000ba9eb
+   b622c:	000baa17 	.word	0x000baa17
+   b6230:	000baa1f 	.word	0x000baa1f
+   b6234:	000baa54 	.word	0x000baa54
+   b6238:	000baaaf 	.word	0x000baaaf
+   b623c:	000baad4 	.word	0x000baad4
+   b6240:	000baad9 	.word	0x000baad9
+   b6244:	000baaf3 	.word	0x000baaf3
+   b6248:	000baaf8 	.word	0x000baaf8
+   b624c:	000baa7a 	.word	0x000baa7a
     aResponse.body = "";
    b6250:	f108 0504 	add.w	r5, r8, #4
    b6254:	490a      	ldr	r1, [pc, #40]	; (b6280 <_ZN10HttpClient7requestER14http_request_tR15http_response_tP13http_header_tPKc+0x3d4>)
@@ -4842,7 +4842,7 @@ size_t Print::print(T n, int base)
    b6276:	f003 fe4f 	bl	b9f18 <atoi>
    b627a:	f8c8 0000 	str.w	r0, [r8]
    b627e:	e7a5      	b.n	b61cc <_ZN10HttpClient7requestER14http_request_tR15http_response_tP13http_header_tPKc+0x320>
-   b6280:	000ba5c1 	.word	0x000ba5c1
+   b6280:	000ba5c4 	.word	0x000ba5c4
 
 000b6284 <hal_ble_stack_init>:
 
@@ -6436,7 +6436,7 @@ void delay(unsigned long ms)
       }
    b6af0:	4620      	mov	r0, r4
    b6af2:	bd10      	pop	{r4, pc}
-   b6af4:	000bac70 	.word	0x000bac70
+   b6af4:	000bac74 	.word	0x000bac74
 
 000b6af8 <_ZNSt23_Sp_counted_ptr_inplaceIN8particle14BleServiceImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE14_M_get_deleterERKSt9type_info>:
 	    ||
@@ -6457,7 +6457,7 @@ void delay(unsigned long ms)
       }
    b6b10:	4620      	mov	r0, r4
    b6b12:	bd10      	pop	{r4, pc}
-   b6b14:	000bac70 	.word	0x000bac70
+   b6b14:	000bac74 	.word	0x000bac74
 
 000b6b18 <_ZNSt23_Sp_counted_ptr_inplaceIN8particle17BlePeerDeviceImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE14_M_get_deleterERKSt9type_info>:
 	    ||
@@ -6478,7 +6478,7 @@ void delay(unsigned long ms)
       }
    b6b30:	4620      	mov	r0, r4
    b6b32:	bd10      	pop	{r4, pc}
-   b6b34:	000bac70 	.word	0x000bac70
+   b6b34:	000bac74 	.word	0x000bac74
 
 000b6b38 <_ZNSt23_Sp_counted_ptr_inplaceIN8particle21BleCharacteristicImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EED0Ev>:
       ~_Sp_counted_ptr_inplace() noexcept { }
@@ -7037,7 +7037,7 @@ BleUuid::BleUuid()
    b6e0c:	d1f9      	bne.n	b6e02 <_ZN8particle7BleUuidC1Ev+0xe>
 }
    b6e0e:	bd10      	pop	{r4, pc}
-   b6e10:	000bac7e 	.word	0x000bac7e
+   b6e10:	000bac82 	.word	0x000bac82
 
 000b6e14 <_ZN8particle7BleUuidC1ERKS0_>:
 BleUuid::BleUuid(const BleUuid& uuid)
@@ -7128,7 +7128,7 @@ bool BleUuid::isValid() const {
    b6e94:	f003 f866 	bl	b9f64 <memcmp>
    b6e98:	e7f6      	b.n	b6e88 <_ZNK8particle7BleUuid7isValidEv+0x8>
    b6e9a:	bf00      	nop
-   b6e9c:	000bac9e 	.word	0x000bac9e
+   b6e9c:	000baca2 	.word	0x000baca2
 
 000b6ea0 <_ZNK8particle7BleUuid4typeEv>:
 }
@@ -7323,7 +7323,7 @@ inline size_t hexToBytes(const char* src, char* dest, size_t size) {
    b6fd2:	3501      	adds	r5, #1
    b6fd4:	e7d1      	b.n	b6f7a <_ZN8particle7BleUuid9constructEPKc+0x7e>
    b6fd6:	bf00      	nop
-   b6fd8:	000bac7e 	.word	0x000bac7e
+   b6fd8:	000bac82 	.word	0x000bac82
 
 000b6fdc <_ZN8particle7BleUuidC1EPKc>:
 BleUuid::BleUuid(const char* uuid)
@@ -7459,7 +7459,7 @@ inline particle::EnumFlags<T, typename std::enable_if_t<std::is_enum<T>::value>>
    b70a6:	4620      	mov	r0, r4
    b70a8:	bd38      	pop	{r3, r4, r5, pc}
    b70aa:	bf00      	nop
-   b70ac:	000ba5c1 	.word	0x000ba5c1
+   b70ac:	000ba5c4 	.word	0x000ba5c4
 
 000b70b0 <_ZN8particle18BleLocalDeviceImpl14findPeerDeviceEt>:
     BlePeerDevice* findPeerDevice(BleConnectionHandle connHandle) {
@@ -7712,7 +7712,7 @@ BleService::BleService(const BleUuid& uuid)
 }
    b71fe:	4638      	mov	r0, r7
    b7200:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
-   b7204:	000bac40 	.word	0x000bac40
+   b7204:	000bac44 	.word	0x000bac44
 
 000b7208 <_ZN8particle13BlePeerDeviceC1Ev>:
 
@@ -7759,7 +7759,7 @@ BlePeerDevice::BlePeerDevice()
 }
    b7244:	4630      	mov	r0, r6
    b7246:	bd70      	pop	{r4, r5, r6, pc}
-   b7248:	000bac5c 	.word	0x000bac5c
+   b7248:	000bac60 	.word	0x000bac60
 
 000b724c <_ZNK8particle13BlePeerDevice9connectedEv>:
         impl()->connHandle() = BLE_INVALID_CONN_HANDLE;
@@ -8004,8 +8004,8 @@ void BleCharacteristicImpl::onBleCharEvents(const hal_ble_char_evt_t *event, voi
    b73c8:	47a0      	blx	r4
 }
    b73ca:	e7ef      	b.n	b73ac <_ZN8particle21BleCharacteristicImpl15onBleCharEventsEPK18hal_ble_char_evt_tPv+0x34>
-   b73cc:	000bab4d 	.word	0x000bab4d
-   b73d0:	000bab26 	.word	0x000bab26
+   b73cc:	000bab51 	.word	0x000bab51
+   b73d0:	000bab2a 	.word	0x000bab2a
 
 000b73d4 <_ZNK8particle14BleLocalDevice2onEv>:
     stopAdvertising(); // BLE HAL will guard that device keeps broadcasting if device is in the Listening mode.
@@ -8857,10 +8857,10 @@ inline bool spark::Vector<T, AllocatorT>::removeOne(const T &value) {
    b78ee:	2308      	movs	r3, #8
    b78f0:	e760      	b.n	b77b4 <_ZN8particle18BleLocalDeviceImpl15onBleLinkEventsEPK18hal_ble_link_evt_tPv+0x64>
    b78f2:	bf00      	nop
-   b78f4:	000bab65 	.word	0x000bab65
-   b78f8:	000bab26 	.word	0x000bab26
-   b78fc:	000bab8b 	.word	0x000bab8b
-   b7900:	000baba8 	.word	0x000baba8
+   b78f4:	000bab69 	.word	0x000bab69
+   b78f8:	000bab2a 	.word	0x000bab2a
+   b78fc:	000bab8f 	.word	0x000bab8f
+   b7900:	000babac 	.word	0x000babac
 
 000b7904 <_ZNK8particle13BlePeerDevice10disconnectEv>:
 int BlePeerDevice::disconnect() const {
@@ -9139,7 +9139,7 @@ void BleCharacteristic::construct(const char* desc, EnumFlags<BleCharacteristicP
 }
    b7ac6:	b009      	add	sp, #36	; 0x24
    b7ac8:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
-   b7acc:	000bac24 	.word	0x000bac24
+   b7acc:	000bac28 	.word	0x000bac28
    b7ad0:	000b6429 	.word	0x000b6429
 
 000b7ad4 <_ZNSt8functionIFvRKN8particle13BlePeerDeviceEEE4swapERS5_>:
@@ -9788,13 +9788,13 @@ BleCharacteristic BleLocalDevice::addCharacteristic(const BleCharacteristic& cha
    b7f12:	eb02 09c3 	add.w	r9, r2, r3, lsl #3
    b7f16:	f7ff faf0 	bl	b74fa <_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED1Ev>
    b7f1a:	e76b      	b.n	b7df4 <_ZN8particle14BleLocalDevice17addCharacteristicERKNS_17BleCharacteristicE+0xcc>
-   b7f1c:	000babc7 	.word	0x000babc7
-   b7f20:	000bab26 	.word	0x000bab26
-   b7f24:	000bac8e 	.word	0x000bac8e
+   b7f1c:	000babcb 	.word	0x000babcb
+   b7f20:	000bab2a 	.word	0x000bab2a
+   b7f24:	000bac92 	.word	0x000bac92
    b7f28:	2003e634 	.word	0x2003e634
    b7f2c:	002c0003 	.word	0x002c0003
    b7f30:	000b7379 	.word	0x000b7379
-   b7f34:	000babf2 	.word	0x000babf2
+   b7f34:	000babf6 	.word	0x000babf6
 
 000b7f38 <_GLOBAL__sub_I__ZN8particle3ble13WiringBleLock6mutex_E>:
 BleCharacteristic BleLocalDevice::addCharacteristic(EnumFlags<BleCharacteristicProperty> properties, const String& desc, const BleOnDataReceivedStdFunction& callback) {
@@ -9925,7 +9925,7 @@ EthernetClass Ethernet;
 } // spark
    b7fd2:	4770      	bx	lr
    b7fd4:	2003e640 	.word	0x2003e640
-   b7fd8:	000bacb8 	.word	0x000bacb8
+   b7fd8:	000bacbc 	.word	0x000bacbc
 
 000b7fdc <_ZN7TwoWireD1Ev>:
 private:
@@ -10049,7 +10049,7 @@ TwoWire::TwoWire(hal_i2c_interface_t i2c, const hal_i2c_config_t& conf)
 }
    b8050:	4620      	mov	r0, r4
    b8052:	bd10      	pop	{r4, pc}
-   b8054:	000bacf4 	.word	0x000bacf4
+   b8054:	000bacf8 	.word	0x000bacf8
 
 000b8058 <_ZN7TwoWire5beginEv>:
 	hal_i2c_begin(_i2c, I2C_MODE_MASTER, 0x00, NULL);
@@ -10251,7 +10251,7 @@ IPAddress::IPAddress()
    b815e:	4620      	mov	r0, r4
    b8160:	bd10      	pop	{r4, pc}
    b8162:	bf00      	nop
-   b8164:	000bad1c 	.word	0x000bad1c
+   b8164:	000bad20 	.word	0x000bad20
 
 000b8168 <_ZN9IPAddressC1ERK16_HAL_IPAddress_t>:
 IPAddress::IPAddress(const HAL_IPAddress& address)
@@ -10269,7 +10269,7 @@ IPAddress::IPAddress(const HAL_IPAddress& address)
    b8184:	701a      	strb	r2, [r3, #0]
 }
    b8186:	bd10      	pop	{r4, pc}
-   b8188:	000bad1c 	.word	0x000bad1c
+   b8188:	000bad20 	.word	0x000bad20
 
 000b818c <_ZNK9IPAddresscvbEv>:
 
@@ -10341,7 +10341,7 @@ IPAddress::IPAddress(const uint8_t* addr)
    b81e8:	b003      	add	sp, #12
    b81ea:	f85d fb04 	ldr.w	pc, [sp], #4
    b81ee:	bf00      	nop
-   b81f0:	000bad1c 	.word	0x000bad1c
+   b81f0:	000bad20 	.word	0x000bad20
 
 000b81f4 <_GLOBAL__sub_I__ZN5spark3LogE>:
     // This handler doesn't support direct logging
@@ -10361,7 +10361,7 @@ void spark::logProcessControlRequest(ctrl_request* req) {
 }
    b81fa:	4770      	bx	lr
    b81fc:	2003e648 	.word	0x2003e648
-   b8200:	000bad28 	.word	0x000bad28
+   b8200:	000bad2c 	.word	0x000bad2c
 
 000b8204 <_ZN5spark12NetworkClass7connectEj>:
         return Network;
@@ -10653,7 +10653,7 @@ class IPAddress : public Printable {
 } // spark
    b835e:	4770      	bx	lr
    b8360:	2003e64c 	.word	0x2003e64c
-   b8364:	000bad34 	.word	0x000bad34
+   b8364:	000bad38 	.word	0x000bad38
 
 000b8368 <_ZN5Print5writeEPKhj>:
 
@@ -11123,7 +11123,7 @@ void SPIClass::computeClockDivider(unsigned reference, unsigned targetSpeed, uin
 }
    b8580:	bd30      	pop	{r4, r5, pc}
    b8582:	bf00      	nop
-   b8584:	000bad68 	.word	0x000bad68
+   b8584:	000bad6c 	.word	0x000bad6c
 
 000b8588 <_ZN8SPIClass13setClockSpeedEjj>:
 
@@ -11792,7 +11792,7 @@ String String::substring(unsigned int left, unsigned int right) const
 }
    b88a4:	4630      	mov	r0, r6
    b88a6:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
-   b88a8:	000ba5c1 	.word	0x000ba5c1
+   b88a8:	000ba5c4 	.word	0x000ba5c4
 
 000b88ac <_ZNK6String9substringEj>:
 {
@@ -12091,8 +12091,8 @@ SystemSleepResult SystemClass::sleep(const particle::SystemSleepConfiguration& c
    b8a2a:	bf00      	nop
    b8a2c:	2003e664 	.word	0x2003e664
    b8a30:	ffff0000 	.word	0xffff0000
-   b8a34:	000bad77 	.word	0x000bad77
-   b8a38:	000bad70 	.word	0x000bad70
+   b8a34:	000bad7b 	.word	0x000bad7b
+   b8a38:	000bad74 	.word	0x000bad74
 
 000b8a3c <_GLOBAL__sub_I_System>:
     return wokenUpByRtc();
@@ -12280,7 +12280,7 @@ TCPClient::operator bool() {
       }
    b8b18:	4620      	mov	r0, r4
    b8b1a:	bd10      	pop	{r4, pc}
-   b8b1c:	000bac70 	.word	0x000bac70
+   b8b1c:	000bac74 	.word	0x000bac74
 
 000b8b20 <_ZNSt23_Sp_counted_ptr_inplaceIN9TCPClient4DataESaIS1_ELN9__gnu_cxx12_Lock_policyE0EED0Ev>:
       ~_Sp_counted_ptr_inplace() noexcept { }
@@ -12396,7 +12396,7 @@ public:
    b8bd6:	4798      	blx	r3
    b8bd8:	4628      	mov	r0, r5
    b8bda:	bd38      	pop	{r3, r4, r5, pc}
-   b8bdc:	000badd4 	.word	0x000badd4
+   b8bdc:	000badd8 	.word	0x000badd8
 
 000b8be0 <_ZN9TCPClientD0Ev>:
    b8be0:	b510      	push	{r4, lr}
@@ -12448,7 +12448,7 @@ class IPAddress : public Printable {
 }
    b8c28:	4630      	mov	r0, r6
    b8c2a:	bd70      	pop	{r4, r5, r6, pc}
-   b8c2c:	000bad1c 	.word	0x000bad1c
+   b8c2c:	000bad20 	.word	0x000bad20
 
 000b8c30 <_ZN9TCPClient7connectEPKctm>:
 int TCPClient::connect(const char* host, uint16_t port, network_interface_t nif) {
@@ -12601,7 +12601,7 @@ class IPAddress : public Printable {
    b8d22:	4625      	mov	r5, r4
    b8d24:	e7e8      	b.n	b8cf8 <_ZN9TCPClient7connectEPKctm+0xc8>
    b8d26:	bf00      	nop
-   b8d28:	000bad1c 	.word	0x000bad1c
+   b8d28:	000bad20 	.word	0x000bad20
 
 000b8d2c <_ZN9TCPClient9connectedEv>:
 uint8_t TCPClient::connected() {
@@ -12947,8 +12947,8 @@ int TCPClient::connect(IPAddress ip, uint16_t port, network_interface_t nif) {
    b8f8e:	601a      	str	r2, [r3, #0]
    b8f90:	e7d4      	b.n	b8f3c <_ZN9TCPClient9availableEv+0x54>
    b8f92:	bf00      	nop
-   b8f94:	000bad9e 	.word	0x000bad9e
-   b8f98:	000bad70 	.word	0x000bad70
+   b8f94:	000bada2 	.word	0x000bada2
+   b8f98:	000bad74 	.word	0x000bad74
 
 000b8f9c <_ZN9TCPClient4stopEv>:
 void TCPClient::stop() {
@@ -13051,8 +13051,8 @@ TCPClient::TCPClient(sock_handle_t sock)
    b9022:	b002      	add	sp, #8
    b9024:	bd70      	pop	{r4, r5, r6, pc}
    b9026:	bf00      	nop
-   b9028:	000badd4 	.word	0x000badd4
-   b902c:	000badb8 	.word	0x000badb8
+   b9028:	000badd8 	.word	0x000badd8
+   b902c:	000badbc 	.word	0x000badbc
 
 000b9030 <_ZN9TCPClientC1Ev>:
 TCPClient::TCPClient()
@@ -13425,7 +13425,7 @@ USARTSerial::USARTSerial(hal_usart_interface_t serial, hal_usart_ring_buffer_t *
 }
    b91fc:	4620      	mov	r0, r4
    b91fe:	bd10      	pop	{r4, pc}
-   b9200:	000bae3c 	.word	0x000bae3c
+   b9200:	000bae40 	.word	0x000bae40
 
 000b9204 <_Z22__fetch_global_Serial1v>:
 static hal_usart_ring_buffer_t* serial1_rx_buffer = nullptr;
@@ -13596,7 +13596,7 @@ USBSerial::USBSerial(HAL_USB_USART_Serial serial, const HAL_USB_USART_Config& co
 }
    b92f4:	4620      	mov	r0, r4
    b92f6:	bd10      	pop	{r4, pc}
-   b92f8:	000bae6c 	.word	0x000bae6c
+   b92f8:	000bae70 	.word	0x000bae70
 
 000b92fc <_ZN9USBSerial5beginEl>:
     HAL_USB_USART_Begin(_serial, speed, NULL);
@@ -13798,7 +13798,7 @@ the same way.
 }
    b9402:	4770      	bx	lr
    b9404:	2003e7c0 	.word	0x2003e7c0
-   b9408:	000bae9c 	.word	0x000bae9c
+   b9408:	000baea0 	.word	0x000baea0
 
 000b940c <_Z11str_reversePc>:
 
@@ -14499,7 +14499,7 @@ hal_i2c_config_t __attribute__((weak)) acquireWireBuffer()
    b97aa:	4620      	mov	r0, r4
    b97ac:	bd38      	pop	{r3, r4, r5, pc}
    b97ae:	bf00      	nop
-   b97b0:	000baed0 	.word	0x000baed0
+   b97b0:	000baed4 	.word	0x000baed4
 
 000b97b4 <_Z19__fetch_global_Wirev>:
 	return defaultWireConfig();
@@ -14566,7 +14566,7 @@ TwoWire& __fetch_global_Wire()
    b9820:	4901      	ldr	r1, [pc, #4]	; (b9828 <_ZNSt19_Sp_make_shared_tag5_S_eqERKSt9type_info+0x8>)
    b9822:	f000 b8f9 	b.w	b9a18 <_ZNKSt9type_infoeqERKS_>
    b9826:	bf00      	nop
-   b9828:	000baeec 	.word	0x000baeec
+   b9828:	000baef0 	.word	0x000baef0
 
 000b982c <_ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PPv>:
    b982c:	b57f      	push	{r0, r1, r2, r3, r4, r5, r6, lr}
@@ -14608,7 +14608,7 @@ TwoWire& __fetch_global_Wire()
    b9874:	f000 f8cd 	bl	b9a12 <_ZNSt9type_infoD1Ev>
    b9878:	4620      	mov	r0, r4
    b987a:	bd10      	pop	{r4, pc}
-   b987c:	000baf2c 	.word	0x000baf2c
+   b987c:	000baf30 	.word	0x000baf30
 
 000b9880 <_ZN10__cxxabiv117__class_type_infoD0Ev>:
    b9880:	b510      	push	{r4, lr}
@@ -14688,7 +14688,7 @@ TwoWire& __fetch_global_Wire()
    b991c:	f7ff ffa6 	bl	b986c <_ZN10__cxxabiv117__class_type_infoD1Ev>
    b9920:	4620      	mov	r0, r4
    b9922:	bd10      	pop	{r4, pc}
-   b9924:	000baf8c 	.word	0x000baf8c
+   b9924:	000baf90 	.word	0x000baf90
 
 000b9928 <_ZN10__cxxabiv120__si_class_type_infoD0Ev>:
    b9928:	b510      	push	{r4, lr}
@@ -15275,9 +15275,9 @@ TwoWire& __fetch_global_Wire()
    b9f06:	4620      	mov	r0, r4
    b9f08:	b006      	add	sp, #24
    b9f0a:	bd10      	pop	{r4, pc}
-   b9f0c:	000baffa 	.word	0x000baffa
-   b9f10:	000bafe5 	.word	0x000bafe5
-   b9f14:	000bafc5 	.word	0x000bafc5
+   b9f0c:	000baffe 	.word	0x000baffe
+   b9f10:	000bafe9 	.word	0x000bafe9
+   b9f14:	000bafc9 	.word	0x000bafc9
 
 000b9f18 <atoi>:
    b9f18:	220a      	movs	r2, #10
@@ -15410,8 +15410,8 @@ TwoWire& __fetch_global_Wire()
    ba024:	615a      	str	r2, [r3, #20]
    ba026:	bd38      	pop	{r3, r4, r5, pc}
    ba028:	2003d9c8 	.word	0x2003d9c8
-   ba02c:	000bb01e 	.word	0x000bb01e
-   ba030:	000bb035 	.word	0x000bb035
+   ba02c:	000bb022 	.word	0x000bb022
+   ba030:	000bb039 	.word	0x000bb039
    ba034:	abcd330e 	.word	0xabcd330e
    ba038:	e66d1234 	.word	0xe66d1234
    ba03c:	0005deec 	.word	0x0005deec
@@ -15601,7 +15601,7 @@ TwoWire& __fetch_global_Wire()
    ba1da:	230a      	movs	r3, #10
    ba1dc:	e7ab      	b.n	ba136 <_strtol_l.constprop.0+0x56>
    ba1de:	bf00      	nop
-   ba1e0:	000bb08f 	.word	0x000bb08f
+   ba1e0:	000bb093 	.word	0x000bb093
 
 000ba1e4 <strtol>:
    ba1e4:	4613      	mov	r3, r2
@@ -15659,303 +15659,303 @@ TwoWire& __fetch_global_Wire()
    ba498:	64657361 20796220 4f434552 4e494452     ased by RECORDIN
    ba4a8:	69460047 20747372 64616572 00676e69     G.First reading.
    ba4b8:	454c530a 45205045 4c42414e 43204445     .SLEEP ENABLED C
-   ba4c8:	0a45444f 64657243 69746e65 20736c61     ODE.Credentials 
-   ba4d8:	20657261 72727563 6c746e65 74732079     are currently st
-   ba4e8:	6465726f 726f6620 005b0a3a 5d000a2c     ored for:.[.,..]
-   ba4f8:	746e450a 6e207265 6f777465 53206b72     .Enter network S
-   ba508:	20444953 616c6228 74206b6e 6b73206f     SID (blank to sk
-   ba518:	202c7069 656c6327 20277261 72206f74     ip, 'clear' to r
-   ba528:	74657365 65726320 746e6564 736c6169     eset credentials
-   ba538:	00203a29 7275430a 746e6572 49534420     ): ..Current DSI
-   ba548:	73692044 5d005b20 746e450a 64207265     D is [.].Enter d
-   ba558:	63697665 53442065 28204449 6e616c62     evice DSID (blan
-   ba568:	6f74206b 696b7320 203a2970 656c6300     k to skip): .cle
-   ba578:	0a007261 65746e45 656e2072 726f7774     ar..Enter networ
-   ba588:	6170206b 6f777373 203a6472 430a0a00     k password: ...C
-   ba598:	65646572 6169746e 7320736c 77207465     redentials set w
-   ba5a8:	20687469 64697373 0a00203a 73736170     ith ssid: ..pass
-   ba5b8:	64726f77 0a00203a 450a000a 7265746e     word: .....Enter
-   ba5c8:	65742720 20277473 74206f74 20747365      'test' to test 
-   ba5d8:	64657263 69746e65 20736c61 616c6228     credentials (bla
-   ba5e8:	74206b6e 6b73206f 3a297069 65740020     nk to skip): .te
-   ba5f8:	74007473 6f656d69 53007475 65636375     st.timeout.Succe
-   ba608:	0a217373 52524500 203a524f 69466957     ss!..ERROR: WiFi
-   ba618:	6e6f6320 7463656e 206e6f69 656d6974      connection time
-   ba628:	0a74756f 69736400 6e652064 65726574     out..dsid entere
-   ba638:	73640064 203a6469 75430a00 6e657272     d.dsid: ..Curren
-   ba648:	61762074 2065756c 20726f66 65656c73     t value for slee
-   ba658:	61702070 20657375 61727564 6e6f6974     p pause duration
-   ba668:	20736920 0a5d005b 65746e45 6c732072      is [.].Enter sl
-   ba678:	20706565 73756170 75642065 69746172     eep pause durati
-   ba688:	61206e6f 6e612073 746e6920 72656765     on as an integer
-   ba698:	206e6920 6f636573 2073646e 616c6228      in seconds (bla
-   ba6a8:	74206b6e 6b73206f 3a297069 6c730020     nk to skip): .sl
-   ba6b8:	20706565 73756170 75642065 69746172     eep pause durati
-   ba6c8:	65206e6f 7265746e 73006465 7065656c     on entered.sleep
-   ba6d8:	75617020 64206573 74617275 3a6e6f69      pause duration:
-   ba6e8:	430a0020 65727275 7620746e 65756c61      ..Current value
-   ba6f8:	726f6620 74616420 6f632061 63656c6c      for data collec
-   ba708:	6e6f6974 746e6920 61767265 7369206c     tion interval is
-   ba718:	5d005b20 746e450a 74207265 20656d69      [.].Enter time 
-   ba728:	77746562 206e6565 61746164 6c6f6320     between data col
-   ba738:	7463656c 206e6f69 61207361 6e69206e     lection as an in
-   ba748:	65676574 6e692072 6c696d20 6573696c     teger in millise
-   ba758:	646e6f63 62282073 6b6e616c 206f7420     conds (blank to 
-   ba768:	70696b73 00203a29 7275430a 746e6572     skip): ..Current
-   ba778:	6c617620 66206575 5720726f 20694669      value for WiFi 
-   ba788:	6e6e6f63 69746365 69206e6f 7265746e     connection inter
-   ba798:	206c6176 5b207369 450a5d00 7265746e     val is [.].Enter
-   ba7a8:	6d697420 65622065 65657774 6957206e      time between Wi
-   ba7b8:	63206946 656e6e6f 6f697463 6120736e     Fi connections a
-   ba7c8:	6e612073 746e6920 72656765 206e6920     s an integer in 
-   ba7d8:	6f636573 2073646e 616c6228 74206b6e     seconds (blank t
-   ba7e8:	6b73206f 3a297069 450a0020 7265746e     o skip): ..Enter
-   ba7f8:	746f2720 74202761 6177206f 66207469      'ota' to wait f
-   ba808:	4f20726f 75204154 74616470 62282065     or OTA update (b
-   ba818:	6b6e616c 206f7420 70696b73 00203a29     lank to skip): .
-   ba828:	0061746f 69466957 6e6f6320 7463656e     ota.WiFi connect
-   ba838:	202c6465 69617761 676e6974 64707520     ed, awaiting upd
-   ba848:	00657461 6177410a 6e697469 544f2067     ate..Awaiting OT
-   ba858:	70752041 65746164 34453600 30303030     A update.6E40000
-   ba868:	35422d31 462d3341 2d333933 39413045     1-B5A3-F393-E0A9
-   ba878:	3035452d 44343245 39414343 45360045     -E50E24DCCA9E.6E
-   ba888:	30303034 422d3230 2d334135 33393346     400002-B5A3-F393
-   ba898:	4130452d 35452d39 34324530 41434344     -E0A9-E50E24DCCA
-   ba8a8:	36004539 30303445 2d333030 33413542     9E.6E400003-B5A3
-   ba8b8:	3933462d 30452d33 452d3941 32453035     -F393-E0A9-E50E2
-   ba8c8:	43434434 00453941 72007874 63410078     4DCCA9E.tx.rx.Ac
-   ba8d8:	74706563 70706100 6163696c 6e6f6974     cept.application
-   ba8e8:	6f736a2f 6f43006e 6e65746e 79542d74     /json.Content-Ty
-   ba8f8:	00006570                                pe..
+   ba4c8:	2045444f 430a3276 65646572 6169746e     ODE v2.Credentia
+   ba4d8:	6120736c 63206572 65727275 796c746e     ls are currently
+   ba4e8:	6f747320 20646572 3a726f66 2c005b0a      stored for:.[.,
+   ba4f8:	0a5d000a 65746e45 656e2072 726f7774     ..].Enter networ
+   ba508:	5353206b 28204449 6e616c62 6f74206b     k SSID (blank to
+   ba518:	696b7320 27202c70 61656c63 74202772      skip, 'clear' t
+   ba528:	6572206f 20746573 64657263 69746e65     o reset credenti
+   ba538:	29736c61 0a00203a 72727543 20746e65     als): ..Current 
+   ba548:	44495344 20736920 0a5d005b 65746e45     DSID is [.].Ente
+   ba558:	65642072 65636976 49534420 62282044     r device DSID (b
+   ba568:	6b6e616c 206f7420 70696b73 00203a29     lank to skip): .
+   ba578:	61656c63 450a0072 7265746e 74656e20     clear..Enter net
+   ba588:	6b726f77 73617020 726f7773 00203a64     work password: .
+   ba598:	72430a0a 6e656465 6c616974 65732073     ..Credentials se
+   ba5a8:	69772074 73206874 3a646973 700a0020     t with ssid: ..p
+   ba5b8:	77737361 3a64726f 0a0a0020 6e450a00     assword: .....En
+   ba5c8:	20726574 73657427 74202774 6574206f     ter 'test' to te
+   ba5d8:	63207473 65646572 6169746e 2820736c     st credentials (
+   ba5e8:	6e616c62 6f74206b 696b7320 203a2970     blank to skip): 
+   ba5f8:	73657400 69740074 756f656d 75530074     .test.timeout.Su
+   ba608:	73656363 000a2173 4f525245 57203a52     ccess!..ERROR: W
+   ba618:	20694669 6e6e6f63 69746365 74206e6f     iFi connection t
+   ba628:	6f656d69 000a7475 64697364 746e6520     imeout..dsid ent
+   ba638:	64657265 69736400 00203a64 7275430a     ered.dsid: ..Cur
+   ba648:	746e6572 6c617620 66206575 7320726f     rent value for s
+   ba658:	7065656c 75617020 64206573 74617275     leep pause durat
+   ba668:	206e6f69 5b207369 450a5d00 7265746e     ion is [.].Enter
+   ba678:	656c7320 70207065 65737561 72756420      sleep pause dur
+   ba688:	6f697461 7361206e 206e6120 65746e69     ation as an inte
+   ba698:	20726567 73206e69 6e6f6365 28207364     ger in seconds (
+   ba6a8:	6e616c62 6f74206b 696b7320 203a2970     blank to skip): 
+   ba6b8:	656c7300 70207065 65737561 72756420     .sleep pause dur
+   ba6c8:	6f697461 6e65206e 65726574 6c730064     ation entered.sl
+   ba6d8:	20706565 73756170 75642065 69746172     eep pause durati
+   ba6e8:	203a6e6f 75430a00 6e657272 61762074     on: ..Current va
+   ba6f8:	2065756c 20726f66 61746164 6c6f6320     lue for data col
+   ba708:	7463656c 206e6f69 65746e69 6c617672     lection interval
+   ba718:	20736920 0a5d005b 65746e45 69742072      is [.].Enter ti
+   ba728:	6220656d 65777465 64206e65 20617461     me between data 
+   ba738:	6c6c6f63 69746365 61206e6f 6e612073     collection as an
+   ba748:	746e6920 72656765 206e6920 6c6c696d      integer in mill
+   ba758:	63657369 73646e6f 6c622820 206b6e61     iseconds (blank 
+   ba768:	73206f74 2970696b 0a00203a 72727543     to skip): ..Curr
+   ba778:	20746e65 756c6176 6f662065 69572072     ent value for Wi
+   ba788:	63206946 656e6e6f 6f697463 6e69206e     Fi connection in
+   ba798:	76726574 69206c61 005b2073 6e450a5d     terval is [.].En
+   ba7a8:	20726574 656d6974 74656220 6e656577     ter time between
+   ba7b8:	46695720 6f632069 63656e6e 6e6f6974      WiFi connection
+   ba7c8:	73612073 206e6120 65746e69 20726567     s as an integer 
+   ba7d8:	73206e69 6e6f6365 28207364 6e616c62     in seconds (blan
+   ba7e8:	6f74206b 696b7320 203a2970 6e450a00     k to skip): ..En
+   ba7f8:	20726574 61746f27 6f742027 69617720     ter 'ota' to wai
+   ba808:	6f662074 544f2072 70752041 65746164     t for OTA update
+   ba818:	6c622820 206b6e61 73206f74 2970696b      (blank to skip)
+   ba828:	6f00203a 57006174 20694669 6e6e6f63     : .ota.WiFi conn
+   ba838:	65746365 61202c64 74696177 20676e69     ected, awaiting 
+   ba848:	61647075 0a006574 69617741 676e6974     update..Awaiting
+   ba858:	41544f20 64707520 00657461 30344536      OTA update.6E40
+   ba868:	31303030 4135422d 33462d33 452d3339     0001-B5A3-F393-E
+   ba878:	2d394130 45303545 43443432 45394143     0A9-E50E24DCCA9E
+   ba888:	34453600 30303030 35422d32 462d3341     .6E400002-B5A3-F
+   ba898:	2d333933 39413045 3035452d 44343245     393-E0A9-E50E24D
+   ba8a8:	39414343 45360045 30303034 422d3330     CCA9E.6E400003-B
+   ba8b8:	2d334135 33393346 4130452d 35452d39     5A3-F393-E0A9-E5
+   ba8c8:	34324530 41434344 74004539 78720078     0E24DCCA9E.tx.rx
+   ba8d8:	63634100 00747065 6c707061 74616369     .Accept.applicat
+   ba8e8:	2f6e6f69 6e6f736a 6e6f4300 746e6574     ion/json.Content
+   ba8f8:	7079542d 00000065                       -Type...
 
-000ba8fc <_ZTV15Adafruit_LIS3DH>:
+000ba900 <_ZTV15Adafruit_LIS3DH>:
 	...
-   ba904:	000b40b3 000b56a5 000b5915 000b5cf1     .@...V...Y...\..
-   ba914:	000b5919 70747448 65696c43 093e746e     .Y..HttpClient>.
-   ba924:	6e6e6f43 69746365 7420676e 00203a6f     Connecting to: .
-   ba934:	70747448 65696c43 093e746e 6e6e6f43     HttpClient>.Conn
-   ba944:	69746365 7420676e 5049206f 2000203a     ecting to IP: . 
-   ba954:	50545448 302e312f 48000a0d 43707474     HTTP/1.0...HttpC
-   ba964:	6e65696c 53093e74 74726174 20666f20     lient>.Start of 
-   ba974:	50545448 71655220 74736575 6c63002e     HTTP Request..cl
-   ba984:	0065736f 6e6e6f43 69746365 48006e6f     ose.Connection.H
-   ba994:	43707474 6e65696c 43093e74 656e6e6f     ttpClient>.Conne
-   ba9a4:	6f697463 6166206e 64656c69 4f48002e     ction failed..HO
-   ba9b4:	43005453 65746e6f 4c2d746e 74676e65     ST.Content-Lengt
-   ba9c4:	74480068 6c437074 746e6569 6e45093e     h.HttpClient>.En
-   ba9d4:	666f2064 54544820 65522050 73657571     d of HTTP Reques
-   ba9e4:	0d002e74 7474480a 696c4370 3e746e65     t....HttpClient>
-   ba9f4:	63655209 69766965 5420676e 74205043     .Receiving TCP t
-   baa04:	736e6172 69746361 6f206e6f 20002066     ransaction of . 
-   baa14:	65747962 48002e73 43707474 6e65696c     bytes..HttpClien
-   baa24:	45093e74 726f7272 6552203a 6e6f7073     t>.Error: Respon
-   baa34:	62206573 2079646f 6772616c 74207265     se body larger t
-   baa44:	206e6168 66667562 002e7265 74480a0d     han buffer....Ht
-   baa54:	6c437074 746e6569 6e45093e 666f2064     tpClient>.End of
-   baa64:	50435420 61727420 6361736e 6e6f6974      TCP transaction
-   baa74:	0a0d002e 70747448 65696c43 093e746e     ....HttpClient>.
-   baa84:	6f727245 54203a72 6f656d69 77207475     Error: Timeout w
-   baa94:	656c6968 61657220 676e6964 73657220     hile reading res
-   baaa4:	736e6f70 0d002e65 7474480a 696c4370     ponse....HttpCli
-   baab4:	3e746e65 646e4509 20666f20 50545448     ent>.End of HTTP
-   baac4:	73655220 736e6f70 00282065 2e29736d      Response (.ms).
-   baad4:	74744800 696c4370 3e746e65 61745309     .HttpClient>.Sta
-   baae4:	20737574 65646f43 0d00203a 000a0d0a     tus Code: ......
-   baaf4:	70747448 65696c43 093e746e 6f727245     HttpClient>.Erro
-   bab04:	43203a72 74276e61 6e696620 54482064     r: Can't find HT
-   bab14:	72205054 6f707365 2065736e 79646f62     TP response body
-   bab24:	6977002e 676e6972 656c622e 61745300     ..wiring.ble.Sta
-   bab34:	64207472 6f637369 69726576 7320676e     rt discovering s
-   bab44:	69767265 2e736563 65655000 65642072     ervices..Peer de
-   bab54:	65636976 20736920 7373696d 21676e69     vice is missing!
-   bab64:	69614600 2064656c 61206f74 6e657070     .Failed to appen
-   bab74:	65702064 43207265 72746e65 64206c61     d peer Central d
-   bab84:	63697665 43002e65 656e6e6f 64657463     evice..Connected
-   bab94:	20796220 746e6543 206c6172 69766564      by Central devi
-   baba4:	002e6563 63736944 656e6e6f 64657463     ce..Disconnected
-   babb4:	20796220 6f6d6572 64206574 63697665      by remote devic
-   babc4:	44002e65 696c7075 65746163 68632064     e..Duplicated ch
-   babd4:	63617261 69726574 63697473 6e616320     aracteristic can
-   babe4:	20746f6e 61206562 64656464 6146002e     not be added..Fa
-   babf4:	64656c69 206f7420 65707061 6c20646e     iled to append l
-   bac04:	6c61636f 61686320 74636172 73697265     ocal characteris
-   bac14:	2e636974 00000000                       tic.....
+   ba908:	000b40b3 000b56a5 000b5915 000b5cf1     .@...V...Y...\..
+   ba918:	000b5919 70747448 65696c43 093e746e     .Y..HttpClient>.
+   ba928:	6e6e6f43 69746365 7420676e 00203a6f     Connecting to: .
+   ba938:	70747448 65696c43 093e746e 6e6e6f43     HttpClient>.Conn
+   ba948:	69746365 7420676e 5049206f 2000203a     ecting to IP: . 
+   ba958:	50545448 302e312f 48000a0d 43707474     HTTP/1.0...HttpC
+   ba968:	6e65696c 53093e74 74726174 20666f20     lient>.Start of 
+   ba978:	50545448 71655220 74736575 6c63002e     HTTP Request..cl
+   ba988:	0065736f 6e6e6f43 69746365 48006e6f     ose.Connection.H
+   ba998:	43707474 6e65696c 43093e74 656e6e6f     ttpClient>.Conne
+   ba9a8:	6f697463 6166206e 64656c69 4f48002e     ction failed..HO
+   ba9b8:	43005453 65746e6f 4c2d746e 74676e65     ST.Content-Lengt
+   ba9c8:	74480068 6c437074 746e6569 6e45093e     h.HttpClient>.En
+   ba9d8:	666f2064 54544820 65522050 73657571     d of HTTP Reques
+   ba9e8:	0d002e74 7474480a 696c4370 3e746e65     t....HttpClient>
+   ba9f8:	63655209 69766965 5420676e 74205043     .Receiving TCP t
+   baa08:	736e6172 69746361 6f206e6f 20002066     ransaction of . 
+   baa18:	65747962 48002e73 43707474 6e65696c     bytes..HttpClien
+   baa28:	45093e74 726f7272 6552203a 6e6f7073     t>.Error: Respon
+   baa38:	62206573 2079646f 6772616c 74207265     se body larger t
+   baa48:	206e6168 66667562 002e7265 74480a0d     han buffer....Ht
+   baa58:	6c437074 746e6569 6e45093e 666f2064     tpClient>.End of
+   baa68:	50435420 61727420 6361736e 6e6f6974      TCP transaction
+   baa78:	0a0d002e 70747448 65696c43 093e746e     ....HttpClient>.
+   baa88:	6f727245 54203a72 6f656d69 77207475     Error: Timeout w
+   baa98:	656c6968 61657220 676e6964 73657220     hile reading res
+   baaa8:	736e6f70 0d002e65 7474480a 696c4370     ponse....HttpCli
+   baab8:	3e746e65 646e4509 20666f20 50545448     ent>.End of HTTP
+   baac8:	73655220 736e6f70 00282065 2e29736d      Response (.ms).
+   baad8:	74744800 696c4370 3e746e65 61745309     .HttpClient>.Sta
+   baae8:	20737574 65646f43 0d00203a 000a0d0a     tus Code: ......
+   baaf8:	70747448 65696c43 093e746e 6f727245     HttpClient>.Erro
+   bab08:	43203a72 74276e61 6e696620 54482064     r: Can't find HT
+   bab18:	72205054 6f707365 2065736e 79646f62     TP response body
+   bab28:	6977002e 676e6972 656c622e 61745300     ..wiring.ble.Sta
+   bab38:	64207472 6f637369 69726576 7320676e     rt discovering s
+   bab48:	69767265 2e736563 65655000 65642072     ervices..Peer de
+   bab58:	65636976 20736920 7373696d 21676e69     vice is missing!
+   bab68:	69614600 2064656c 61206f74 6e657070     .Failed to appen
+   bab78:	65702064 43207265 72746e65 64206c61     d peer Central d
+   bab88:	63697665 43002e65 656e6e6f 64657463     evice..Connected
+   bab98:	20796220 746e6543 206c6172 69766564      by Central devi
+   baba8:	002e6563 63736944 656e6e6f 64657463     ce..Disconnected
+   babb8:	20796220 6f6d6572 64206574 63697665      by remote devic
+   babc8:	44002e65 696c7075 65746163 68632064     e..Duplicated ch
+   babd8:	63617261 69726574 63697473 6e616320     aracteristic can
+   babe8:	20746f6e 61206562 64656464 6146002e     not be added..Fa
+   babf8:	64656c69 206f7420 65707061 6c20646e     iled to append l
+   bac08:	6c61636f 61686320 74636172 73697265     ocal characteris
+   bac18:	2e636974 00000000                       tic.....
 
-000bac1c <_ZTVSt23_Sp_counted_ptr_inplaceIN8particle21BleCharacteristicImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
+000bac20 <_ZTVSt23_Sp_counted_ptr_inplaceIN8particle21BleCharacteristicImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
 	...
-   bac24:	000b6ad5 000b6b39 000b6cff 000b6b63     .j..9k...l..ck..
-   bac34:	000b6ad9                                .j..
+   bac28:	000b6ad5 000b6b39 000b6cff 000b6b63     .j..9k...l..ck..
+   bac38:	000b6ad9                                .j..
 
-000bac38 <_ZTVSt23_Sp_counted_ptr_inplaceIN8particle14BleServiceImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
+000bac3c <_ZTVSt23_Sp_counted_ptr_inplaceIN8particle14BleServiceImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
 	...
-   bac40:	000b6ad1 000b6b47 000b6ad3 000b6b69     .j..Gk...j..ik..
-   bac50:	000b6af9                                .j..
+   bac44:	000b6ad1 000b6b47 000b6ad3 000b6b69     .j..Gk...j..ik..
+   bac54:	000b6af9                                .j..
 
-000bac54 <_ZTVSt23_Sp_counted_ptr_inplaceIN8particle17BlePeerDeviceImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
+000bac58 <_ZTVSt23_Sp_counted_ptr_inplaceIN8particle17BlePeerDeviceImplESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
 	...
-   bac5c:	000b6acf 000b6b55 000b7561 000b6b6f     .j..Uk..au..ok..
-   bac6c:	000b6b19                                .k..
+   bac60:	000b6acf 000b6b55 000b7561 000b6b6f     .j..Uk..au..ok..
+   bac70:	000b6b19                                .k..
 
-000bac70 <_ZZNSt19_Sp_make_shared_tag5_S_tiEvE5__tag>:
+000bac74 <_ZZNSt19_Sp_make_shared_tag5_S_tiEvE5__tag>:
 	...
-   bac7c:	34fb0000 00805f9b 10008000 00000000     ...4._..........
-	...
-
-000bac8e <_ZN8particle12_GLOBAL__N_1L29PARTICLE_DEFAULT_BLE_SVC_UUIDE>:
-   bac8e:	7427e37b ac15f87b 13a949dd f5720000     {.'t{....I....r.
-
-000bac9e <_ZN8particle7BleUuid9BASE_UUIDE>:
-   bac9e:	5f9b34fb 80000080 00001000 00000000     .4._............
+   bac80:	34fb0000 00805f9b 10008000 00000000     ...4._..........
 	...
 
-000bacb0 <_ZTVN5spark13EthernetClassE>:
-	...
-   bacb8:	000b7fbf 000b7fb5 000b7fab 000b7fa1     ................
-   bacc8:	000b7f95 000b7f89 000b8245 000b824d     ........E...M...
-   bacd8:	000b7f7d 000b7f75 000b7f6b 000b7f61     }...u...k...a...
-   bace8:	000b827d                                }...
+000bac92 <_ZN8particle12_GLOBAL__N_1L29PARTICLE_DEFAULT_BLE_SVC_UUIDE>:
+   bac92:	7427e37b ac15f87b 13a949dd f5720000     {.'t{....I....r.
 
-000bacec <_ZTV7TwoWire>:
-	...
-   bacf4:	000b7fdd 000b8027 000b7fff 000b7fdf     ....'...........
-   bad04:	000b8007 000b800f 000b8017 000b801f     ................
-
-000bad14 <_ZTV9IPAddress>:
-	...
-   bad1c:	000b80e9 000b80d9 000b80db 00707061     ............app.
-
-000bad2c <_ZTVN5spark12NetworkClassE>:
-	...
-   bad34:	000b8205 000b820f 000b8219 000b8223     ............#...
-   bad44:	000b822d 000b8239 000b8245 000b824d     -...9...E...M...
-   bad54:	000b8255 000b8261 000b8269 000b8273     U...a...i...s...
-   bad64:	000b827d                                }...
-
-000bad68 <_ZN12_GLOBAL__N_1L14clock_divisorsE>:
-   bad68:	18100800 38302820 69726977 5300676e     .... (08wiring.S
-   bad78:	65747379 6c73206d 20706565 666e6f63     ystem sleep conf
-   bad88:	72756769 6f697461 7369206e 766e6920     iguration is inv
-   bad98:	64696c61 6572002e 65207663 726f7272     alid..recv error
-   bada8:	25203d20 00000064                        = %d...
-
-000badb0 <_ZTVSt23_Sp_counted_ptr_inplaceIN9TCPClient4DataESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
-	...
-   badb8:	000b8afd 000b8b21 000b9053 000b8b2f     ....!...S.../...
-   badc8:	000b8b01                                ....
-
-000badcc <_ZTV9TCPClient>:
-	...
-   badd4:	000b8bad 000b8be1 000b8a79 000b8a93     ........y.......
-   bade4:	000b8ee9 000b8abd 000b8d5f 000b8af1     ........_.......
-   badf4:	000b8df1 000b8c31 000b8d8d 000b8f9d     ....1...........
-   bae04:	000b8d2d 000b8af3 000b8aa5 000b8b35     -...........5...
-   bae14:	000b8c11 252d5925 64252d6d 3a482554     ....%Y-%m-%dT%H:
-   bae24:	253a4d25 007a2553 74637361 00656d69     %M:%S%z.asctime.
-
-000bae34 <_ZTV11USARTSerial>:
-	...
-   bae3c:	000b915d 000b91c9 000b91a1 000b8369     ]...........i...
-   bae4c:	000b9171 000b918d 000b917f 000b919b     q...............
-   bae5c:	000b915f 000b9163                       _...c...
-
-000bae64 <_ZTV9USBSerial>:
-	...
-   bae6c:	000b925d 000b92c5 000b929b 000b8369     ]...........i...
-   bae7c:	000b928d 000b925f 000b926f 000b92bf     ...._...o.......
-   bae8c:	000b927f 000b9259                       ....Y...
-
-000bae94 <_ZTVN5spark9WiFiClassE>:
-	...
-   bae9c:	000b41d9 000b93c9 000b93bf 000b41e3     .A...........A..
-   baeac:	000b41c1 000b41cd 000b8245 000b824d     .A...A..E...M...
-   baebc:	000b93b3 000b93ab 000b93a1 000b9397     ................
-   baecc:	000b827d                                }...
-
-000baed0 <_ZSt7nothrow>:
+000baca2 <_ZN8particle7BleUuid9BASE_UUIDE>:
+   baca2:	5f9b34fb 80000080 00001000 00000000     .4._............
 	...
 
-000baed1 <_ZTSSt19_Sp_make_shared_tag>:
-   baed1:	39317453 5f70535f 656b616d 6168735f     St19_Sp_make_sha
-   baee1:	5f646572 00676174                        red_tag....
+000bacb4 <_ZTVN5spark13EthernetClassE>:
+	...
+   bacbc:	000b7fbf 000b7fb5 000b7fab 000b7fa1     ................
+   baccc:	000b7f95 000b7f89 000b8245 000b824d     ........E...M...
+   bacdc:	000b7f7d 000b7f75 000b7f6b 000b7f61     }...u...k...a...
+   bacec:	000b827d                                }...
 
-000baeec <_ZTISt19_Sp_make_shared_tag>:
-   baeec:	000baf2c 000baed1                       ,.......
+000bacf0 <_ZTV7TwoWire>:
+	...
+   bacf8:	000b7fdd 000b8027 000b7fff 000b7fdf     ....'...........
+   bad08:	000b8007 000b800f 000b8017 000b801f     ................
 
-000baef4 <_ZTIN10__cxxabiv117__class_type_infoE>:
-   baef4:	000baf8c 000baf00 000bafb0              ............
+000bad18 <_ZTV9IPAddress>:
+	...
+   bad20:	000b80e9 000b80d9 000b80db 00707061     ............app.
 
-000baf00 <_ZTSN10__cxxabiv117__class_type_infoE>:
-   baf00:	5f30314e 7878635f 76696261 5f373131     N10__cxxabiv117_
-   baf10:	616c635f 745f7373 5f657079 6f666e69     _class_type_info
-   baf20:	00000045                                E...
+000bad30 <_ZTVN5spark12NetworkClassE>:
+	...
+   bad38:	000b8205 000b820f 000b8219 000b8223     ............#...
+   bad48:	000b822d 000b8239 000b8245 000b824d     -...9...E...M...
+   bad58:	000b8255 000b8261 000b8269 000b8273     U...a...i...s...
+   bad68:	000b827d                                }...
 
-000baf24 <_ZTVN10__cxxabiv117__class_type_infoE>:
-   baf24:	00000000 000baef4 000b986d 000b9881     ........m.......
-   baf34:	000b9a15 000b9a15 000b98eb 000b982d     ............-...
-   baf44:	000b98d3 000b9895 000b985f              ........_...
+000bad6c <_ZN12_GLOBAL__N_1L14clock_divisorsE>:
+   bad6c:	18100800 38302820 69726977 5300676e     .... (08wiring.S
+   bad7c:	65747379 6c73206d 20706565 666e6f63     ystem sleep conf
+   bad8c:	72756769 6f697461 7369206e 766e6920     iguration is inv
+   bad9c:	64696c61 6572002e 65207663 726f7272     alid..recv error
+   badac:	25203d20 00000064                        = %d...
 
-000baf50 <_ZTIN10__cxxabiv120__si_class_type_infoE>:
-   baf50:	000baf8c 000baf5c 000baef4              ....\.......
+000badb4 <_ZTVSt23_Sp_counted_ptr_inplaceIN9TCPClient4DataESaIS1_ELN9__gnu_cxx12_Lock_policyE0EE>:
+	...
+   badbc:	000b8afd 000b8b21 000b9053 000b8b2f     ....!...S.../...
+   badcc:	000b8b01                                ....
 
-000baf5c <_ZTSN10__cxxabiv120__si_class_type_infoE>:
-   baf5c:	5f30314e 7878635f 76696261 5f303231     N10__cxxabiv120_
-   baf6c:	5f69735f 73616c63 79745f73 695f6570     _si_class_type_i
-   baf7c:	456f666e 00000000                       nfoE....
+000badd0 <_ZTV9TCPClient>:
+	...
+   badd8:	000b8bad 000b8be1 000b8a79 000b8a93     ........y.......
+   bade8:	000b8ee9 000b8abd 000b8d5f 000b8af1     ........_.......
+   badf8:	000b8df1 000b8c31 000b8d8d 000b8f9d     ....1...........
+   bae08:	000b8d2d 000b8af3 000b8aa5 000b8b35     -...........5...
+   bae18:	000b8c11 252d5925 64252d6d 3a482554     ....%Y-%m-%dT%H:
+   bae28:	253a4d25 007a2553 74637361 00656d69     %M:%S%z.asctime.
 
-000baf84 <_ZTVN10__cxxabiv120__si_class_type_infoE>:
-   baf84:	00000000 000baf50 000b9915 000b9929     ....P.......)...
-   baf94:	000b9a15 000b9a15 000b98eb 000b982d     ............-...
-   bafa4:	000b99e9 000b9975 000b993d              ....u...=...
+000bae38 <_ZTV11USARTSerial>:
+	...
+   bae40:	000b915d 000b91c9 000b91a1 000b8369     ]...........i...
+   bae50:	000b9171 000b918d 000b917f 000b919b     q...............
+   bae60:	000b915f 000b9163                       _...c...
 
-000bafb0 <_ZTISt9type_info>:
-   bafb0:	000baf2c 000bafb8                       ,.......
+000bae68 <_ZTV9USBSerial>:
+	...
+   bae70:	000b925d 000b92c5 000b929b 000b8369     ]...........i...
+   bae80:	000b928d 000b925f 000b926f 000b92bf     ...._...o.......
+   bae90:	000b927f 000b9259                       ....Y...
 
-000bafb8 <_ZTSSt9type_info>:
-   bafb8:	74397453 5f657079 6f666e69 332e2500     St9type_info.%.3
-   bafc8:	2e252073 33257333 2e252064 253a6432     s %.3s%3d %.2d:%
-   bafd8:	3a64322e 64322e25 0a642520               .2d:%.2d %d..
+000bae98 <_ZTVN5spark9WiFiClassE>:
+	...
+   baea0:	000b41d9 000b93c9 000b93bf 000b41e3     .A...........A..
+   baeb0:	000b41c1 000b41cd 000b8245 000b824d     .A...A..E...M...
+   baec0:	000b93b3 000b93ab 000b93a1 000b9397     ................
+   baed0:	000b827d                                }...
 
-000bafe5 <day_name.1>:
-   bafe5:	4d6e7553 75546e6f 64655765 46756854     SunMonTueWedThuF
-   baff5:	61536972                                 riSat
-
-000baffa <mon_name.0>:
-   baffa:	466e614a 614d6265 72704172 4a79614d     JanFebMarAprMayJ
-   bb00a:	754a6e75 6775416c 4f706553 6f4e7463     unJulAugSepOctNo
-   bb01a:	63654476 4e454552 616d2054 636f6c6c     vDecREENT malloc
-   bb02a:	63757320 64656563 2f006465 2f706d74      succeeded./tmp/
-   bb03a:	6b6e656a 2d736e69 2d434347 702d3031     jenkins-GCC-10-p
-   bb04a:	6c657069 2d656e69 325f3834 31303230     ipeline-48_20201
-   bb05a:	5f343231 36303631 36303831 732f3933     124_1606180639/s
-   bb06a:	6e2f6372 696c7765 656e2f62 62696c77     rc/newlib/newlib
-   bb07a:	62696c2f 74732f63 62696c64 6e61722f     /libc/stdlib/ran
-   bb08a:	00632e64                                d.c.
-
-000bb08e <_ctype_>:
-   bb08e:	20202000 20202020 28282020 20282828     .         ((((( 
-   bb09e:	20202020 20202020 20202020 20202020                     
-   bb0ae:	10108820 10101010 10101010 10101010      ...............
-   bb0be:	04040410 04040404 10040404 10101010     ................
-   bb0ce:	41411010 41414141 01010101 01010101     ..AAAAAA........
-   bb0de:	01010101 01010101 01010101 10101010     ................
-   bb0ee:	42421010 42424242 02020202 02020202     ..BBBBBB........
-   bb0fe:	02020202 02020202 02020202 10101010     ................
-   bb10e:	00000020 00000000 00000000 00000000      ...............
+000baed4 <_ZSt7nothrow>:
 	...
 
-000bb18f <link_const_variable_data_end>:
+000baed5 <_ZTSSt19_Sp_make_shared_tag>:
+   baed5:	39317453 5f70535f 656b616d 6168735f     St19_Sp_make_sha
+   baee5:	5f646572 00676174                        red_tag....
+
+000baef0 <_ZTISt19_Sp_make_shared_tag>:
+   baef0:	000baf30 000baed5                       0.......
+
+000baef8 <_ZTIN10__cxxabiv117__class_type_infoE>:
+   baef8:	000baf90 000baf04 000bafb4              ............
+
+000baf04 <_ZTSN10__cxxabiv117__class_type_infoE>:
+   baf04:	5f30314e 7878635f 76696261 5f373131     N10__cxxabiv117_
+   baf14:	616c635f 745f7373 5f657079 6f666e69     _class_type_info
+   baf24:	00000045                                E...
+
+000baf28 <_ZTVN10__cxxabiv117__class_type_infoE>:
+   baf28:	00000000 000baef8 000b986d 000b9881     ........m.......
+   baf38:	000b9a15 000b9a15 000b98eb 000b982d     ............-...
+   baf48:	000b98d3 000b9895 000b985f              ........_...
+
+000baf54 <_ZTIN10__cxxabiv120__si_class_type_infoE>:
+   baf54:	000baf90 000baf60 000baef8              ....`.......
+
+000baf60 <_ZTSN10__cxxabiv120__si_class_type_infoE>:
+   baf60:	5f30314e 7878635f 76696261 5f303231     N10__cxxabiv120_
+   baf70:	5f69735f 73616c63 79745f73 695f6570     _si_class_type_i
+   baf80:	456f666e 00000000                       nfoE....
+
+000baf88 <_ZTVN10__cxxabiv120__si_class_type_infoE>:
+   baf88:	00000000 000baf54 000b9915 000b9929     ....T.......)...
+   baf98:	000b9a15 000b9a15 000b98eb 000b982d     ............-...
+   bafa8:	000b99e9 000b9975 000b993d              ....u...=...
+
+000bafb4 <_ZTISt9type_info>:
+   bafb4:	000baf30 000bafbc                       0.......
+
+000bafbc <_ZTSSt9type_info>:
+   bafbc:	74397453 5f657079 6f666e69 332e2500     St9type_info.%.3
+   bafcc:	2e252073 33257333 2e252064 253a6432     s %.3s%3d %.2d:%
+   bafdc:	3a64322e 64322e25 0a642520               .2d:%.2d %d..
+
+000bafe9 <day_name.1>:
+   bafe9:	4d6e7553 75546e6f 64655765 46756854     SunMonTueWedThuF
+   baff9:	61536972                                 riSat
+
+000baffe <mon_name.0>:
+   baffe:	466e614a 614d6265 72704172 4a79614d     JanFebMarAprMayJ
+   bb00e:	754a6e75 6775416c 4f706553 6f4e7463     unJulAugSepOctNo
+   bb01e:	63654476 4e454552 616d2054 636f6c6c     vDecREENT malloc
+   bb02e:	63757320 64656563 2f006465 2f706d74      succeeded./tmp/
+   bb03e:	6b6e656a 2d736e69 2d434347 702d3031     jenkins-GCC-10-p
+   bb04e:	6c657069 2d656e69 325f3834 31303230     ipeline-48_20201
+   bb05e:	5f343231 36303631 36303831 732f3933     124_1606180639/s
+   bb06e:	6e2f6372 696c7765 656e2f62 62696c77     rc/newlib/newlib
+   bb07e:	62696c2f 74732f63 62696c64 6e61722f     /libc/stdlib/ran
+   bb08e:	00632e64                                d.c.
+
+000bb092 <_ctype_>:
+   bb092:	20202000 20202020 28282020 20282828     .         ((((( 
+   bb0a2:	20202020 20202020 20202020 20202020                     
+   bb0b2:	10108820 10101010 10101010 10101010      ...............
+   bb0c2:	04040410 04040404 10040404 10101010     ................
+   bb0d2:	41411010 41414141 01010101 01010101     ..AAAAAA........
+   bb0e2:	01010101 01010101 01010101 10101010     ................
+   bb0f2:	42421010 42424242 02020202 02020202     ..BBBBBB........
+   bb102:	02020202 02020202 02020202 10101010     ................
+   bb112:	00000020 00000000 00000000 00000000      ...............
 	...
 
-000bb190 <link_constructors_location>:
-   bb190:	000b56b5 	.word	0x000b56b5
-   bb194:	000b7f39 	.word	0x000b7f39
-   bb198:	000b7fc9 	.word	0x000b7fc9
-   bb19c:	000b81f5 	.word	0x000b81f5
-   bb1a0:	000b8355 	.word	0x000b8355
-   bb1a4:	000b84a9 	.word	0x000b84a9
-   bb1a8:	000b8a3d 	.word	0x000b8a3d
-   bb1ac:	000b9149 	.word	0x000b9149
-   bb1b0:	000b93f9 	.word	0x000b93f9
+000bb193 <link_const_variable_data_end>:
+	...
 
-000bb1b4 <link_constructors_end>:
+000bb194 <link_constructors_location>:
+   bb194:	000b56b5 	.word	0x000b56b5
+   bb198:	000b7f39 	.word	0x000b7f39
+   bb19c:	000b7fc9 	.word	0x000b7fc9
+   bb1a0:	000b81f5 	.word	0x000b81f5
+   bb1a4:	000b8355 	.word	0x000b8355
+   bb1a8:	000b84a9 	.word	0x000b84a9
+   bb1ac:	000b8a3d 	.word	0x000b8a3d
+   bb1b0:	000b9149 	.word	0x000b9149
+   bb1b4:	000b93f9 	.word	0x000b93f9
+
+000bb1b8 <link_constructors_end>:
 	...

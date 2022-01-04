@@ -36,6 +36,7 @@ void setup() {
 
 bool firstLIS3DHReading = true; //sets first recorded value to 0
 void loop() {
+  wd.pet();
   switch (firmwareState) {
     case BLEWAIT: {
       //wait for BLE connection

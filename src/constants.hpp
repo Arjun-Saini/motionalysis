@@ -17,3 +17,4 @@
 #define kWiFiCheckInterval 100 // in milliseconds
 #define kDeltaAccelThreshold 0.05 // in g
 #define kSecondsToMilliseconds 1000
+#define kWatchDogTimeout 3600000 // 1 hr in milliseconds

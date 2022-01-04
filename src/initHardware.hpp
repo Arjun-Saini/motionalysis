@@ -2,8 +2,10 @@
 #include "globalVariables.hpp"
 #include "constants.hpp"
 #include <Adafruit_LIS3DH.h>
+#include "WatchDog_WCL.h"
 
 Adafruit_LIS3DH lis3dh = Adafruit_LIS3DH();
+WatchDog wd = WatchDog();
 
 void writeRegister(byte reg, byte data) {
   Wire.beginTransmission(kLis3dhAddress);
@@ -56,6 +58,7 @@ void initHardware() {
     }
   }
   init_ACC();
+  wd.initialize(kWatchDogTimeout);
 }
 
 void initFromEEPROM() {

@@ -17,7 +17,7 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
     case 0:{
       //ssid prompt
       SSID:
-      txCharacteristic.setValue("\nSLEEP ENABLED CODE v2\nCredentials are currently stored for:\n[");
+      txCharacteristic.setValue("\nSLEEP ENABLED CODE v3\nCredentials are currently stored for:\n[");
       networkCount = WiFi.getCredentials(networks, 5);
       for(int i = 0; i < networkCount - 1; i++){
         networkBuffer = networks[i].ssid;

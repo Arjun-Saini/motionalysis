@@ -61,7 +61,7 @@ void loop() {
       BLE.advertise(&data);
       BLE.onConnected(connectCallback);
       BLE.onDisconnected(disconnectCallback);
-      int BLECountdown = 5000;
+      int BLECountdown = 15000;
       while(!BLE.connected() && BLECountdown > 0) {
         BLECountdown = BLECountdown - 10;
         WITH_LOCK(Serial) {

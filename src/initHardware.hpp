@@ -58,6 +58,7 @@ void initHardware() {
     }
   }
   init_ACC();
+  wd.runWhileSleeping(true);
   wd.initialize(kWatchDogTimeout);
 }
 

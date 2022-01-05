@@ -21,11 +21,20 @@ void reportingThread(void* args);
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  //while(!Serial.isConnected()){} 
+  while(!Serial.isConnected()){} 
   initHardware();
   HTTPRequestSetup(); 
   initFromEEPROM();
   syncSystemTime();
+
+  delay(200);
+
+  if (System.resetReason() == RESET_REASON_WATCHDOG) {
+    Serial.println("Watchdog reset");
+  }
+  if (System.resetReason() == RESET_REASON_PIN_RESET) {
+    Serial.println("External reset");
+  }
 
   os_mutex_create(&payloadAccessLock);
   os_mutex_create(&reportingSleepProtectionLock);

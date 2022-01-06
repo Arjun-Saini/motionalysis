@@ -31,7 +31,7 @@ void reportingThread(void* args);
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  while(!Serial.isConnected()){} 
+  // while(!Serial.isConnected()){} 
   initHardware();
   HTTPRequestSetup(); 
   initFromEEPROM();
@@ -71,7 +71,7 @@ void loop() {
       BLE.advertise(&data);
       BLE.onConnected(connectCallback);
       BLE.onDisconnected(disconnectCallback);
-      int BLECountdown = 5000;
+      int BLECountdown = 15000;
       while(!BLE.connected() && BLECountdown > 0) {
         BLECountdown = BLECountdown - 10;
         WITH_LOCK(Serial) {

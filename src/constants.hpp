@@ -4,6 +4,7 @@
 #define kLIS3DHInterruptPin D2
 #define kHTTPRequestPort 80
 #define kHTTPHostname "digiglue.io"
+//#define kHTTPHostname "192.168.0.104" // debug at lab IP
 #define kLis3dhAddress 0x18
 #define kRecordingIntervalEEPROMAddress 100
 #define kReportingIntervalEEPROMAddress 200

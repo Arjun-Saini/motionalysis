@@ -17,7 +17,7 @@ void engageSleep() {
   WITH_LOCK(Serial) {
     Serial.println("Sleep process waiting for mutex locks");
   }
-  delay(100);
+  delay(110);
   os_mutex_lock(reportingSleepProtectionLock);
   System.sleep(sleepConfig);
   sleepTimeoutCounter = 0;

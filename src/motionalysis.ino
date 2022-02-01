@@ -1,8 +1,8 @@
 SYSTEM_MODE(MANUAL)
 SYSTEM_THREAD(ENABLED)
 /*
- * Project motionalysis-testFirmware
- * Description: Attempting to diagnose Motionalysis issues
+ * Project motionalysis
+ * Description:
  * Author: trylaarsdam
  * Date:
  */

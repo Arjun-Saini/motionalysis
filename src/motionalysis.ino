@@ -21,7 +21,7 @@ void reportingThread(void* args);
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  // while(!Serial.isConnected()){} 
+  while(!Serial.isConnected()){} 
   initHardware();
   HTTPRequestSetup(); 
   initFromEEPROM();
@@ -36,11 +36,11 @@ void setup() {
     Serial.println("External reset");
   }
 
-  os_mutex_create(&payloadAccessLock);
-  os_mutex_create(&reportingSleepProtectionLock);
-  os_mutex_unlock(&reportingSleepProtectionLock);
-  os_mutex_unlock(&payloadAccessLock);
-  os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
+  // os_mutex_create(&payloadAccessLock);
+  // os_mutex_create(&reportingSleepProtectionLock);
+  // os_mutex_unlock(&reportingSleepProtectionLock);
+  // os_mutex_unlock(&payloadAccessLock);
+  // os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
 }
 
 bool firstLIS3DHReading = true; //sets first recorded value to 0
@@ -64,8 +64,11 @@ void loop() {
       int BLECountdown = 15000;
       while(!BLE.connected() && BLECountdown > 0) {
         BLECountdown = BLECountdown - 10;
-        WITH_LOCK(Serial) {
-          Serial.println(BLECountdown);
+        if(BLECountdown % 1000 == 0 || BLECountdown == 0) {
+          WITH_LOCK(Serial) {
+            Serial.print("BLECountdown: ");
+            Serial.println(BLECountdown);
+          }
         }
         delay(10);
       }
@@ -121,17 +124,6 @@ void loop() {
           Serial.printlnf("Recording index: %i", storedValuesIndex);
         }
         storedValuesIndex++; 
-        WITH_LOCK(Serial) {
-          Serial.println("requesting payloadAccessLock");
-        }
-        os_mutex_lock(payloadAccessLock);
-        //Lock the recording loop until reporting thread has completed making the payload
-        //if lock was not present there could be data that was not reported if recordingDelay was low enough
-        delay(1);
-        os_mutex_unlock(payloadAccessLock);
-        WITH_LOCK(Serial) {
-          Serial.println("payloadAccessLock released by RECORDING");
-        }
       }
       else {
         firstLIS3DHReading = false;
@@ -143,6 +135,29 @@ void loop() {
       prevX = x;
       prevY = y;
       prevZ = z;
+
+      if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
+        if(WiFi.ready()) {
+          WITH_LOCK(Serial) {
+            Serial.println(">>> REPORTING DATA");
+            Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
+          }
+          for (int i = 0; i < storedValuesIndex; i++) {
+            //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+            payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+          }
+          storedValuesIndex = 0;
+          String localPayload = payload;
+          payload = "";
+
+          reportData(localPayload);
+          // init_ACC();
+        }
+        else {
+          WiFi.on();
+          WiFi.connect();
+        }
+      }
       delay(recordingInterval);
       break;
     }
@@ -153,24 +168,26 @@ void loop() {
   }
 }
 
-void reportingThread(void *args) {
-  while(true) {
-    if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
-
-      os_mutex_lock(payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
-      for (int i = 0; i < storedValuesIndex; i++) {
-        //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
-        payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
-      }
-      storedValuesIndex = 0;
-      String localPayload = payload;
-      payload = "";
-      os_mutex_unlock(payloadAccessLock);
-      os_mutex_lock(reportingSleepProtectionLock);
-      reportData(localPayload);
-      os_mutex_unlock(reportingSleepProtectionLock);
-      init_ACC();
-    }
-    os_thread_yield();
-  }
-}
+// void reportingThread(void *args) {
+//   while(true) {
+//     if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
+//       WITH_LOCK(Serial) {
+//         Serial.println("ffs why is this running");
+//         Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
+//       }
+//       os_mutex_lock(payloadAccessLock); // lock access to payload before copying to local variable and resetting global payload
+//       for (int i = 0; i < storedValuesIndex; i++) {
+//         //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+//         payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+//       }
+//       storedValuesIndex = 0;
+//       String localPayload = payload;
+//       payload = "";
+//       os_mutex_unlock(payloadAccessLock);
+//       os_mutex_lock(reportingSleepProtectionLock);
+//       reportData(localPayload);
+//       os_mutex_unlock(reportingSleepProtectionLock);
+//       init_ACC();
+//     }
+//   }
+// }

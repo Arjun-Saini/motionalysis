@@ -15,12 +15,11 @@ bool sleepReadyTest(){
 
 void engageSleep() {
   WITH_LOCK(Serial) {
-    Serial.println("Sleep process waiting for mutex locks");
+    Serial.println("Engaging sleep.");
   }
-  delay(110);
-  os_mutex_lock(reportingSleepProtectionLock);
+  delay(100);
   System.sleep(sleepConfig);
   sleepTimeoutCounter = 0;
-  init_ACC();
-  os_mutex_unlock(reportingSleepProtectionLock);
+  // init_ACC();
+  // os_mutex_unlock(reportingSleepProtectionLock);
 }

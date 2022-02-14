@@ -56,19 +56,19 @@ void getTime() {
       Time.setTime(timeresponse.body.toInt());
     }
   }
+
+  WiFi.off();
 }
 
 void reportData(String payload) {
-  WiFi.on();
-  WiFi.connect();
-  while(!WiFi.ready()) {
-    delay(100);
-  }
   if(WiFi.ready() != true) {
-    WITH_LOCK(Serial) {
-      Serial.println("WiFi failed to connect, data not reported");
+    if(WiFi.isOn() != true) {
+      WiFi.on();
     }
-    rolloverPayload += payload;
+    WiFi.connect();
+    while(!WiFi.ready()) {
+      
+    }
   }
   else {
     WITH_LOCK(Serial) {

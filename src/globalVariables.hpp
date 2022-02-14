@@ -23,10 +23,10 @@ bool bleWaitForConfig = false; //when true, firmware is waiting for user input o
 String bleInputBuffer; // buffer for reading from BLE and writing to EEPROM
 int bleQuestionCount, dsid, size;
 bool waitingForOTA = false;
-os_thread_t reportingThreadHandle;
-os_mutex_t payloadAccessLock;
-os_mutex_t recordingSleepProtectionLock; // these 2 mutexes are used to prevent the system from sleeping
-os_mutex_t reportingSleepProtectionLock; // while recording/reporting are in the middle of an action (e.g. POSTing data or reading the accelerometer)
+// os_thread_t reportingThreadHandle;
+// os_mutex_t payloadAccessLock;
+// os_mutex_t recordingSleepProtectionLock; // these 2 mutexes are used to prevent the system from sleeping
+// os_mutex_t reportingSleepProtectionLock; // while recording/reporting are in the middle of an action (e.g. POSTing data or reading the accelerometer)
 long sleepTimeoutCounter = 0; //counts consecutive data points that have been "0"
 SystemSleepConfiguration sleepConfig;
 

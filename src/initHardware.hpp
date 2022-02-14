@@ -31,12 +31,12 @@ void init_ACC(void) {
   writeRegister(0x21, 0x09); //Write 09h into CTRL_REG2;      // High-pass filter (HPF) enabled
   writeRegister(0x22, 0x40); //Write 40h into CTRL_REG3;      // ACC AOI1 interrupt signal is routed to INT1 pin.
   writeRegister(0x23, 0x00); //Write 00h into CTRL_REG4;      // Full Scale = +/-2 g
-  writeRegister(0x24, 0x08); //Write 08h into CTRL_REG5;      // Default value is 00 for no latching. Interrupt signals on INT1 pin is not latched.
+  writeRegister(0x24, 0x00); //Write 08h into CTRL_REG5;      // Default value is 00 for no latching. Interrupt signals on INT1 pin is not latched.
                                                               //Users don’t need to read the INT1_SRC register to clear the interrupt signal.
   // configurations for wakeup and motionless detection
   writeRegister(0x32, 0x10); //Write 10h into INT1_THS;          // Threshold (THS) = 16LSBs * 15.625mg/LSB = 250mg.
   writeRegister(0x33, 0x00); //Write 00h into INT1_DURATION;     // Duration = 1LSBs * (1/10Hz) = 0.1s.
-  //readRegister();  //Dummy read to force the HP filter to set reference acceleration/tilt value
+  // readRegister();  //Dummy read to force the HP filter to set reference acceleration/tilt value
   writeRegister(0x30, 0x2A); //Write 2Ah into INT1_CFG;          // Enable XLIE, YLIE, ZLIE interrupt generation, OR logic.
   //lis3dh.setRange(LIS3DH_RANGE_2_G);   // 2, 4, 8 or 16 G!
 }
@@ -73,15 +73,19 @@ void initFromEEPROM() {
   Serial.printlnf("sleepPauseDuration: %i", sleepPauseDuration);
   if(recordingInterval == kEEPROMEmptyValue) { // if no value stored in EEPROM, set to default
     recordingInterval = kDefaultRecordingInterval; //default value
+    // EEPROM.put(kRecordingIntervalEEPROMAddress, recordingInterval);
   }
   if(reportingInterval == kEEPROMEmptyValue) {
     reportingInterval = kDefaultReportingInterval; //default value
   }
   if(sleepPauseDuration == kEEPROMEmptyValue) {
-    sleepPauseDuration = kDefaultSleepPauseDuration; //default value
+    sleepPauseDuration = kDefaultSleepPauseDuration + 1; //default value
+    // EEPROM.put(kSleepPauseDurationEEPROMAddress, sleepPauseDuration);
   }
   if(dsid == kEEPROMEmptyValue) {
     Serial.println("DSID not stored in EEPROM. BLE config required"); 
+    // dsid = 51509;
+    // EEPROM.put(kDsidEEPROMAddress, dsid);
     //TODO notify user somehow
   }
 }

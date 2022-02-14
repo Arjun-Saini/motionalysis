@@ -70,31 +70,31 @@ void reportData(String payload) {
       
     }
   }
-  else {
-    WITH_LOCK(Serial) {
-      Serial.println("WiFi connected, reporting data");
-    }
-    if(rolloverPayload != "") {
-      WITH_LOCK(Serial) {
-        Serial.println("Rollover payload: " + rolloverPayload);
-      }
-      payload += rolloverPayload;
-    }
-    payload.remove(payload.length() - 1);
-    request.body = "{\"data\":[" + payload + "]}";
-    WITH_LOCK(Serial){
-      http.post(request, response, headers); //http library is not thread safe with serial, so we need to lock it to prevent panic
-    }
-    WITH_LOCK(Serial) {
-      Serial.println("Status: " + response.status);
-    }
-    WITH_LOCK(Serial) {
-      Serial.println("Body: " + response.body);
-    }
-    WITH_LOCK(Serial) {
-      Serial.println("ReqBody: " + request.body);
-    }
-    rolloverPayload = "";
+
+  WITH_LOCK(Serial) {
+    Serial.println("WiFi connected, reporting data");
   }
+  if(rolloverPayload != "") {
+    WITH_LOCK(Serial) {
+      Serial.println("Rollover payload: " + rolloverPayload);
+    }
+    payload += rolloverPayload;
+  }
+  payload.remove(payload.length() - 1);
+  request.body = "{\"data\":[" + payload + "]}";
+  WITH_LOCK(Serial){
+    http.post(request, response, headers); //http library is not thread safe with serial, so we need to lock it to prevent panic
+  }
+  WITH_LOCK(Serial) {
+    Serial.println("Status: " + response.status);
+  }
+  WITH_LOCK(Serial) {
+    Serial.println("Body: " + response.body);
+  }
+  WITH_LOCK(Serial) {
+    Serial.println("ReqBody: " + request.body);
+  }
+  rolloverPayload = "";
+  
   WiFi.off();
 }

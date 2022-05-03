@@ -30,6 +30,7 @@ void setup() {
 
   if (System.resetReason() == RESET_REASON_WATCHDOG) {
     Serial.println("Watchdog reset");
+    restartFromWatchdog = true;
   }
   if (System.resetReason() == RESET_REASON_PIN_RESET) {
     Serial.println("External reset");
@@ -107,6 +108,9 @@ void loop() {
       z = lis3dh.z_g;
       if(!firstLIS3DHReading) {
         if(abs(x - prevX) > kDeltaAccelThreshold || abs(y - prevY) > kDeltaAccelThreshold || abs(z - prevZ) > kDeltaAccelThreshold) {
+          if(restartFromWatchdog) {
+            restartFromWatchdog = false;
+          }
           storedValues[storedValuesIndex] = 1;
           sleepTimeoutCounter = 0; // reset sleep timeout because movement detected
         } else {

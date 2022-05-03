@@ -8,7 +8,9 @@
 #define kLis3dhAddress 0x18
 #define kRecordingIntervalEEPROMAddress 100
 #define kReportingIntervalEEPROMAddress 200
+#define kReportingModeEEPROMAddress 364
 #define kSleepPauseDurationEEPROMAddress 500
+#define kDefaultReportingMode 0
 #define kDsidEEPROMAddress 0
 #define kEEPROMEmptyValue -1
 #define kDefaultRecordingInterval 500 // in milliseconds

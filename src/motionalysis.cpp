@@ -26,11 +26,10 @@ SYSTEM_THREAD(ENABLED)
 
 void reportingThread(void* args);
 
-
 // setup() runs once, when the device is first turned on.
 void setup() {
   Serial.begin(9600);
-  // while(!Serial.isConnected()){} 
+  while(!Serial.isConnected()){} 
   initHardware();
   HTTPRequestSetup(); 
   initFromEEPROM();
@@ -96,9 +95,9 @@ void loop() {
       }
 
       while(bleWaitForConfig) {
-        WITH_LOCK(Serial) {
-          Serial.println("bleWaitForConfig");
-        }
+        // WITH_LOCK(Serial) {
+        //   Serial.println("bleWaitForConfig");
+        // }
         delay(100);
       }
       BLE.disconnectAll();
@@ -145,28 +144,58 @@ void loop() {
       prevY = y;
       prevZ = z;
 
-      if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
-        if(WiFi.ready()) {
-          WITH_LOCK(Serial) {
-            Serial.println(">>> REPORTING DATA");
-            Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
-          }
-          for (int i = 0; i < storedValuesIndex; i++) {
-            //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
-            payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
-          }
-          storedValuesIndex = 0;
-          String localPayload = payload;
-          payload = "";
+      if(reportingMode == 0) {
+        if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
+          if(WiFi.ready()) {
+            WITH_LOCK(Serial) {
+              Serial.println(">>> REPORTING DATA");
+              Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
+            }
+            for (int i = 0; i < storedValuesIndex; i++) {
+              //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+              payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+            }
+            storedValuesIndex = 0;
+            String localPayload = payload;
+            payload = "";
 
-          reportData(localPayload);
-          // init_ACC();
-        }
-        else {
-          WiFi.on();
-          WiFi.connect();
+            reportData(localPayload);
+            // init_ACC();
+          }
+          else {
+            WiFi.on();
+            WiFi.connect();
+          }
         }
       }
+      else {
+        if (storedValuesIndex >= 50) { // if buffer is getting full begin reporting process
+          WITH_LOCK(Serial) {
+            Serial.println(">>> REPORTING DUE TO BUFFER CAPACITY");
+          }
+          if(WiFi.ready()) {
+            WITH_LOCK(Serial) {
+              Serial.println(">>> REPORTING DATA");
+              Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
+            }
+            for (int i = 0; i < storedValuesIndex; i++) {
+              //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+              payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+            }
+            storedValuesIndex = 0;
+            String localPayload = payload;
+            payload = "";
+
+            reportData(localPayload);
+            // init_ACC();
+          }
+          else {
+            WiFi.on();
+            WiFi.connect();
+          }
+        }
+      }
+      
       delay(recordingInterval);
       break;
     }

@@ -228,11 +228,45 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         Serial.println(reportingInterval);
       }
 
+      EEPROM.get(kReportingModeEEPROMAddress, reportingMode);
+      //prompt for report by exception
+      if(reportingMode == 1) {
+        txCharacteristic.setValue("\nCurrent reporting mode is: by exception\n");
+      }
+      else {
+        reportingMode = 0;
+        txCharacteristic.setValue("\nCurrent reporting mode is: normal");
+      }
+      txCharacteristic.setValue("\nEnter 'y' to enable exception reporting, 'n' to use normal reporting (blank to skip): ");
+      break;
+    }
+    case 8: {
+      //enter ota mode if command entered
+      for(int i = 0; i < len - 1; i++){
+        WITH_LOCK(Serial) {
+          Serial.println(data[i]);
+        }
+        bleInputBuffer += (char)data[i];
+      }
+      if(bleInputBuffer == "y"){
+        System.updatesEnabled();
+        reportingMode = 1;
+        EEPROM.put(kReportingModeEEPROMAddress, reportingMode);
+        EEPROM.get(kReportingModeEEPROMAddress, reportingMode);
+      }
+      else if(bleInputBuffer == "n"){
+        reportingMode = 0;
+        EEPROM.put(kReportingModeEEPROMAddress, reportingMode);
+        EEPROM.get(kReportingModeEEPROMAddress, reportingMode);
+      }
+
+      Serial.printlnf("reporting mode: %i", reportingMode);
+
       //prompt for ota
       txCharacteristic.setValue("\nEnter 'ota' to wait for OTA update (blank to skip): ");
       break;
     }
-    case 8:{
+    case 9:{
       //enter ota mode if command entered
       for(int i = 0; i < len - 1; i++){
         WITH_LOCK(Serial) {

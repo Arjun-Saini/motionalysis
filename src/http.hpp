@@ -34,10 +34,15 @@ void HTTPRequestSetup() {
 }
 
 void getTime() {
+  int wifiTimeout = kWiFiConnectionTimeout;
   WiFi.on();
   WiFi.connect();
   while(!WiFi.ready()){
+    wifiTimeout = wifiTimeout - 100;
     delay(100);
+    if(wifiTimeout == 0) {
+      break;
+    }
   }
   if(WiFi.ready() != true) {
     WITH_LOCK(Serial) {

@@ -3,13 +3,14 @@
 int recordingInterval; // interval between lis3dh reads
 int reportingInterval; // interval between reporting data to server in seconds
 int sleepPauseDuration; // time of inactivity before sleep
+int reportingMode; // 0 = reporting disabled, 1 = reporting enabled
 String payload = "";
 bool valuesChanged = false;
 String unixTime;
 String ssid, password = "";
 float x, y, z;
-uint8_t storedValues [256];
-long storedTimes [256];
+uint8_t storedValues [10000];
+long storedTimes [10000];
 float prevX, prevY, prevZ;
 int storedValuesIndex = 0;
 String rolloverPayload = ""; 

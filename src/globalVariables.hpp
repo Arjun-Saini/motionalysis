@@ -3,7 +3,7 @@
 int recordingInterval; // interval between lis3dh reads
 int reportingInterval; // interval between reporting data to server in seconds
 int sleepPauseDuration; // time of inactivity before sleep
-int reportingMode; // 0 = reporting disabled, 1 = reporting enabled
+int recordingMode; // 0 = reporting disabled, 1 = reporting enabled
 String payload = "";
 bool valuesChanged = false;
 String unixTime;

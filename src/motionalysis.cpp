@@ -24,23 +24,29 @@ SYSTEM_THREAD(ENABLED)
 #include "ble.hpp"
 #include "sleep.hpp"
 
-void reportingThread(void* args);
+void reportingThread(void *args);
 
 // setup() runs once, when the device is first turned on.
-void setup() {
+void setup()
+{
   Serial.begin(9600);
-  while(!Serial.isConnected()){} 
+  while (!Serial.isConnected())
+  {
+  }
   initHardware();
-  HTTPRequestSetup(); 
+  HTTPRequestSetup();
   initFromEEPROM();
   syncSystemTime();
 
   delay(200);
 
-  if (System.resetReason() == RESET_REASON_WATCHDOG) {
+  if (System.resetReason() == RESET_REASON_WATCHDOG)
+  {
     Serial.println("Watchdog reset");
+    restartFromWatchdog = true;
   }
-  if (System.resetReason() == RESET_REASON_PIN_RESET) {
+  if (System.resetReason() == RESET_REASON_PIN_RESET)
+  {
     Serial.println("External reset");
   }
 
@@ -51,158 +57,214 @@ void setup() {
   // os_thread_create(&reportingThreadHandle, "reportThread", OS_THREAD_PRIORITY_DEFAULT, reportingThread, NULL, 1024);
 }
 
-bool firstLIS3DHReading = true; //sets first recorded value to 0
-void loop() {
+bool firstLIS3DHReading = true; // sets first recorded value to 0
+void loop()
+{
   wd.pet();
-  switch (firmwareState) {
-    case BLEWAIT: {
-      //wait for BLE connection
-      WITH_LOCK(Serial) {
-        Serial.println("BLEWAIT");
-      }
-      BLE.on();
-      BLE.addCharacteristic(txCharacteristic);
-      BLE.addCharacteristic(rxCharacteristic);
-
-      BleAdvertisingData data;
-      data.appendServiceUUID(serviceUuid);
-      BLE.advertise(&data);
-      BLE.onConnected(connectCallback);
-      BLE.onDisconnected(disconnectCallback);
-      int BLECountdown = 15000;
-      while(!BLE.connected() && BLECountdown > 0) {
-        BLECountdown = BLECountdown - 10;
-        if(BLECountdown % 1000 == 0 || BLECountdown == 0) {
-          WITH_LOCK(Serial) {
-            Serial.print("BLECountdown: ");
-            Serial.println(BLECountdown);
-          }
-        }
-        delay(10);
-      }
-
-      if(BLE.connected()){ 
-        WITH_LOCK(Serial) {
-          Serial.println("BLE connected");
-        }
-        bleWaitForConfig = true;
-      }
-      else {
-        bleWaitForConfig = false;
-        WITH_LOCK(Serial) {
-          Serial.println("BLE not connected, continuing with stored settings.");
-        }
-      }
-
-      while(bleWaitForConfig) {
-        // WITH_LOCK(Serial) {
-        //   Serial.println("bleWaitForConfig");
-        // }
-        delay(100);
-      }
-      BLE.disconnectAll();
-      BLE.off();
-      firmwareState = RECORDING;
-      break;
+  switch (firmwareState)
+  {
+  case BLEWAIT:
+  {
+    // wait for BLE connection
+    WITH_LOCK(Serial)
+    {
+      Serial.println("BLEWAIT");
     }
-    case RECORDING: {
-      //record data
-      WITH_LOCK(Serial) {
-        Serial.println("RECORDING");
+    BLE.on();
+    BLE.addCharacteristic(txCharacteristic);
+    BLE.addCharacteristic(rxCharacteristic);
+
+    BleAdvertisingData data;
+    data.appendServiceUUID(serviceUuid);
+    BLE.advertise(&data);
+    BLE.onConnected(connectCallback);
+    BLE.onDisconnected(disconnectCallback);
+    int BLECountdown = 15000;
+    while (!BLE.connected() && BLECountdown > 0)
+    {
+      BLECountdown = BLECountdown - 10;
+      if (BLECountdown % 1000 == 0 || BLECountdown == 0)
+      {
+        WITH_LOCK(Serial)
+        {
+          Serial.print("BLECountdown: ");
+          Serial.println(BLECountdown);
+        }
       }
-      lis3dh.read();
-      x = lis3dh.x_g;
-      y = lis3dh.y_g;
-      z = lis3dh.z_g;
-      if(!firstLIS3DHReading) {
-        if(abs(x - prevX) > kDeltaAccelThreshold || abs(y - prevY) > kDeltaAccelThreshold || abs(z - prevZ) > kDeltaAccelThreshold) {
+      delay(10);
+    }
+
+    if (BLE.connected())
+    {
+      WITH_LOCK(Serial)
+      {
+        Serial.println("BLE connected");
+      }
+      bleWaitForConfig = true;
+    }
+    else
+    {
+      bleWaitForConfig = false;
+      WITH_LOCK(Serial)
+      {
+        Serial.println("BLE not connected, continuing with stored settings.");
+      }
+    }
+
+    while (bleWaitForConfig)
+    {
+      // WITH_LOCK(Serial) {
+      //   Serial.println("bleWaitForConfig");
+      // }
+      delay(100);
+    }
+    BLE.disconnectAll();
+    BLE.off();
+    firmwareState = RECORDING;
+    break;
+  }
+  case RECORDING:
+  {
+    // record data
+    WITH_LOCK(Serial)
+    {
+      Serial.println("RECORDING");
+    }
+    lis3dh.read();
+    x = lis3dh.x_g;
+    y = lis3dh.y_g;
+    z = lis3dh.z_g;
+    if (!firstLIS3DHReading)
+    {
+      if (abs(x - prevX) > kDeltaAccelThreshold || abs(y - prevY) > kDeltaAccelThreshold || abs(z - prevZ) > kDeltaAccelThreshold)
+      {
+        if (restartFromWatchdog)
+        {
+          restartFromWatchdog = false;
+        }
+        if(recordingMode == 1) {
+          if(storedValuesIndex != 0) {
+            if(storedValues[storedValuesIndex - 1] != 1) {
+              storedValues[storedValuesIndex] = 1;
+            }
+          }
+        }
+        else {
           storedValues[storedValuesIndex] = 1;
-          sleepTimeoutCounter = 0; // reset sleep timeout because movement detected
-        } else {
+        }
+        
+        sleepTimeoutCounter = 0; // reset sleep timeout because movement detected
+      }
+      else
+      {
+        if (recordingMode == 0) {
           storedValues[storedValuesIndex] = 0;
-          if(storedValues[storedValuesIndex - 1] == 0) {
-            sleepTimeoutCounter++;
-            if(sleepReadyTest()){
-              engageSleep();
+        }
+        else {
+          if (storedValuesIndex != 0) {
+            if (storedValues[storedValuesIndex - 1] != 0) {
+              storedValues[storedValuesIndex] = 0;
             }
           }
         }
-        storedTimes[storedValuesIndex] = Time.now(); 
-        WITH_LOCK(Serial) {
-          Serial.printlnf("Recording index: %i", storedValuesIndex);
-        }
-        storedValuesIndex++; 
-      }
-      else {
-        firstLIS3DHReading = false;
-        WITH_LOCK(Serial) {
-          Serial.println("First reading");
-        }
-      }
-      
-      prevX = x;
-      prevY = y;
-      prevZ = z;
 
-      if(reportingMode == 0) {
-        if(storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval)) {
-          if(WiFi.ready()) {
-            WITH_LOCK(Serial) {
-              Serial.println(">>> REPORTING DATA");
-              Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
-            }
-            for (int i = 0; i < storedValuesIndex; i++) {
-              //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
-              payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
-            }
-            storedValuesIndex = 0;
-            String localPayload = payload;
-            payload = "";
-
-            reportData(localPayload);
-            // init_ACC();
-          }
-          else {
-            WiFi.on();
-            WiFi.connect();
+        if (storedValues[storedValuesIndex - 1] == 0)
+        {
+          sleepTimeoutCounter++;
+          if (sleepReadyTest())
+          {
+            engageSleep();
           }
         }
       }
-      else {
-        if (storedValuesIndex >= 50) { // if buffer is getting full begin reporting process
-          WITH_LOCK(Serial) {
-            Serial.println(">>> REPORTING DUE TO BUFFER CAPACITY");
-          }
-          if(WiFi.ready()) {
-            WITH_LOCK(Serial) {
-              Serial.println(">>> REPORTING DATA");
-              Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
-            }
-            for (int i = 0; i < storedValuesIndex; i++) {
-              //Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
-              payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
-            }
-            storedValuesIndex = 0;
-            String localPayload = payload;
-            payload = "";
-
-            reportData(localPayload);
-            // init_ACC();
-          }
-          else {
-            WiFi.on();
-            WiFi.connect();
-          }
-        }
+      storedTimes[storedValuesIndex] = Time.now();
+      WITH_LOCK(Serial)
+      {
+        Serial.printlnf("Recording index: %i", storedValuesIndex);
       }
-      
+      storedValuesIndex++;
+    }
+    else
+    {
+      firstLIS3DHReading = false;
+      WITH_LOCK(Serial)
+      {
+        Serial.println("First reading");
+      }
+    }
+
+    prevX = x;
+    prevY = y;
+    prevZ = z;
+
+    if (storedValuesIndex >= ((reportingInterval * kSecondsToMilliseconds) / recordingInterval))
+    {
+      if (WiFi.ready())
+      {
+        WITH_LOCK(Serial)
+        {
+          Serial.println(">>> REPORTING DATA");
+          Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
+        }
+        for (int i = 0; i < storedValuesIndex; i++)
+        {
+          // Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+          payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+        }
+        storedValuesIndex = 0;
+        String localPayload = payload;
+        payload = "";
+
+        reportData(localPayload);
+        // init_ACC();
+      }
+      else
+      {
+        WiFi.on();
+        WiFi.connect();
+      }
+    }
+
+    if (storedValuesIndex >= 9500)
+    { // if buffer is getting full begin reporting process
+      WITH_LOCK(Serial)
+      {
+        Serial.println(">>> REPORTING DUE TO BUFFER CAPACITY");
+      }
+      if (WiFi.ready())
+      {
+        WITH_LOCK(Serial)
+        {
+          Serial.println(">>> REPORTING DATA");
+          Serial.printlnf("storedValuesIndex: %i", storedValuesIndex);
+        }
+        for (int i = 0; i < storedValuesIndex; i++)
+        {
+          // Serial.printf("{timestamp: %i, data: %i}, ", storedTimes[i], storedValues[i]);
+          payload += "{\"dsid\":" + String(dsid) + ", \"value\":" + storedValues[i] + ", \"timestamp\":" + String(storedTimes[i]) + "},";
+        }
+        storedValuesIndex = 0;
+        String localPayload = payload;
+        payload = "";
+
+        reportData(localPayload);
+        // init_ACC();
+      }
+      else
+      {
+        WiFi.on();
+        WiFi.connect();
+      }
+
       delay(recordingInterval);
       break;
     }
-    case SENDING: {
-      //send data to server, not used 
-      break;
-    }
+  }
+  case SENDING:
+  {
+    // send data to server, not used
+    break;
+  }
   }
 }
 

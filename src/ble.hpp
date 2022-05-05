@@ -228,16 +228,16 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
         Serial.println(reportingInterval);
       }
 
-      EEPROM.get(kReportingModeEEPROMAddress, reportingMode);
+      EEPROM.get(kReportingModeEEPROMAddress, recordingMode);
       //prompt for report by exception
-      if(reportingMode == 1) {
-        txCharacteristic.setValue("\nCurrent reporting mode is: by exception\n");
+      if(recordingMode == 1) {
+        txCharacteristic.setValue("\nCurrent recording mode is: by exception\n");
       }
       else {
-        reportingMode = 0;
-        txCharacteristic.setValue("\nCurrent reporting mode is: normal");
+        recordingMode = 0;
+        txCharacteristic.setValue("\nCurrent recording mode is: normal");
       }
-      txCharacteristic.setValue("\nEnter 'y' to enable exception reporting, 'n' to use normal reporting (blank to skip): ");
+      txCharacteristic.setValue("\nEnter 'y' to enable exception recording, 'n' to use normal recording (blank to skip): ");
       break;
     }
     case 8: {
@@ -250,17 +250,17 @@ void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, 
       }
       if(bleInputBuffer == "y"){
         System.updatesEnabled();
-        reportingMode = 1;
-        EEPROM.put(kReportingModeEEPROMAddress, reportingMode);
-        EEPROM.get(kReportingModeEEPROMAddress, reportingMode);
+        recordingMode = 1;
+        EEPROM.put(kReportingModeEEPROMAddress, recordingMode);
+        EEPROM.get(kReportingModeEEPROMAddress, recordingMode);
       }
       else if(bleInputBuffer == "n"){
-        reportingMode = 0;
-        EEPROM.put(kReportingModeEEPROMAddress, reportingMode);
-        EEPROM.get(kReportingModeEEPROMAddress, reportingMode);
+        recordingMode = 0;
+        EEPROM.put(kReportingModeEEPROMAddress, recordingMode);
+        EEPROM.get(kReportingModeEEPROMAddress, recordingMode);
       }
 
-      Serial.printlnf("reporting mode: %i", reportingMode);
+      Serial.printlnf("reporting mode: %i", recordingMode);
 
       //prompt for ota
       txCharacteristic.setValue("\nEnter 'ota' to wait for OTA update (blank to skip): ");

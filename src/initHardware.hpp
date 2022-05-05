@@ -67,12 +67,12 @@ void initFromEEPROM() {
   EEPROM.get(kDsidEEPROMAddress, dsid);
   EEPROM.get(kReportingIntervalEEPROMAddress, reportingInterval);
   EEPROM.get(kSleepPauseDurationEEPROMAddress, sleepPauseDuration);
-  EEPROM.get(kReportingModeEEPROMAddress, reportingMode);
+  EEPROM.get(kReportingModeEEPROMAddress, recordingMode);
   reportingInterval = reportingInterval / 1000; // convert to seconds from milliseconds 
   Serial.printlnf("recordingInterval: %i", recordingInterval);
   Serial.printlnf("reportingInterval: %i", reportingInterval);
   Serial.printlnf("sleepPauseDuration: %i", sleepPauseDuration);
-  Serial.printlnf("reportingMode: %i", reportingMode);
+  Serial.printlnf("recordingMode: %i", recordingMode);
   if(recordingInterval == kEEPROMEmptyValue) { // if no value stored in EEPROM, set to default
     recordingInterval = kDefaultRecordingInterval; //default value
     // EEPROM.put(kRecordingIntervalEEPROMAddress, recordingInterval);
@@ -84,8 +84,8 @@ void initFromEEPROM() {
     sleepPauseDuration = kDefaultSleepPauseDuration + 1; //default value
     // EEPROM.put(kSleepPauseDurationEEPROMAddress, sleepPauseDuration);
   }
-  if(reportingMode == kEEPROMEmptyValue) {
-    reportingMode = kDefaultReportingMode; //default value
+  if(recordingMode == kEEPROMEmptyValue) {
+    recordingMode = kDefaultReportingMode; //default value
     // EEPROM.put(kReportingModeEEPROMAddress, reportingMode);
   }
   if(dsid == kEEPROMEmptyValue) {

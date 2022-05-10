@@ -248,10 +248,9 @@ void loop()
         WiFi.on();
         WiFi.connect();
       }
-
-      delay(recordingInterval);
-      break;
     }
+    delay(recordingInterval);
+    break;
   }
   case SENDING:
   {

@@ -23,19 +23,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
   9 .debug_abbrev 0001484e  00000000  00000000  00149ae0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 10 .debug_loc    0003bcf8  00000000  00000000  0015e32e  2**0
+ 10 .debug_loc    0003bd06  00000000  00000000  0015e32e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 11 .debug_aranges 00003428  00000000  00000000  0019a026  2**0
+ 11 .debug_aranges 00003428  00000000  00000000  0019a034  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 12 .debug_ranges 0000b7b0  00000000  00000000  0019d44e  2**0
+ 12 .debug_ranges 0000b7b0  00000000  00000000  0019d45c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_macro  0003a49a  00000000  00000000  001a8bfe  2**0
+ 13 .debug_macro  0003a49a  00000000  00000000  001a8c0c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_line   00044d4b  00000000  00000000  001e3098  2**0
+ 14 .debug_line   00044d4b  00000000  00000000  001e30a6  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str    0012d63e  00000000  00000000  00227de3  2**0
+ 15 .debug_str    0012d63e  00000000  00000000  00227df1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_frame  000091c0  00000000  00000000  00355424  2**2
+ 16 .debug_frame  000091c0  00000000  00000000  00355430  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -3680,7 +3680,7 @@ class StringSumHelper : public String
    b5a94:	6822      	ldr	r2, [r4, #0]
    b5a96:	f242 531b 	movw	r3, #9499	; 0x251b
    b5a9a:	429a      	cmp	r2, r3
-   b5a9c:	f77f ad92 	ble.w	b55c4 <loop+0x1c>
+   b5a9c:	f340 8088 	ble.w	b5bb0 <loop+0x608>
       WITH_LOCK(Serial)
    b5aa0:	f003 fdde 	bl	b9660 <_Z16_fetch_usbserialv>
       explicit lock_guard(mutex_type& __m) : _M_device(__m)
@@ -3805,13 +3805,13 @@ class StringSumHelper : public String
         String localPayload = payload;
    b5baa:	a808      	add	r0, sp, #32
    b5bac:	f002 ff30 	bl	b8a10 <_ZN6StringD1Ev>
-      delay(recordingInterval);
+    delay(recordingInterval);
    b5bb0:	6830      	ldr	r0, [r6, #0]
 }
    b5bb2:	b013      	add	sp, #76	; 0x4c
    b5bb4:	ecbd 8b02 	vpop	{d8}
    b5bb8:	e8bd 4ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
-      delay(recordingInterval);
+    delay(recordingInterval);
    b5bbc:	f001 b926 	b.w	b6e0c <delay>
         WiFi.on();
    b5bc0:	480b      	ldr	r0, [pc, #44]	; (b5bf0 <loop+0x648>)

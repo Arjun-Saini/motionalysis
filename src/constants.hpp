@@ -21,3 +21,5 @@
 #define kDeltaAccelThreshold 0.05 // in g
 #define kSecondsToMilliseconds 1000
 #define kWatchDogTimeout 3600000 // 1 hr in milliseconds
+
+LEDStatus bleListening(RGB_COLOR_BLUE, LED_PATTERN_FADE, LED_SPEED_FAST, LED_PRIORITY_IMPORTANT);

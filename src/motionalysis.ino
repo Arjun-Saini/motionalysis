@@ -21,9 +21,9 @@ void reportingThread(void *args);
 void setup()
 {
   Serial.begin(9600);
-  while (!Serial.isConnected())
-  {
-  }
+  // while (!Serial.isConnected())
+  // {
+  // }
   initHardware();
   HTTPRequestSetup();
   initFromEEPROM();
@@ -56,6 +56,7 @@ void loop()
   {
   case BLEWAIT:
   {
+    bleListening.setActive(true);
     // wait for BLE connection
     WITH_LOCK(Serial)
     {
@@ -111,6 +112,7 @@ void loop()
     }
     BLE.disconnectAll();
     BLE.off();
+    bleListening.setActive(false);
     firmwareState = RECORDING;
     break;
   }
